@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SinalR-Javascript Client using Hub-Proxy</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.2.0.min.js"></script>
+</head>
+<body>
+
+</body>
+
+
+<script>
+
+
+    var SignalrConnection;
+    var ChatProxy;
+
+    function Connect() {
+        ChatServerUrl = "http://www.signalrservice.somee.com/";
+        var ChatUrl = ChatServerUrl + "signalr";
+        //This will hold the connection to the signalr hub
+        SignalrConnection = $.hubConnection(ChatUrl, {
+            useDefaultPath: false
+        });
+        ChatProxy = SignalrConnection.createHubProxy('ServiceHub');
+        //This will be called by signalr
+        ChatProxy.on("clientCallback", function (data) {
+
+            var fn = getFunctionFromString(data.Method);
+            if (typeof fn === 'function') {
+                fn(data.Parameters);
+            }
+
+
+        });
+
+        //connecting the client to the signalr hub
+        SignalrConnection.start().done(function () {
+            console.log("Connected to Signalr Server");
+        })
+            .fail(function () {
+                console.log("failed in connecting to the signalr server");
+            })
+
+    }
+
+    $(function () {
+        Connect();
+    });
+
+    function testmethod(params) {
+        $('body').append('<strong>called: testmethod</strong>');
+        $(params).each(function (idx) {
+            $('body').append('<strong>' + params.param1 + " | " + params.param2 + '</strong>');
+        });
+        $('body').append('<strong>-----</strong>');
+    }
+   
+
+</script>
+
+
+</html>

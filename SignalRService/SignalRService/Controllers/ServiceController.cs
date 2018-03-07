@@ -18,5 +18,14 @@ namespace SignalRService.Controllers
             Utils.SignalRServiceUtils.SayHello();
             return Json("done...", JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult ExecuteCallbackOnClient()
+        {
+            Hubs.ClientCallbackData data = new Hubs.ClientCallbackData();
+            data.Method = "testmethod";
+            data.Parameters = new { param1 = 1, param2 = "test" };
+            Utils.SignalRServiceUtils.SendClientCallback(data);
+            return Json("done...", JsonRequestBehavior.AllowGet);
+        }
     }
 }
