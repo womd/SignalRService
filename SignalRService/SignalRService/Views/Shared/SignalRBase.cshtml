@@ -1,0 +1,48 @@
+﻿
+
+  
+    <script>
+        $(function () {
+            var chat = $.connection.serviceHub;
+            chat.client.hello = function () {
+                // Add the message to the page.
+                $('body').append('<strong>HELLO</strong>');
+            };
+
+            //general purpose callback method
+            chat.client.clientCallback = function (data) {
+                var fn = getFunctionFromString(data.Method);
+                if (typeof fn === 'function') {
+                    fn(data.Parameters);
+                }
+            }
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                console.log("connection start done....");
+            });
+
+        });
+
+        //to avoid use of eval
+        // Get function from string, with or without scopes (by Nicolas Gauthier)
+        window.getFunctionFromString = function (string) {
+            var scope = window;
+            var scopeSplit = string.split('.');
+            for (i = 0; i < scopeSplit.length - 1; i++) {
+                scope = scope[scopeSplit[i]];
+
+                if (scope == undefined) return;
+            }
+            return scope[scopeSplit[scopeSplit.length - 1]];
+        }
+
+        function testmethod(params) {
+            $('body').append('<strong>called: testmethod</strong>');
+            $(params).each(function (idx) {
+                $('body').append('<strong>' + params.param1 + " | " + params.param2 + '</strong>');
+            });
+            $('body').append('<strong>-----</strong>');
+        }
+
+    </script>
+

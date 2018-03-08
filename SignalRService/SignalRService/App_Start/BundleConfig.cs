@@ -23,9 +23,20 @@ namespace SignalRService
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                "~/Scripts/jquery-ui-1.9.2.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jtable").Include(
+                "~/Scripts/jtable/jquery.jtable.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
+                "~/Scripts/jquery.signalR-2.2.2.min.js",
+                "~/signalr/hubs"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Scripts/jtable/themes/metro/blue/jtable.min.css"));
         }
     }
 }

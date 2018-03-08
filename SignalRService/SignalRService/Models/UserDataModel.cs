@@ -7,6 +7,8 @@ namespace SignalRService.Models
 {
     public class UserDataModel
     {
-        public Enums.EnumSignalRConnectionState ConnectionState;
+        public Enums.EnumSignalRConnectionState ConnectionState { get; set; }
+        public string RefererUrl { get; set; }
+        public string RemoteIp { get; set; }
     }
 }

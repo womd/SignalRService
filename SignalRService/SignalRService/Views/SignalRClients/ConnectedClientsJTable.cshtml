@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "ConnectedClientsJTable";
+}
+
+<h2>ConnectedClientsJTable</h2>
+<div id="ConnectedSignalRClientsTable"></div>
+
+
+    <script>
+
+        function init_ClientsJTable() {
+
+             $('#ConnectedSignalRClientsTable').jtable({
+                title: 'Table of connected SignalRClients',
+                actions: {
+                    listAction: '@Url.Action("ClientList", "SignalRClients", null)',
+                   // createAction: '/GettingStarted/CreatePerson',
+                   // updateAction: '/GettingStarted/UpdatePerson',
+                   // deleteAction: '/GettingStarted/DeletePerson'
+                },
+                fields: {
+                    ConnectionId: {
+                        key: true,
+                        list: true
+                    },
+                    ConnectionState: {
+                        title: 'ConnectionState',
+                        width: '40%',
+                        create: false,
+                        edit: false
+                    },
+                    RefererUrl: {
+                        title: 'Referer',
+                        create: false,
+                        edit: false
+                    },
+                    RemoteIp: {
+                        title: 'RemoteIp',
+                        create: false,
+                        edit: false
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_ClientsJTable();
+        $('#ConnectedSignalRClientsTable').jtable('load');
+
+    });
+
+
+
+    </script>
+

@@ -203,6 +203,7 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="DAL\SignalRConnections.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
+    <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -470,10 +471,12 @@
     <Content Include="Scripts\jtable\themes\jtable_theme_base.less" />
     <Content Include="Scripts\jtable\themes\jqueryui\jtable_jqueryui.less" />
     <Content Include="Scripts\jtable\themes\basic\jtable_basic.less" />
+    <Content Include="Views\SignalRClients\ConnectedClientsJTable.cshtml" />
+    <Content Include="Views\Shared\SignalRBase.cshtml" />
+    <Content Include="Views\SignalRClients\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\SignalRClients\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

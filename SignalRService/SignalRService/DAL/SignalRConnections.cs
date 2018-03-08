@@ -27,18 +27,33 @@ namespace SignalRService.DAL
             {
                 result.Add(new UserDataViewModel() {
                     ConnectionId = item.Key,
-                    ConnectionState = item.Value.ConnectionState.ToString()
+                    ConnectionState = item.Value.ConnectionState.ToString(),
+                    RefererUrl = item.Value.RefererUrl,
+                    RemoteIp = item.Value.RemoteIp
                 });
             }
             return result;
         }
 
-        public void AddOrUpdate(string ConnectionId, Enums.EnumSignalRConnectionState ConnectionState)
+        public void AddOrUpdate(string ConnectionId, Enums.EnumSignalRConnectionState ConnectionState, string refererUrl = "", string remoteIp = "")
         {
-            if( _data.TryGetValue(ConnectionId, out UserDataModel userData))
+            if (_data.TryGetValue(ConnectionId, out UserDataModel userData))
+            {
                 userData.ConnectionState = ConnectionState;
+                if(!string.IsNullOrEmpty(remoteIp))
+                    userData.RemoteIp = remoteIp;
+                if(!string.IsNullOrEmpty(refererUrl))
+                    userData.RefererUrl = refererUrl;
+            }
             else
-                _data.Add(ConnectionId, new UserDataModel() { ConnectionState = ConnectionState });
+            {
+                _data.Add(ConnectionId, new UserDataModel()
+                {
+                    ConnectionState = ConnectionState,
+                    RefererUrl = refererUrl,
+                    RemoteIp = remoteIp
+                });
+            }
         }
 
         public void Remove(string ConnectionId)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using SignalRService.Extensions;
 
 namespace SignalRService.Hubs
 {
@@ -11,7 +12,9 @@ namespace SignalRService.Hubs
     {
         public override Task OnConnected()
         {
-            DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected);
+            string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
+            string remoteIP = Context.Request.GetRemoteIpAddress();
+            DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP);
             return base.OnConnected();
         }
 

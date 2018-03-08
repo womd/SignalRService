@@ -8,7 +8,7 @@ namespace SignalRService.Controllers
 {
     public class ServiceController : Controller
     {
-        public ActionResult SiteLoader()
+        public ActionResult Index()
         {
             return View("Index");
         }
