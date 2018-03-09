@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace SignalRService.Controllers
 {
@@ -19,11 +20,16 @@ namespace SignalRService.Controllers
             return Json("done...", JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult ExecuteCallbackOnClient()
+        public JsonResult ExecuteCallbackOnClient(string fdata)
         {
+            var oParams = new JavaScriptSerializer().Deserialize(fdata, typeof(IEnumerable<string>));
             Hubs.ClientCallbackData data = new Hubs.ClientCallbackData();
-            data.Method = "testmethod";
-            data.Parameters = new { param1 = 1, param2 = "test" };
+            List<string> paramList = oParams as List<string>;
+
+            data.Method = paramList[0];
+            paramList.RemoveAt(0);
+            data.Parameters = ((object) paramList);
+
             Utils.SignalRServiceUtils.SendClientCallback(data);
             return Json("done...", JsonRequestBehavior.AllowGet);
         }

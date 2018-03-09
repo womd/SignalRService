@@ -6,17 +6,36 @@
 
 @Html.Partial("SignalRBase")
 
-@Html.Label("tbx_fn", "function", null)
-@Html.TextBox("tbx_fn")
-<input type="button" value="send" onclick="send_command()" />
+<div class="send_command_wrapper">
 
+    @Html.Label("tbx_fn", "function", null)
+    @Html.TextBox("tbx_fn")
+    <div id="parameterlist">
+        <label title="parameters"></label>
+        <ul></ul>
+    </div>
+    <input type="button" value="send" onclick="send_command()" />
+    <input type="button" value="add parameter" onclick="add_param_input()" />
+
+</div>
 
 <script>
 
     function send_command() {
-        var fn_name = $('tbx_fn').val();
+        var fn_name = $('#tbx_fn').val();
+        //get params, build object
+        var fparamsobject = [];
+        fparamsobject.push(fn_name);
+        var fparams = $('input[name=param]');
+        fparams.each(function (idx) {
+            fparamsobject.push( $(fparams[idx]).val() );
+        });
 
-        var jqxhr = $.ajax('@Url.Action("ExecuteCallbackOnClient", "Service", null)')
+        var jqxhr = $.ajax({
+            method: "POST",
+            url: '@Url.Action("ExecuteCallbackOnClient", "Service")',
+            data: { fdata: JSON.stringify(fparamsobject,'false',false) }
+        })
             .done(function () {
                 alert("success");
             })
@@ -26,6 +45,13 @@
             .always(function () {
                 alert("complete");
             });
+    }
+
+    function add_param_input() {
+
+        var item = "<li><input type='text' name='param'></li>";
+        $('#parameterlist ul').append(item);
+
     }
 
 </script>
