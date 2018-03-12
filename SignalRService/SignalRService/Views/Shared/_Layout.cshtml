@@ -32,7 +32,7 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
                     @{
-                if (User.Identity.IsAuthenticated)
+                if (User != null && User.Identity.IsAuthenticated)
                 {
                     <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
                     <li>@Html.ActionLink("Clients", "Index", "SignalRClients")</li>

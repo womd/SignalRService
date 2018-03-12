@@ -66,6 +66,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.0.0\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -75,6 +78,12 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -196,6 +205,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -204,6 +214,7 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
     <Compile Include="DAL\SignalRConnections.cs" />
+    <Compile Include="Enums\EnumOrderState.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
@@ -212,12 +223,15 @@
     </Compile>
     <Compile Include="Hubs\ServiceHub.cs" />
     <Compile Include="Models\AccountProperitesModel.cs" />
+    <Compile Include="Models\MinerConfigurationModel.cs" />
+    <Compile Include="Rest\RestServiceController.cs" />
     <Compile Include="Utils\ModelExtensinos.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ServiceSettingModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
+    <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\UserDataViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -483,7 +497,8 @@
     <Content Include="Views\SignalRClients\Index.cshtml" />
     <Content Include="Views\ServiceConfiguration\Index.cshtml" />
     <Content Include="Views\Service\UrlNotFound.cshtml" />
-    <Content Include="Views\Service\Goto.cshtml" />
+    <Content Include="Views\Shared\Goto.cshtml" />
+    <Content Include="Views\Shared\RenderMiner.cshtml" />
     <None Include="Web.ATNID1003HostConfiguration.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
