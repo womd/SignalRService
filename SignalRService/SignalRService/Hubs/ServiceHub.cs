@@ -10,11 +10,27 @@ namespace SignalRService.Hubs
 {
     public class ServiceHub : Hub
     {
+       
+
+        public ServiceHub()
+        {
+
+        }
+
+       
+
         public override Task OnConnected()
         {
             string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
             string remoteIP = Context.Request.GetRemoteIpAddress();
-            DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP);
+
+            //  Context.ConnectionId
+            if (Context.Request.User.Identity.IsAuthenticated)
+            {
+                DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP, Context.Request.User.Identity.Name);
+            } else
+                DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP);
+
             return base.OnConnected();
         }
 

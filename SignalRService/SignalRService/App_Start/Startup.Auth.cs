@@ -58,11 +58,11 @@ namespace SignalRService
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "1011399114995-43i5vnled1p7qumbrgsu6k5tdnq29dks.apps.googleusercontent.com",
+                ClientSecret = "UUSMJ6vcTeGX-bMkO_l0U7r0"
+            });
         }
     }
 }

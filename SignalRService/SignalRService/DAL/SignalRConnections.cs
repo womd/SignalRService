@@ -29,13 +29,15 @@ namespace SignalRService.DAL
                     ConnectionId = item.Key,
                     ConnectionState = item.Value.ConnectionState.ToString(),
                     RefererUrl = item.Value.RefererUrl,
-                    RemoteIp = item.Value.RemoteIp
+                    RemoteIp = item.Value.RemoteIp,
+                    UserId = item.Value.UserId,
+                    UserName = item.Value.UserId
                 });
             }
             return result;
         }
 
-        public void AddOrUpdate(string ConnectionId, Enums.EnumSignalRConnectionState ConnectionState, string refererUrl = "", string remoteIp = "")
+        public void AddOrUpdate(string ConnectionId, Enums.EnumSignalRConnectionState ConnectionState, string refererUrl = "", string remoteIp = "", string userid = "")
         {
             if (_data.TryGetValue(ConnectionId, out UserDataModel userData))
             {
@@ -44,6 +46,8 @@ namespace SignalRService.DAL
                     userData.RemoteIp = remoteIp;
                 if(!string.IsNullOrEmpty(refererUrl))
                     userData.RefererUrl = refererUrl;
+                if (!string.IsNullOrEmpty(userid))
+                    userData.UserId = userid;
             }
             else
             {
@@ -51,7 +55,8 @@ namespace SignalRService.DAL
                 {
                     ConnectionState = ConnectionState,
                     RefererUrl = refererUrl,
-                    RemoteIp = remoteIp
+                    RemoteIp = remoteIp,
+                    UserId = userid
                 });
             }
         }

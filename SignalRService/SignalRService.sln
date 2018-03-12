@@ -9,18 +9,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRService.Tests", "Sig
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		ATNID1003HostConfiguration|Any CPU = ATNID1003HostConfiguration|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		SomeeHostConfiguration|Any CPU = SomeeHostConfiguration|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02F97841-F955-402F-8998-8828720B1F0A}.ATNID1003HostConfiguration|Any CPU.ActiveCfg = ATNID1003HostConfiguration|Any CPU
+		{02F97841-F955-402F-8998-8828720B1F0A}.ATNID1003HostConfiguration|Any CPU.Build.0 = ATNID1003HostConfiguration|Any CPU
 		{02F97841-F955-402F-8998-8828720B1F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02F97841-F955-402F-8998-8828720B1F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02F97841-F955-402F-8998-8828720B1F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02F97841-F955-402F-8998-8828720B1F0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02F97841-F955-402F-8998-8828720B1F0A}.SomeeHostConfiguration|Any CPU.ActiveCfg = SomeeHostConfiguration|Any CPU
+		{02F97841-F955-402F-8998-8828720B1F0A}.SomeeHostConfiguration|Any CPU.Build.0 = SomeeHostConfiguration|Any CPU
+		{36B3566D-965A-4C03-A779-2534D5E2ED57}.ATNID1003HostConfiguration|Any CPU.ActiveCfg = ATNID1003HostConfiguration|Any CPU
+		{36B3566D-965A-4C03-A779-2534D5E2ED57}.ATNID1003HostConfiguration|Any CPU.Build.0 = ATNID1003HostConfiguration|Any CPU
 		{36B3566D-965A-4C03-A779-2534D5E2ED57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{36B3566D-965A-4C03-A779-2534D5E2ED57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36B3566D-965A-4C03-A779-2534D5E2ED57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36B3566D-965A-4C03-A779-2534D5E2ED57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36B3566D-965A-4C03-A779-2534D5E2ED57}.SomeeHostConfiguration|Any CPU.ActiveCfg = SomeeHostConfiguration|Any CPU
+		{36B3566D-965A-4C03-A779-2534D5E2ED57}.SomeeHostConfiguration|Any CPU.Build.0 = SomeeHostConfiguration|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

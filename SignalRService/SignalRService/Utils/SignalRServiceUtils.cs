@@ -19,6 +19,6 @@ namespace SignalRService.Utils
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.clientCallback(data);
         }
 
-
+      
     }
 }

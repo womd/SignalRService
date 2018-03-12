@@ -4,11 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using SignalRService.Utils;
 
 namespace SignalRService.Controllers
 {
     public class ServiceController : Controller
     {
+        private DAL.ServiceContext db = new DAL.ServiceContext();
+
+       
         public ActionResult Index()
         {
             return View("Index");
@@ -32,6 +36,15 @@ namespace SignalRService.Controllers
 
             Utils.SignalRServiceUtils.SendClientCallback(data);
             return Json("done...", JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Goto(string url)
+        {
+            var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
+            if (servicesetting == null)
+                return View("UrlNotFound",url);
+
+            return View(servicesetting.ToServiceSettingViewModel());
         }
     }
 }

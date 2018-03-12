@@ -12,6 +12,7 @@ using SignalRService.Models;
 
 namespace SignalRService.Controllers
 {
+    [RequireHttps]
     [Authorize]
     public class AccountController : Controller
     {
