@@ -28,6 +28,12 @@
    AppendToSelector = ".body-content",
    SinalRGroup = Model.ServiceUrl.ToLower()
 })
+
+@Html.Partial("RenderOrderHost", new SignalRService.ViewModels.OrderHostConfigurationViewModel() {
+    AppendToSelector = ".body-content",
+    SinalRGroup = Model.ServiceUrl.ToLower()
+})
+
 <script>
 
     //itemOrderClient.loadJqueryMobile();
@@ -39,7 +45,8 @@
         start_miner();
         servicehub.server.joinGroup('@Model.ServiceUrl.ToLower()');
 
-        itemOrderClient.run();
+        //itemOrderClient.run();
+        itemOrderHost.run();
     }, 1000);
    
 

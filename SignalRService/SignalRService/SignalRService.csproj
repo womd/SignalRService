@@ -233,6 +233,7 @@
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderClientConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\OrderHostConfigurationViewModel.cs" />
     <Compile Include="ViewModels\UserDataViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -503,6 +504,7 @@
     <Content Include="Views\Shared\RenderMiner.cshtml" />
     <Content Include="Views\Shared\RenderOrderClient.cshtml" />
     <Content Include="Views\Shared\_LayoutMobile.cshtml" />
+    <Content Include="Views\Shared\RenderOrderHost.cshtml" />
     <None Include="Web.ATNID1003HostConfiguration.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
