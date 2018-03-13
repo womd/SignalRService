@@ -2,20 +2,44 @@
 
   
     <script>
+        var servicehub;
         $(function () {
-            var chat = $.connection.serviceHub;
-            chat.client.hello = function () {
+            servicehub = $.connection.serviceHub;
+            servicehub.client.hello = function () {
                 // Add the message to the page.
                 $('body').append('<strong>HELLO</strong>');
             };
 
             //general purpose callback method
-            chat.client.clientCallback = function (data) {
+            servicehub.client.clientCallback = function (data) {
                 var fn = getFunctionFromString(data.Method);
                 if (typeof fn === 'function') {
                     fn(data.Parameters);
                 }
             }
+
+            servicehub.client.someoneAddedItemToCart = function (itemid) {
+                //find item and highlight it
+                $('*[data-itemid=' +itemid + ']').addClass("highlight");
+                setTimeout(function () {
+                    $('*[data-itemid=' +itemid + ']').removeClass("highlight");
+                }, 500);
+            }
+
+            servicehub.client.minerstatsUpdate = function (connectionId, data) {
+                //find item in jtable and update
+             
+            }
+
+            servicehub.client.miner_reportStatus = function () {
+                //send stats to server
+                miner.reportStatus();
+            }
+
+            servicehub.client.miner_setThrottle = function(data) {
+                miner.client().setThrottle(data);
+            }
+
             // Start the connection.
             $.connection.hub.start().done(function () {
                 console.log("connection start done....");

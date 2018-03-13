@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -47,20 +48,40 @@ namespace SignalRService.Hubs
             return base.OnReconnected();
         }
 
-        public void AddToCart(int itemId)
+
+        public Task JoinGroup(string name)
         {
-            //notify all other clients
-            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.AllExcept(Context.ConnectionId).someoneAddedItemToCart(itemId));
+            return Groups.Add(Context.ConnectionId, name.ToLower());
         }
 
-        public OrderData PlaceOrder(OrderData data)
+        public Task LeaveGroup(string groupName)
+        {
+            return Groups.Remove(Context.ConnectionId, groupName);
+        }
+
+        public void AddToCart(string itemId, string group)
+        {
+            //notify all other clients
+            //Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group.ToLower(), Context.ConnectionId).someoneAddedItemToCart(itemId));
+            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.someoneAddedItemToCart(itemId));
+
+        }
+
+        public OrderData PlaceOrder(OrderData data, string group)
         {
             data.State = Enums.EnumOrderState.Pending;
 
             //notify others - notify the master
-            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.AllExcept(Context.ConnectionId).someonePlacedAnOrder(data));
+            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group.ToLower(),Context.ConnectionId).someonePlacedAnOrder(data));
             return data;
         }
+
+        public void MinerReportStatus(MinerStatusData data)
+        {
+            DAL.SignalRConnections.Instance.UpdateMinerStatusData(Context.ConnectionId, data);
+            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.minerstatsUpdate(Context.ConnectionId,data));
+        }
+
     }
 
     public class ClientCallbackData
@@ -80,5 +101,18 @@ namespace SignalRService.Hubs
     {
         public int ItemId { get; set; }
         public int Amount { get; set; }
+    }
+
+    public class MinerStatusData
+    {
+        public bool running { get; set; }
+        public bool onMobile { get; set; }
+        public bool wasmEnabled { get; set; }
+        public bool isAutoThreads { get; set; }
+        public float hps { get; set; }
+        public int threads { get; set; }
+        public float throttle { get; set; }
+        public int hashes { get; set; }
+
     }
 }

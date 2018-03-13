@@ -37,6 +37,10 @@ namespace SignalRService
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Scripts/jtable/themes/metro/blue/jtable.min.css"));
+
+            bundles.Add(new StyleBundle("~/Content/mobilecss").Include(
+                     "~/Content/site_mobile.css"
+                    ));
         }
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SignalRService.Hubs;
 using SignalRService.Models;
+using SignalRService.ViewModels;
 
 namespace SignalRService.DAL
 {
@@ -25,16 +27,34 @@ namespace SignalRService.DAL
             List<UserDataViewModel> result = new List<UserDataViewModel>();
             foreach(var item in _data)
             {
+                var mstat = new MinerStatusData();
+                if(item.Value.MinerStatus != null)
+                    mstat =(MinerStatusData) item.Value.MinerStatus;
+
                 result.Add(new UserDataViewModel() {
                     ConnectionId = item.Key,
                     ConnectionState = item.Value.ConnectionState.ToString(),
                     RefererUrl = item.Value.RefererUrl,
                     RemoteIp = item.Value.RemoteIp,
                     UserId = item.Value.UserId,
-                    UserName = item.Value.UserId
+                    UserName = item.Value.UserId,
+
+                    MinerIsRunning = mstat.running,
+                    MinerIsMobile = mstat.onMobile,
+                    MinerHps = mstat.hps,
+                    MinerThrottle = mstat.throttle
+                    
                 });
             }
             return result;
+        }
+
+        public void UpdateMinerStatusData(string ConnectionId, MinerStatusData Data)
+        {
+            if (_data.TryGetValue(ConnectionId, out UserDataModel userData))
+            {
+                userData.MinerStatus = Data;
+            }
         }
 
         public void AddOrUpdate(string ConnectionId, Enums.EnumSignalRConnectionState ConnectionState, string refererUrl = "", string remoteIp = "", string userid = "")

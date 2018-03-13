@@ -16,7 +16,7 @@
                 actions: {
                     listAction: '@Url.Action("ClientList", "SignalRClients", null)',
                    // createAction: '/GettingStarted/CreatePerson',
-                   // updateAction: '/GettingStarted/UpdatePerson',
+                      updateAction: '@Url.Action("ClientUpdate", "SignalRClients", null)',
                    // deleteAction: '/GettingStarted/DeletePerson'
                 },
                 fields: {
@@ -49,7 +49,28 @@
                         title: 'UserName',
                         create: false,
                         edit: false
+                    },
+                    MinerIsRunning: {
+                        title: 'MinerRunning',
+                        create: false,
+                        edit: true
+                    },
+                    MinerIsMobile: {
+                        title: 'IsMoblie',
+                        create: false,
+                        edit: false
+                    },
+                    MinerHps: {
+                        title: 'Hps',
+                        create: false,
+                        edit: false,
+                    },
+                    MinerThrottle: {
+                        title: 'Throttle',
+                        create: false,
+                        edit: true
                     }
+
                 }
             });
         }

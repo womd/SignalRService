@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>ServiceConfiguration</h2>
+
+<div id="ServiceConfigurationTable"></div>
+
+<script>
+
+    function init_ServiceTalbe() {
+         $('#ServiceConfigurationTable').jtable({
+                title: 'Table of Services',
+                actions: {
+                    listAction: '@Url.Action("ServiceList", "ServiceConfiguration", null)',
+                    createAction: '@Url.Action("ServiceCreate", "ServiceConfiguration", null)',
+                    updateAction: '@Url.Action("ServiceUpdate", "ServiceConfiguration", null)',
+                    deleteAction: '@Url.Action("ServiceDelete","GettingStarted/DeletePerson", null)'
+                },
+                fields: {
+                    Id: {
+                        key: true,
+                        list: false
+                    },
+                    ServiceName: {
+                        title: 'Name',
+                        width: '40%',
+                        create: true,
+                        edit: true
+                    },
+                    ServiceUrl: {
+                        title: 'Url',
+                        create: true,
+                        edit: true
+                    },
+                    ServiceType: {
+                        title: 'ServiceType',
+                        create: true,
+                        edit: true
+                    }
+                }
+            });
+    }
+
+
+    $(function () {
+
+        init_ServiceTalbe();
+        $('#ServiceConfigurationTable').jtable('load');
+
+    });
+
+</script>

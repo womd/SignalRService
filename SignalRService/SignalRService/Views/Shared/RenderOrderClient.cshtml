@@ -1,0 +1,262 @@
+﻿@model SignalRService.ViewModels.OrderClientConfigurationViewModel
+<script>
+
+    var itemOrderClient = {
+
+        createProductItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
+            var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
+                "<img src=\"" + thumbnailSrc + "\">" +
+                "<div class=\"cpwrapper\">" +
+                "<div class=\"caption\">" + caption + "</div>" +
+                "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
+                "</div>" +
+                "<div class=\"description\">" + description + "</div></a>" +
+                "</li>";
+            return element;
+        },
+        createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
+            var element = "<li data-icon=\"false\" class=\"orderitem\" ><a data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
+                "<div class=\"caption\">" + caption + "</div>" +
+                "<div class=\"price\">" + amount * unitprice + "</div>" +
+                "<div class=\"pricedetails\">" +
+                "<div class=\"unitcount\">1</div>" +
+                "<div class=\"unitprice\">" + unitprice + "</div>" +
+                "</div>" +
+
+                "</a>" +
+                "</li>";
+            return element;
+        },
+        initializeProductItems: function build_productItemsElement(appendTo) {
+            var element = "<div id=\"customeritemswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"true\" data-autodividers=\"true\" data-filter=\"true\" id=\"customeritemlist\">" +
+                "<li></li></ul></div>";
+
+            if ($(appendTo).length == 0) {
+                console.log("could not find item: " + appendTo + " aborting orderclient");
+            }
+            else {
+                $(appendTo).append(element);
+                $('#customeritemlist').listview();
+                $('#customeritemlist').listview("refresh");
+            }
+        },
+        initializeOrderItems: function build_oderItemsElement(appendTo) {
+            var element = "<div id=\"orderswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"true\" id=\"orderitemlist\">"; +
+                    "<li></li></ul></div>";
+
+            if ($(appendTo).length == 0) {
+                console.log("could not find item: " + appendTo + " aborting orderclient");
+            }
+            else {
+                $(appendTo).append(element);
+                $('#orderitemlist').listview();
+                $('#orderitemlist').listview("refresh");
+            }
+        },
+        initializeTotals: function build_totalsElement(appendTo) {
+            var element = "<div id=\"totalswrapper\">" +
+                "<div class=\"totaldetails\">" +
+                "<div class=\"description\">total</div>" +
+                "<div class=\"price\">0.00</div>" +
+                "</div>" +
+                "<a href=\"#\" onclick=\"loadPaymentData()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>" +
+                "</div>";
+
+            $(appendTo).append(element);
+        },
+        loadProducts: function load_products() {
+            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1122", "/img/bier.png", "Bier 0.5", "BeschreibungsText etwas laenger", 3.6));
+            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1123", "/img/cappucino.png", "Cappucino", "---- mit xxx", 2.50));
+            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1124", "/img/cola.png", "Cola", "0.5L", 3.60));
+            $("#customeritemlist").listview('refresh');
+        },
+        run: function run() {
+
+            itemOrderClient.initializeProductItems('@Model.AppendToSelector');
+            itemOrderClient.initializeOrderItems('@Model.AppendToSelector');
+            itemOrderClient.initializeTotals('@Model.AppendToSelector');
+            itemOrderClient.loadProducts();
+        },
+        loadJqueryMobile: function load_jqueryMobile() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js";    // use this for linked script
+            //script.text  = "alert('voila!');"               // use this for inline script
+            document.head.appendChild(script);
+
+            var head = document.head;
+            var link = document.createElement("link");
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.href = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css";
+            head.appendChild(link);
+        },
+        orderListAdd: function add_item_to_orderlist(e) {
+            var li_item = $(e).parent();
+
+            var itemid = $(e).data("itemid");
+            var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
+            if (itemInOrderlist.length > 0) {
+
+
+                var unitprice = $(e).data("price");
+                var countcurr = itemInOrderlist.data("itemcnt");
+                countcurr++;
+                itemInOrderlist.data("itemcnt", countcurr);
+
+                var price = countcurr * unitprice;
+                var pelement = $(itemInOrderlist).find(".price");
+                pelement.html(parseFloat(price).toFixed(2));
+
+                var cntelement = $(itemInOrderlist).find(".unitcount");
+                cntelement.html(countcurr);
+
+            }
+            else {
+                var oitem = itemOrderClient.createOrderItem($(e).data("itemid"), $(e).data("caption"), 1, $(e).data("price"));
+                $("#orderitemlist").append(oitem).listview('refresh');
+            }
+
+            itemOrderClient.calcTotals();
+   
+            servicehub.server.addToCart(itemid, '@Model.SinalRGroup.ToLower()');
+
+        },
+        orderListRemove: function remove_item_from_orderlist(e) {
+            var itemid = $(e).data("itemid");
+            var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
+            if (itemInOrderlist.length > 0) {
+
+                var unitprice = $(e).data("price");
+                var countcurr = itemInOrderlist.data("itemcnt");
+                countcurr--;
+
+                if (countcurr == 0) {
+                    $(itemInOrderlist).parent().remove();
+                }
+
+                itemInOrderlist.data("itemcnt", countcurr);
+
+                var price = countcurr * unitprice;
+                var pelement = $(itemInOrderlist).find(".price");
+                pelement.html(parseFloat(price).toFixed(2));
+
+                var cntelement = $(itemInOrderlist).find(".unitcount");
+                cntelement.html(countcurr);
+            }
+            itemOrderClient.calcTotals();
+        },
+        calcTotals: function calculate_totals() {
+            var total = 0;
+            var orderitems = $("#orderitemlist").children(".orderitem");
+            $(orderitems).each(function (idx) {
+
+                var unitprice = $(orderitems[idx]).children().first().data('price');
+                var amount = $(orderitems[idx]).children().first().data('itemcnt');
+                total = total + (unitprice * amount);
+            });
+            $('.totaldetails').data("sum", total);
+            $('.totaldetails .price').html(parseFloat(total).toFixed(2));
+        }
+
+
+    };
+
+   
+   
+
+
+</script>
+
+<style>
+
+    .highlight {
+        -webkit-box-shadow: 6px 4px 5px 0px rgba(31,101,222,1);
+        -moz-box-shadow: 6px 4px 5px 0px rgba(31,101,222,1);
+        box-shadow: 6px 4px 5px 0px rgba(31,101,222,1);
+    }
+
+    .orderdetailsitem .item {
+        display: inline-block;
+    }
+
+    .orderdetailsitem .unitprice {
+        display: inline-block;
+    }
+
+    .orderdetailsitem .amount {
+        display: inline-block;
+    }
+
+    .orderdetailsitem .price {
+        display: inline-block;
+    }
+
+    .orderitem {
+    }
+
+        .orderitem .caption {
+            display: inline-block;
+        }
+
+    .productitem .caption {
+        display: inline-block;
+        font-size: 1.2em;
+    }
+
+    .orderitem .price {
+        float: right;
+        margin-left: 5px;
+        font-size: 1.2em;
+    }
+
+    .productitem .price {
+        float: right;
+        margin-left: 5px;
+        font-size: 1em;
+    }
+
+    .productitem .description {
+        display: inline-block;
+        font-size: 0.8em;
+    }
+
+
+    .orderitem .pricedetails {
+        float: right;
+        font-size: 0.8em;
+    }
+
+    .orderitem .unitcount {
+    }
+
+    .orderitem .unitprice {
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+    .unitcount::after {
+        content: "x";
+    }
+
+    .unitprice::after {
+        content: "€"
+    }
+
+    .price::after {
+        content: "€"
+    }
+
+    .totaldetails .description {
+        display: inline-block;
+        font-size: 1.5em;
+    }
+
+    .totaldetails .price {
+        float: right;
+        margin-left: 5px;
+        font-size: 2em;
+    }
+</style>

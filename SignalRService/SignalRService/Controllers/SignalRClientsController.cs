@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNet.SignalR;
+using SignalRService.Hubs;
+using SignalRService.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -19,7 +22,7 @@ namespace SignalRService.Controllers
         {
             try
             {
-                List<Models.UserDataViewModel> clients = DAL.SignalRConnections.Instance.List();
+                List<UserDataViewModel> clients = DAL.SignalRConnections.Instance.List();
                 return Json(new { Result = "OK", Records = clients });
             }
             catch (Exception ex)
@@ -41,6 +44,19 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "OK" });
             }
             catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        public JsonResult ClientUpdate(UserDataViewModel model)
+        {
+            try
+            {
+                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
+                return Json(new { Result = "OK", Message = "throttle update sent" });
+            }
+            catch(Exception ex)
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }

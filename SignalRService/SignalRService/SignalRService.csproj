@@ -232,6 +232,7 @@
     <Compile Include="Models\ServiceSettingModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\OrderClientConfigurationViewModel.cs" />
     <Compile Include="ViewModels\UserDataViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -241,6 +242,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\site_mobile.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -499,6 +501,8 @@
     <Content Include="Views\Service\UrlNotFound.cshtml" />
     <Content Include="Views\Shared\Goto.cshtml" />
     <Content Include="Views\Shared\RenderMiner.cshtml" />
+    <Content Include="Views\Shared\RenderOrderClient.cshtml" />
+    <Content Include="Views\Shared\_LayoutMobile.cshtml" />
     <None Include="Web.ATNID1003HostConfiguration.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
