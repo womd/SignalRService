@@ -38,6 +38,7 @@ namespace SignalRService.DAL
                     RemoteIp = item.Value.RemoteIp,
                     UserId = item.Value.UserId,
                     UserName = item.Value.UserId,
+                    NrOfGroups = item.Value.Groups.Count,
 
                     MinerIsRunning = mstat.running,
                     MinerIsMobile = mstat.onMobile,
@@ -47,6 +48,23 @@ namespace SignalRService.DAL
                 });
             }
             return result;
+        }
+
+        public void GroupAddOrUpdate(string ConnectionId, string Group)
+        {
+            if (_data.TryGetValue(ConnectionId, out UserDataModel userData))
+            {
+                if(!userData.Groups.Contains(Group))
+                    userData.Groups.Add(Group);
+            }
+        }
+
+        public void GroupRemove(string ConnectionId, string Group)
+        {
+            if (_data.TryGetValue(ConnectionId, out UserDataModel userData))
+            {
+                _data.Remove(ConnectionId);
+            }
         }
 
         public void UpdateMinerStatusData(string ConnectionId, MinerStatusData Data)

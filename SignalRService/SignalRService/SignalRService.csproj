@@ -215,12 +215,14 @@
     <Compile Include="DAL\ServiceContext.cs" />
     <Compile Include="DAL\SignalRConnections.cs" />
     <Compile Include="Enums\EnumOrderState.cs" />
+    <Compile Include="Enums\EnumServiceHubMethods.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HubPipelineModules\GroupMonitorPipelineModule.cs" />
     <Compile Include="Hubs\ServiceHub.cs" />
     <Compile Include="Models\AccountProperitesModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ServiceSettingModel.cs" />
     <Compile Include="Models\UserDataModel.cs" />
+    <Compile Include="ViewModels\SignalRBaseConfigurationViewModel.cs" />
     <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderClientConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderHostConfigurationViewModel.cs" />

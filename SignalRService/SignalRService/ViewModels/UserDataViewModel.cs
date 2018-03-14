@@ -19,5 +19,7 @@ namespace SignalRService.ViewModels
         public bool MinerIsMobile { get; set; }
         public float MinerHps { get; set; }
         public float MinerThrottle { get; set; }
+
+        public int NrOfGroups { get; set; }
     }
 }

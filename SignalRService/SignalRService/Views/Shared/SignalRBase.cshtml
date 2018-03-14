@@ -1,4 +1,4 @@
-﻿
+﻿@model  SignalRService.ViewModels.SignalRBaseConfigurationViewModel
 
   
     <script>
@@ -26,6 +26,48 @@
                 }, 500);
             }
 
+            servicehub.client.restageAll = function (group) {
+
+                var products = itemOrderHost.getProductsFromCookie();
+                $(products).each(function (idx)
+                {
+                    servicehub.server.stageProduct(products[idx], group);
+                });
+            }
+
+            servicehub.client.productStaged = function (data) {
+                //add to available products on host
+                if (itemOrderHost) {
+
+                    var existingitem = $("*[data-itemid='" + data.Id + "']");
+                    if (existingitem.length == 0) {
+                        $('#hostitemlist').append(itemOrderHost.createProductItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+                        $('#hostitemlist').listview();
+                        $('#hostitemlist').listview("refresh");
+                    }
+                    //else {
+                    //    $(existingitem).replaceWith(itemOrderHost.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
+                    //}                    
+                }
+                    
+                if (itemOrderClient) {
+
+                    var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
+                    if (existingitem.length == 0) {
+                        $('#customeritemlist').append(itemOrderClient.createProductItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+                        $('#customeritemlist').listview();
+                        $('#customeritemlist').listview("refresh");
+                    }
+                    else {
+                        $(existingitem).replaceWith(itemOrderClient.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
+                    }
+                }
+            }
+
+            servicehub.client.productRemove = function (id) {
+                itemOrderHost.productRemove(id);
+            }
+
             servicehub.client.minerstatsUpdate = function (connectionId, data) {
                 //find item in jtable and update
              
@@ -42,8 +84,16 @@
 
             // Start the connection.
             $.connection.hub.start().done(function () {
-                console.log("connection start done....");
-            });
+
+                @if (Model != null)
+                {
+                        <text>
+                            servicehub.server.joinGroup("@Model.SinalRGroup");
+                        </text>
+                }
+
+
+                });
 
         });
 

@@ -67,6 +67,22 @@ namespace SignalRService.Hubs
 
         }
 
+        public void StageProduct(ProductData data, string group)
+        {
+            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(data));
+        }
+
+        public void RequestStageList(string group)
+        {
+            //inform other orderhosts to restage 
+            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).restageAll(group));
+        }
+
+        public void RemoveProduct(string id, string group)
+        {
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+        }
+
         public OrderData PlaceOrder(OrderData data, string group)
         {
             data.State = Enums.EnumOrderState.Pending;
@@ -88,6 +104,15 @@ namespace SignalRService.Hubs
     {
         public string Method { get; set; }
         public object Parameters { get; set; }
+    }
+
+    public class ProductData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string ImgUrl { get; set; }
+        public float Price { get; set; }
     }
 
     public class OrderData

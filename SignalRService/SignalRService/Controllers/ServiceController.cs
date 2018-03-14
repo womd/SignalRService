@@ -46,5 +46,7 @@ namespace SignalRService.Controllers
 
             return View(servicesetting.ToServiceSettingViewModel());
         }
+
+ 
     }
 }

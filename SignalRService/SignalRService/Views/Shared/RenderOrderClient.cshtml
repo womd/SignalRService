@@ -67,10 +67,9 @@
             $(appendTo).append(element);
         },
         loadProducts: function load_products() {
-            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1122", "/img/bier.png", "Bier 0.5", "BeschreibungsText etwas laenger", 3.6));
-            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1123", "/img/cappucino.png", "Cappucino", "---- mit xxx", 2.50));
-            $('#customeritemlist').append(itemOrderClient.createProductItem("xx1124", "/img/cola.png", "Cola", "0.5L", 3.60));
-            $("#customeritemlist").listview('refresh');
+
+            servicehub.server.requestStageList('@Model.SinalRGroup');
+
         },
         run: function run() {
 
@@ -78,6 +77,11 @@
             itemOrderClient.initializeOrderItems('@Model.AppendToSelector');
             itemOrderClient.initializeTotals('@Model.AppendToSelector');
             itemOrderClient.loadProducts();
+        },
+        stop: function stop() {
+            $('#customeritemswrapper').remove();
+            $('#orderswrapper').remove();
+            $('#totalswrapper').remove();
         },
         loadJqueryMobile: function load_jqueryMobile() {
             var script = document.createElement("script");

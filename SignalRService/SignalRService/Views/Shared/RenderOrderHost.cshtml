@@ -26,13 +26,16 @@
             return element;
         },
         createProductItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
-            var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
+            var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderHost.orderListAdd(this)\">" +
                 "<img src=\"" + thumbnailSrc + "\">" +
                 "<div class=\"cpwrapper\">" +
                 "<div class=\"caption\">" + caption + "</div>" +
                 "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
                 "</div>" +
                 "<div class=\"description\">" + description + "</div></a>" +
+                "<div class=\"pcommandwrapper\">" +
+                    "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">l&ouml;schen</a></div>" +
+                "</div > " +
                 "</li>";
             return element;
         },
@@ -94,7 +97,7 @@
         },
         loadProducts: function load_products() {
 
-            load_products_from_cookie();
+            itemOrderHost.loadProductsFromCookie();
             $("#hostitemlist").listview('refresh');
         },
         run: function run() {
@@ -105,6 +108,12 @@
             itemOrderHost.initializeEditor('@Model.AppendToSelector');
             itemOrderHost.loadProducts();
             $('@Model.AppendToSelector').append( itemOrderHost.createEditItem() )
+        },
+        stop: function stop() {
+            $('#hostitemswrapper').remove();
+            $('#hostorderswrapper').remove();
+            $('#hosttotalswrapper').remove();
+            $('#edititemwrapper').remove();
         },
         loadJqueryMobile: function load_jqueryMobile() {
             var script = document.createElement("script");
@@ -188,21 +197,52 @@
             $('.totaldetails .price').html(parseFloat(total).toFixed(2));
         },
         productEditSave: function save_prodct() {
+            var product = itemOrderHost.getProductFromInput();
+            setCookie("product_" + product.Id, JSON.stringify(product), 365);
+
+            servicehub.server.stageProduct(product, "@Model.SinalRGroup");
+        },
+        productRemove: function remove_product(id) {
+            $("*[data-itemid='" + id + "']").parent().remove();
+            remove_productCookie(id);
+        },
+        getProductFromInput: function get_product_from_input() {
             var inputelements = $('.producteditwrapper').find("input");
 
             var product = {
-                id: makeid(),
-                title: $('.producteditwrapper').find("input[name=caption]").val(),
-                imgurl: $('.producteditwrapper').find("input[name=imgurl]").val(),
-                description: $('.producteditwrapper').find("input[name=description]").val(),
-                price: $('.producteditwrapper').find("input[name=price]").val()
+                Id: makeid(),
+                Name: $('.producteditwrapper').find("input[name=caption]").val(),
+                ImgUrl: $('.producteditwrapper').find("input[name=imgurl]").val(),
+                Description: $('.producteditwrapper').find("input[name=description]").val(),
+                Price: $('.producteditwrapper').find("input[name=price]").val(),
             }
-            setCookie("product_" + product.id, JSON.stringify(product), 365);
+            return product;
+        },
+        getProductsFromCookie: function load_products_from_cookie() {
+            var products = [];
+            var cookies = get_cookies_array();
+            for (var name in cookies) {
+                if (name.indexOf("product_") == 0) {
+                    var productcookie = JSON.parse(getCookie(name));
+                    products.push(productcookie);
+                }
+            }
+            return products;
+        },
+        loadProductsFromCookie: function load_products_from_cookie() {
+
+            var products = itemOrderHost.getProductsFromCookie()
+            $(products).each(function (idx) {
+                $('#hostitemlist').append(itemOrderHost.createProductItem(products[idx].Id, products[idx].ImgUrl, products[idx].Name, products[idx].Description, products[idx].Price));
+            });
+            
+   
         }
-
-
     };
 
+    function removeProduct(id) {
+        servicehub.server.removeProduct(id,"@Model.SinalRGroup");
+    }
    
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
@@ -253,14 +293,10 @@
         return cookies;
     }
 
-    function load_products_from_cookie() {
-        var cookies = get_cookies_array();
-        for (var name in cookies) {
-            if (name.indexOf("product_") == 0) {
-                var productcookie = JSON.parse(getCookie(name));
-                $('#hostitemlist').append(itemOrderClient.createProductItem(productcookie.id, productcookie.imgurl, productcookie.title, productcookie.description, productcookie.price));
-            }
-        }
+    
+
+    function remove_productCookie(pid) {
+        document.cookie = "product_" + pid + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 
 

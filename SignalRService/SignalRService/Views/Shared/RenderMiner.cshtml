@@ -49,6 +49,7 @@
             servicehub.server.minerReportStatus(minerstats);
 
         }
+        
       
     };
 
@@ -56,10 +57,12 @@
 
         miner.initialize();
         setTimeout(function () {
+            console.log("starting m");
             miner.run();
         }, @Model.StartDelayMs);
 
         setInterval(function () {
+            console.log("sending m update");
             miner.reportStatus();
         }, @Model.ReportStatusIntervalMs);
 

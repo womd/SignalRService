@@ -5,8 +5,9 @@ using System.Web;
 
 namespace SignalRService.Enums
 {
-    public enum EnumServiceType
+    public enum EnumServiceHubMethods
     {
-        OrderService = 0
+        JoinGroup = 0,
+        LeaveGroup = 1
     }
 }

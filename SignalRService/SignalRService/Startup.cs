@@ -11,6 +11,10 @@ namespace SignalRService
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+
+            //register custom pipeline modules
+            GlobalHost.HubPipeline.AddModule(new HubPipelineModules.GroupMonitorPipelineModule());
+
             // Branch the pipeline here for requests that start with "/signalr"
             app.Map("/signalr", map =>
             {
