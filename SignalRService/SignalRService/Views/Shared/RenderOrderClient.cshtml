@@ -1,9 +1,31 @@
 ﻿@model SignalRService.ViewModels.OrderClientConfigurationViewModel
 <script>
 
-    var itemOrderClient = {
+    var totalsBox = {
 
-        createProductItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
+        initialize: function build_totalsElement(appendTo) {
+            var element = "<div id=\"totalswrapper\">" +
+                "<div class=\"totaldetails\">" +
+                "<div class=\"description\">total</div>" +
+                "<div class=\"price\">0.00</div>" +
+                "</div>" +
+                "<a href=\"#\" onclick=\"loadPaymentData()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>" +
+                "</div>";
+
+            return element;
+        }
+    }
+
+    var productItemList = {
+
+        initialize: function build_productItemsElement(dataInset, dataAutoDividers, dataFilter) {
+            var element = "<div id=\"customeritemswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"" + dataInset + "\" data-autodividers=\"" + dataAutoDividers + "\" data-filter=\"" + dataFilter + "\" id=\"customeritemlist\">" +
+                "<li></li></ul></div>";
+
+            return element;
+        },
+        createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
             var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
                 "<img src=\"" + thumbnailSrc + "\">" +
                 "<div class=\"cpwrapper\">" +
@@ -12,6 +34,16 @@
                 "</div>" +
                 "<div class=\"description\">" + description + "</div></a>" +
                 "</li>";
+            return element;
+        }
+    }
+
+    var orderItemList = {
+
+        initialize: function build_oderItemsElement(dataInset, dataAutoDividers, dataFilter) {
+            var element = "<div id=\"orderswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"" + dataInset + "\" data-autodividers=\"" + dataAutoDividers + "\" data-filter=\"" + dataFilter + "\" id=\"orderitemlist\">" +
+                    "<li></li></ul></div>";
             return element;
         },
         createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
@@ -22,60 +54,44 @@
                 "<div class=\"unitcount\">1</div>" +
                 "<div class=\"unitprice\">" + unitprice + "</div>" +
                 "</div>" +
-
                 "</a>" +
                 "</li>";
             return element;
-        },
-        initializeProductItems: function build_productItemsElement(appendTo) {
-            var element = "<div id=\"customeritemswrapper\">" +
-                "<ul data-role=\"listview\" data-inset=\"true\" data-autodividers=\"true\" data-filter=\"true\" id=\"customeritemlist\">" +
-                "<li></li></ul></div>";
+        }
 
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-                $(appendTo).append(element);
-                $('#customeritemlist').listview();
-                $('#customeritemlist').listview("refresh");
-            }
-        },
-        initializeOrderItems: function build_oderItemsElement(appendTo) {
-            var element = "<div id=\"orderswrapper\">" +
-                "<ul data-role=\"listview\" data-inset=\"true\" id=\"orderitemlist\">"; +
-                    "<li></li></ul></div>";
+    }
 
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-                $(appendTo).append(element);
-                $('#orderitemlist').listview();
-                $('#orderitemlist').listview("refresh");
-            }
-        },
-        initializeTotals: function build_totalsElement(appendTo) {
-            var element = "<div id=\"totalswrapper\">" +
-                "<div class=\"totaldetails\">" +
-                "<div class=\"description\">total</div>" +
-                "<div class=\"price\">0.00</div>" +
-                "</div>" +
-                "<a href=\"#\" onclick=\"loadPaymentData()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>" +
-                "</div>";
+    var itemOrderClient = {
 
-            $(appendTo).append(element);
-        },
         loadProducts: function load_products() {
 
             servicehub.server.requestStageList('@Model.SinalRGroup');
 
         },
-        run: function run() {
+        run: function run(appendTo) {
 
-            itemOrderClient.initializeProductItems('@Model.AppendToSelector');
-            itemOrderClient.initializeOrderItems('@Model.AppendToSelector');
-            itemOrderClient.initializeTotals('@Model.AppendToSelector');
+
+            if ($(appendTo).length == 0) {
+                console.log("could not find item: " + appendTo + " aborting orderclient");
+            }
+            else {
+
+                var itemlistElement = productItemList.initialize("true", "false", "false");
+                $(appendTo).append(itemlistElement);
+                $('#customeritemlist').listview();
+                $('#customeritemlist').listview("refresh");
+
+                var orderlistElement = orderItemList.initialize("true", "false", "false");
+                $(appendTo).append(orderlistElement);
+                $('#orderitemlist').listview();
+                $('#orderitemlist').listview("refresh");
+
+                var totalsElement = totalsBox.initialize();
+                $(appendTo).append(totalsElement);
+
+            }
+             
+          
             itemOrderClient.loadProducts();
         },
         stop: function stop() {
@@ -167,9 +183,6 @@
 
 
     };
-
-   
-   
 
 
 </script>

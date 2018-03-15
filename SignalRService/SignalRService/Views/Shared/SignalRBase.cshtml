@@ -29,37 +29,49 @@
             servicehub.client.restageAll = function (group) {
 
                 var products = itemOrderHost.getProductsFromCookie();
-                $(products).each(function (idx)
-                {
-                    servicehub.server.stageProduct(products[idx], group);
-                });
+                for (var i = 0; i < products.length; i++) {
+
+                    servicehub.server.stageProduct(products[i], group)
+                        .done(function (data) {
+                            if (data.length == 0) {
+                                //all ok - no messages
+                            }
+                            else {
+                                showMessageDailog(data.toString(), '#edititemwrapper');
+                            }
+                        })
+                        .fail(function () {
+                            console.log("staeingRequest failed...");
+                        });
+                   
+                }
             }
 
             servicehub.client.productStaged = function (data) {
                 //add to available products on host
                 if (itemOrderHost) {
 
-                    var existingitem = $("*[data-itemid='" + data.Id + "']");
+                    var existingitem = $('#hostitemlist').children().find("*[data-itemid='" + data.Id + "']");
                     if (existingitem.length == 0) {
-                        $('#hostitemlist').append(itemOrderHost.createProductItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+                        $('#hostitemlist').append(hostProducList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
                         $('#hostitemlist').listview();
                         $('#hostitemlist').listview("refresh");
                     }
                     //else {
                     //    $(existingitem).replaceWith(itemOrderHost.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
-                    //}                    
+                    //}    
                 }
-                    
+    
                 if (itemOrderClient) {
 
                     var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
                     if (existingitem.length == 0) {
-                        $('#customeritemlist').append(itemOrderClient.createProductItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+                        $('#customeritemlist').append(productItemList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
                         $('#customeritemlist').listview();
                         $('#customeritemlist').listview("refresh");
                     }
                     else {
-                        $(existingitem).replaceWith(itemOrderClient.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
+                        $(existingitem).replaceWith(productItemList.createItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
                     }
                 }
             }
@@ -117,6 +129,58 @@
             });
             $('body').append('<strong>-----</strong>');
         }
+
+
+        function showMessageDailog(message,appendTo) {
+
+            $('#messageDialog').remove();
+            var element = "<div id=\"messageDialog\" title=\"Nachricht\">" +
+                "<p>" + message + "</p>" +
+                "</div>";
+            $(appendTo).append(element);
+            $('#messageDialog').popup();
+            $('#messageDialog').popup("open");
+        }
+
+        function toDataURL(src, callback, outputFormat) {
+            var img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function () {
+                var canvas = document.createElement('CANVAS');
+                var ctx = canvas.getContext('2d');
+                var dataURL;
+                canvas.height = this.naturalHeight;
+                canvas.width = this.naturalWidth;
+                ctx.drawImage(this, 0, 0);
+                dataURL = canvas.toDataURL(outputFormat);
+                callback(dataURL);
+            };
+            img.src = src;
+            if (img.complete || img.complete === undefined) {
+                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+                img.src = src;
+            }
+        }
+
+        //toDataURL(
+        //    'https://someimg.png',
+        //    function (dataUrl) {
+        //        console.log('RESULT:', dataUrl)
+        //    }
+        //)
+
+        //Camera.PictureSourceType.CAMERA
+        //Camera.PictureSourceType.PHOTOLIBRARY
+        //Camera.PictureSourceType.SAVEDPHOTOALBU
+        function getPhoto(source) {
+            // Retrieve image file location from specified source
+            navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+                quality: 50,
+                destinationType: destinationType.FILE_URI,
+                sourceType: source
+            });
+        }
+
 
     </script>
 

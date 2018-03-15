@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SignalRService.Controllers
 {
-    [RequireHttps]
+   
     public class SignalRClientsController : Controller
     {
         // GET: SignalRClients

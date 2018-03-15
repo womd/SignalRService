@@ -67,9 +67,33 @@ namespace SignalRService.Hubs
 
         }
 
-        public void StageProduct(ProductData data, string group)
+        private List<string>_stageProduct(ProductData data, string group)
         {
-            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(data));
+            List<string> messages = new List<string>();
+            int dangerIdx = 0;
+            if(string.IsNullOrEmpty(group))
+            {
+                messages.Add("no groupname given....");
+                return messages;
+            }
+
+            if( Utils.ValidationUtils.IsDangerousString(group, out dangerIdx) )
+            {
+                messages.Add("dangrous string given....");
+                return messages;
+            }
+
+            
+            if (Utils.ProductUtils.IsValidProductData(data, out messages))
+            {
+                Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(data));
+            }
+            return messages;
+        }
+
+        public async Task<List<string>> StageProduct(ProductData data, string group)
+        {
+            return await Task.Run(() => _stageProduct(data,group));
         }
 
         public void RequestStageList(string group)

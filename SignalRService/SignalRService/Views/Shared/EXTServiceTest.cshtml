@@ -1,0 +1,52 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+}
+
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+</head>
+<body>
+
+    <script>
+
+var serviceStarter = {
+
+	start: function start(serviceurl)
+	{
+		$.ajax({
+		  url: serviceurl,
+		 // dataType: 'jsonp',
+		 // context: document.body
+		}).done(function(data) {
+		  $(document.body).append(data);
+		  console.log("starter loaded...");
+		}).fail(function() {
+			console.log("failed loading starter...");
+		});
+	}
+}
+
+
+
+$(function() {
+   serviceStarter.start("https://localhost:44393/Service/SrcStarter?url=testurl");
+});
+
+
+
+
+    </script>
+
+</body>
+
+</html>

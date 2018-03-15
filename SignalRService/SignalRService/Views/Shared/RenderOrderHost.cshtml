@@ -1,31 +1,17 @@
 ﻿@model SignalRService.ViewModels.OrderHostConfigurationViewModel
 <script>
 
-    var itemOrderHost = {
+    var hostProducList = {
 
-        createEditItem: function create_productEditItem() {
-            var element = "<div class=\"producteditwrapper\">" +
-                "<div data-role=\"fieldcontain\">"+
-                    "<label for=\"editorcaption\"> Titel </label>" +
-                    "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"Titel / Name\" />" +
-                "</div>" +
-                "<div data-role=\"fieldcontain\">" +
-                    "<label for=\"editorimgurl\">Bild</label>" +
-                    "<input type=\"text\" id=\"editorimgurl\" name=\"imgurl\" placeholder=\"ImageUrl\" />" + 
-                "</div>" +
-                "<div data-role=\"fieldcontain\">" +
-                    "<label for=\"editordescription\">Beschreibung</label>" +
-                    "<input type=\"text\" id=\"editordescription\" name=\"description\" placeholder=\"Beschreibung\" />" +
-                "</div>" +
-                "<div data-role=\"fieldcontain\">" +
-                    "<label for=\"editorprice\">Preis</label>" +
-                    "<input type=\"number\" id=\"editorprice\" name=\"price\"  placeholder=\"Preis\"  />" +
-                "</div>" +
-                "<div class=\"savebtn\"><a onclick=\"itemOrderHost.productEditSave()\" href=\"#\" class=\"ui-btn ui-corner-all\">speichern</a></div>" +
-                "</div>";
+        signalRGroup: "@Model.SinalRGroup",
+
+        initialize: function build_productItemsElement(dataInset, dataAutoDividers, dataFilter) {
+            var element = "<div id=\"hostitemswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"" + dataInset + "\" data-autodividers=\"" + dataAutoDividers + "\" data-filter=\"" + dataFilter + "\" id=\"hostitemlist\">" +
+                "<li></li></ul></div>";
             return element;
         },
-        createProductItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
+        createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
             var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderHost.orderListAdd(this)\">" +
                 "<img src=\"" + thumbnailSrc + "\">" +
                 "<div class=\"cpwrapper\">" +
@@ -34,11 +20,38 @@
                 "</div>" +
                 "<div class=\"description\">" + description + "</div></a>" +
                 "<div class=\"pcommandwrapper\">" +
-                    "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">l&ouml;schen</a></div>" +
+                "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">l&ouml;schen</a></div>" +
                 "</div > " +
                 "</li>";
             return element;
         },
+        createEditItem: function create_productEditItem() {
+            var element = "<div class=\"producteditwrapper\">" +
+                "<div data-role=\"fieldcontain\">" +
+                "<label for=\"editorcaption\"> Titel </label>" +
+                "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"Titel / Name\" />" +
+                "</div>" +
+                "<div data-role=\"fieldcontain\">" +
+                "<label for=\"editorimgurl\">Bild</label>" +
+                "<input type=\"text\" id=\"editorimgurl\" name=\"imgurl\" placeholder=\"ImageUrl\" />" +
+                "</div>" +
+                "<div data-role=\"fieldcontain\">" +
+                "<label for=\"editordescription\">Beschreibung</label>" +
+                "<input type=\"text\" id=\"editordescription\" name=\"description\" placeholder=\"Beschreibung\" />" +
+                "</div>" +
+                "<div data-role=\"fieldcontain\">" +
+                "<label for=\"editorprice\">Preis</label>" +
+                "<input type=\"number\" id=\"editorprice\" name=\"price\"  placeholder=\"Preis\"  />" +
+                "</div>" +
+                "<div class=\"savebtn\"><a onclick=\"itemOrderHost.productEditSave('" + hostProducList.signalRGroup + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">speichern</a></div>" +
+                "</div>";
+            return element;
+        }
+    }
+
+    var itemOrderHost = {
+
+      
         createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
             var element = "<li data-icon=\"false\" class=\"orderitem\" ><a data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
                 "<div class=\"caption\">" + caption + "</div>" +
@@ -52,20 +65,7 @@
                 "</li>";
             return element;
         },
-        initializeProductItems: function build_productItemsElement(appendTo) {
-            var element = "<div id=\"hostitemswrapper\">" +
-                "<ul data-role=\"listview\" data-inset=\"true\" data-autodividers=\"true\" data-filter=\"true\" id=\"hostitemlist\">" +
-                "<li></li></ul></div>";
-
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-                $(appendTo).append(element);
-                $('#hostitemlist').listview();
-                $('#hostitemlist').listview("refresh");
-            }
-        },
+     
         initializeOrderItems: function build_oderItemsElement(appendTo) {
             var element = "<div id=\"hostorderswrapper\">" +
                 "<ul data-role=\"listview\" data-inset=\"true\" id=\"hostorderitemlist\">"; +
@@ -94,26 +94,36 @@
         initializeEditor: function build_editorElement(appendTo) {
             var element = "<div id=\"edititemwrapper\"></div>";
             $(appendTo).append(element);
+            $('#edititemwrapper').append(hostProducList.createEditItem());
         },
         loadProducts: function load_products() {
 
             itemOrderHost.loadProductsFromCookie();
             $("#hostitemlist").listview('refresh');
         },
-        run: function run() {
+        run: function run(appendTo) {
 
-            itemOrderHost.initializeProductItems('@Model.AppendToSelector');
-            itemOrderHost.initializeOrderItems('@Model.AppendToSelector');
-            itemOrderHost.initializeTotals('@Model.AppendToSelector');
-            itemOrderHost.initializeEditor('@Model.AppendToSelector');
-            itemOrderHost.loadProducts();
-            $('@Model.AppendToSelector').append( itemOrderHost.createEditItem() )
+            if ($(appendTo).length == 0) {
+                console.log("could not find item: " + appendTo + " aborting orderclient");
+            }
+            else {
+                var plistelement = hostProducList.initialize('@Model.AppendToSelector', "true", "true", "true");
+                $(appendTo).append(plistelement);
+                $('#hostitemlist').listview();
+                $('#hostitemlist').listview("refresh");
+
+                itemOrderHost.initializeOrderItems('@Model.AppendToSelector');
+                itemOrderHost.initializeTotals('@Model.AppendToSelector');
+                itemOrderHost.initializeEditor('@Model.AppendToSelector');
+                itemOrderHost.loadProducts();
+            }
         },
         stop: function stop() {
             $('#hostitemswrapper').remove();
             $('#hostorderswrapper').remove();
             $('#hosttotalswrapper').remove();
             $('#edititemwrapper').remove();
+            
         },
         loadJqueryMobile: function load_jqueryMobile() {
             var script = document.createElement("script");
@@ -196,11 +206,24 @@
             $('.totaldetails').data("sum", total);
             $('.totaldetails .price').html(parseFloat(total).toFixed(2));
         },
-        productEditSave: function save_prodct() {
+        productEditSave: function save_prodct(group) {
             var product = itemOrderHost.getProductFromInput();
-            setCookie("product_" + product.Id, JSON.stringify(product), 365);
+           
 
-            servicehub.server.stageProduct(product, "@Model.SinalRGroup");
+            var stageRes = servicehub.server.stageProduct(product, group)
+                .done(function (data) {
+                    if (data.length == 0) {
+                        //ok no errors
+                        setCookie("product_" + product.Id, JSON.stringify(product), 365);
+                    }
+                    else {
+                        showMessageDailog(data.toString(), "#edititemwrapper");
+                    }
+                })
+                .fail(function (data) {
+                    console.log("Request stageProduct failed...");
+                });
+
         },
         productRemove: function remove_product(id) {
             $("*[data-itemid='" + id + "']").parent().remove();
@@ -233,7 +256,7 @@
 
             var products = itemOrderHost.getProductsFromCookie()
             $(products).each(function (idx) {
-                $('#hostitemlist').append(itemOrderHost.createProductItem(products[idx].Id, products[idx].ImgUrl, products[idx].Name, products[idx].Description, products[idx].Price));
+                $('#hostitemlist').append(hostProducList.createItem(products[idx].Id, products[idx].ImgUrl, products[idx].Name, products[idx].Description, products[idx].Price));
             });
             
    
