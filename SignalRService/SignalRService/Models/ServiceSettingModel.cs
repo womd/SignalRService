@@ -10,6 +10,7 @@ namespace SignalRService.Models
     public class ServiceSettingModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public virtual AccountPropertiesModel Owner { get; set; }
 

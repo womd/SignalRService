@@ -161,7 +161,7 @@
 
             }
             else {
-                var oitem = itemOrderClient.createOrderItem($(e).data("itemid"), $(e).data("caption"), 1, $(e).data("price"));
+                var oitem = orderItemList.createOrderItem($(e).data("itemid"), $(e).data("caption"), 1, $(e).data("price"));
                 $("#orderitemlist").append(oitem).listview('refresh');
             }
 

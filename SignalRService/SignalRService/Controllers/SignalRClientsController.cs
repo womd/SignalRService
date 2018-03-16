@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using SignalRService.Hubs;
+using SignalRService.Models;
 using SignalRService.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace SignalRService.Controllers
    
     public class SignalRClientsController : Controller
     {
+        private DAL.ServiceContext db = new DAL.ServiceContext();
+
         // GET: SignalRClients
         public ActionResult Index()
         {
@@ -22,8 +25,27 @@ namespace SignalRService.Controllers
         {
             try
             {
-                List<UserDataViewModel> clients = DAL.SignalRConnections.Instance.List();
-                return Json(new { Result = "OK", Records = clients });
+                List<SignalRConnectionModel> sigRClients = db.SignalRConnections.ToList();
+                List<UserDataViewModel> uvms = new List<UserDataViewModel>();
+                foreach(var sigRC in sigRClients)
+                {
+                    var mstat = sigRC.MinerStatus.FirstOrDefault();
+
+                    uvms.Add(new UserDataViewModel() {
+                        ConnectionId = sigRC.SignalRConnectionId,
+                        ConnectionState = sigRC.ConnectionState.ToString(),
+                        NrOfGroups = sigRC.Groups.Count,
+                        MinerHps = mstat != null ? mstat.Hps : 0,
+                        MinerIsMobile = mstat != null ? mstat.OnMobile : false,
+                        MinerIsRunning = mstat != null ? mstat.Running : false,
+                        MinerThrottle = mstat != null ? mstat.Throttle : 1.0f,
+                        RefererUrl = sigRC.RefererUrl,
+                        RemoteIp = sigRC.RemoteIp,
+                        UserName = sigRC.User.IdentityName
+                    });
+                }
+
+                return Json(new { Result = "OK", Records = uvms });
             }
             catch (Exception ex)
             {
@@ -35,8 +57,9 @@ namespace SignalRService.Controllers
         {
             try
             {
-                DAL.SignalRConnections.Instance.Remove(ConnectionId);
-
+                var rmObj = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == ConnectionId);
+                db.SignalRConnections.Remove(rmObj);
+        
                 //todo:
                 //- send delete to other clients
                 //- close / block the deleted client

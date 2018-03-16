@@ -11,7 +11,8 @@ namespace SignalRService.Hubs
 {
     public class ServiceHub : Hub
     {
-       
+        private DAL.ServiceContext db = new DAL.ServiceContext();
+
         public ServiceHub()
         {
 
@@ -25,26 +26,26 @@ namespace SignalRService.Hubs
             //  Context.ConnectionId
             if (Context.Request.User.Identity.IsAuthenticated)
             {
-                DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP, Context.Request.User.Identity.Name);
-            } else
-                DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected, refererUrl, remoteIP);
+                db.AddConnection(Context.ConnectionId,refererUrl,remoteIP,Context.Request.User.Identity.Name);
+
+            }
+            else
+            {
+                db.AddConnection(Context.ConnectionId, refererUrl, remoteIP);
+            }
 
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            if (stopCalled)
-                DAL.SignalRConnections.Instance.Remove(Context.ConnectionId);
-            else
-                DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Disconnected);
-
+            db.RemoveConnection(Context.ConnectionId);
             return base.OnDisconnected(stopCalled);
         }
 
         public override Task OnReconnected()
         {
-            DAL.SignalRConnections.Instance.AddOrUpdate(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected);
+            db.UpdateConnectionState(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected);
             return base.OnReconnected();
         }
 
@@ -118,10 +119,8 @@ namespace SignalRService.Hubs
 
         public void MinerReportStatus(MinerStatusData data)
         {
-            DAL.SignalRConnections.Instance.UpdateMinerStatusData(Context.ConnectionId, data);
-            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.minerstatsUpdate(Context.ConnectionId,data));
+            db.UpdateMinerState(data, Context.ConnectionId);
         }
-
     }
 
     public class ClientCallbackData

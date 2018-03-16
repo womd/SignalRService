@@ -216,7 +216,6 @@
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
-    <Compile Include="DAL\SignalRConnections.cs" />
     <Compile Include="Enums\EnumOrderState.cs" />
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
@@ -231,9 +230,15 @@
     <Compile Include="Migrations\201803151044262_Initialize.Designer.cs">
       <DependentUpon>201803151044262_Initialize.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803161028279_DbRefactor.cs" />
+    <Compile Include="Migrations\201803161028279_DbRefactor.Designer.cs">
+      <DependentUpon>201803161028279_DbRefactor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountProperitesModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
+    <Compile Include="Models\MinerStatusModel.cs" />
+    <Compile Include="Models\SignalRConnectionModel.cs" />
     <Compile Include="Rest\RestServiceController.cs" />
     <Compile Include="Utils\ModelExtensinos.cs" />
     <Compile Include="Utils\ProductUtils.cs" />
@@ -546,6 +551,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201803151044262_Initialize.resx">
       <DependentUpon>201803151044262_Initialize.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803161028279_DbRefactor.resx">
+      <DependentUpon>201803161028279_DbRefactor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

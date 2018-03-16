@@ -8,17 +8,22 @@ namespace SignalRService.HubPipelineModules
 {
     public class GroupMonitorPipelineModule : HubPipelineModule
     {
+        private DAL.ServiceContext db = new DAL.ServiceContext();
+
         protected override bool OnBeforeIncoming(IHubIncomingInvokerContext context)
         {
             if(Enum.TryParse(context.MethodDescriptor.Name, out Enums.EnumServiceHubMethods res))
             {
+                var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
                 switch (res)
                 {
                     case Enums.EnumServiceHubMethods.JoinGroup:
-                        DAL.SignalRConnections.Instance.GroupAddOrUpdate(context.Hub.Context.ConnectionId, context.Args.ToString());
+                        if(!dbCon.Groups.Contains(context.Args[0].ToString()))
+                            dbCon.Groups.Add(context.Args.ToString());
+
                         break;
                     case Enums.EnumServiceHubMethods.LeaveGroup:
-                        DAL.SignalRConnections.Instance.GroupRemove(context.Hub.Context.ConnectionId, context.Args.ToString());
+                        var rm = dbCon.Groups.Remove(context.Args[0].ToString());
                         break;
                     default:
                         break;

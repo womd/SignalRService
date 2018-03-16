@@ -26,13 +26,15 @@
             return element;
         },
         createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
-            var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
+            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\">" +
+                "<a href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
                 "<img src=\"" + thumbnailSrc + "\">" +
                 "<div class=\"cpwrapper\">" +
-                "<div class=\"caption\">" + caption + "</div>" +
-                "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
+                    "<div class=\"caption\">" + caption + "</div>" +
+                    "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
                 "</div>" +
-                "<div class=\"description\">" + description + "</div></a>" +
+                "<div class=\"description\">" + description + "</div>" +
+                "</a>" +
                 "</li>";
             return element;
         }
@@ -115,13 +117,13 @@
         },
         orderListAdd: function add_item_to_orderlist(e) {
             var li_item = $(e).parent();
-
-            var itemid = $(e).data("itemid");
+            var itemid = $(li_item).data("itemid");
             var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
+          
             if (itemInOrderlist.length > 0) {
 
 
-                var unitprice = $(e).data("price");
+                var unitprice = $(li_item).data("price");
                 var countcurr = itemInOrderlist.data("itemcnt");
                 countcurr++;
                 itemInOrderlist.data("itemcnt", countcurr);
@@ -135,7 +137,8 @@
 
             }
             else {
-                var oitem = itemOrderClient.createOrderItem($(e).data("itemid"), $(e).data("caption"), 1, $(e).data("price"));
+               
+                var oitem = orderItemList.createOrderItem($(li_item).data("itemid"), $(li_item).data("caption"), 1, $(li_item).data("price"));
                 $("#orderitemlist").append(oitem).listview('refresh');
             }
 
@@ -188,6 +191,18 @@
 </script>
 
 <style>
+
+    /* style for productitem-clientlist*/
+    .productitem {
+        border-radius: 5px 5px 5px 5px;
+        -moz-border-radius: 5px 5px 5px 5px;
+        -webkit-border-radius: 5px 5px 5px 5px;
+        border: 0px solid #000000;
+
+        -webkit-box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
+        -moz-box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
+        box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
+    }
 
     .highlight {
         -webkit-box-shadow: 6px 4px 5px 0px rgba(31,101,222,1);

@@ -1,6 +1,8 @@
 ﻿using SignalRService.Hubs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -8,23 +10,13 @@ namespace SignalRService.Models
 {
     public class UserDataModel
     {
-        public Enums.EnumSignalRConnectionState ConnectionState { get; set; }
-        public string RefererUrl { get; set; }
-        public string RemoteIp { get; set; }
-        public string UserId { get; set; }
-        public MinerStatusData MinerStatus { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ID { get; set; }
+        
+        public string IdentityName { get; set; }
 
-        private List<string> mGroups;
-
-        public List<string> Groups
-        {
-            get {
-                if (mGroups == null)
-                    mGroups = new List<string>();
-                return mGroups; }
-            set { mGroups = value; }
-        }
-
+        public virtual ICollection<SignalRConnectionModel> SignalRConnections { get; set; }
 
     }
 }
