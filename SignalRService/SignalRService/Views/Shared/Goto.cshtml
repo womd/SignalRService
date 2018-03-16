@@ -4,12 +4,12 @@
   Layout = "~/Views/Shared/_LayoutMobile.cshtml";
 }
 
-@Html.Action("RenderSignalRBase","Service",Model)
+@*@Html.Action("RenderSignalRBase","Service",Model)*@
 
-@*@Html.Partial("SignalRBase", new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
+@Html.Partial("SignalRBase", new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
 {
         SinalRGroup = Model.ServiceUrl
-})*@
+})
 
 
 <h4>@Model.ServiceName</h4>

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class SignalRBaseConfigurationViewModel
+    public class SignalRBaseConfigurationViewModel : ServiceSettingViewModel
     {
         public string SinalRGroup { get; set; }
     }

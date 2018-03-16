@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class MinerConfigurationViewModel
+    public class MinerConfigurationViewModel : ServiceSettingViewModel
     {
         public int ID { get; set; }
         public string ScriptUrl { get; set; }

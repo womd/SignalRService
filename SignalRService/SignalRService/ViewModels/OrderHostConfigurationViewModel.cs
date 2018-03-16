@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class OrderHostConfigurationViewModel
+    public class OrderHostConfigurationViewModel : ServiceSettingViewModel
     {
         public string AppendToSelector { get; set; }
         public string SinalRGroup { get; set; }
