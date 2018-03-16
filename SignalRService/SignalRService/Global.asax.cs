@@ -20,5 +20,13 @@ namespace SignalRService
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             
         }
+
+        protected void Application_Error()
+        {
+            var ex = Server.GetLastError();
+            //log the error!
+            SignalRService.Utils.SimpleLogger _logger = new Utils.SimpleLogger(true);
+            _logger.Error(ex.Message);
+        }
     }
 }

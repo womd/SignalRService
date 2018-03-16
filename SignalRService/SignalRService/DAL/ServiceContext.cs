@@ -76,6 +76,7 @@ namespace SignalRService.DAL
                 RemoteIp = remoteIp,
                 User = user
             });
+            SaveChanges();
         }
 
             public void RemoveConnection(string connectionId)
