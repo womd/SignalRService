@@ -42,11 +42,21 @@ namespace SignalRService.Controllers
 
         public ActionResult Goto(string url)
         {
-            var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
-            if (servicesetting == null)
-                return View("UrlNotFound",url);
+            try
+            {
+                var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
+                if (servicesetting == null)
+                    return View("UrlNotFound", url);
 
-            return View(servicesetting.ToServiceSettingViewModel());
+                return View(servicesetting.ToServiceSettingViewModel());
+
+            }
+            catch (Exception ex)
+            {
+
+                return View("Exception",ex);
+            }
+
         }
 
         public ActionResult SrcStarter(string url)

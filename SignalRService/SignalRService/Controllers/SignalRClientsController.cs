@@ -41,7 +41,7 @@ namespace SignalRService.Controllers
                         MinerThrottle = mstat != null ? mstat.Throttle : 1.0f,
                         RefererUrl = sigRC.RefererUrl,
                         RemoteIp = sigRC.RemoteIp,
-                        UserName = sigRC.User.IdentityName
+                        UserName = sigRC.User != null ? sigRC.User.IdentityName : "--"
                     });
                 }
 

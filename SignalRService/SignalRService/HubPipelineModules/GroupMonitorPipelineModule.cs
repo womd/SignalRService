@@ -15,19 +15,20 @@ namespace SignalRService.HubPipelineModules
             if(Enum.TryParse(context.MethodDescriptor.Name, out Enums.EnumServiceHubMethods res))
             {
                 var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
-                switch (res)
-                {
-                    case Enums.EnumServiceHubMethods.JoinGroup:
-                        if(!dbCon.Groups.Contains(context.Args[0].ToString()))
-                            dbCon.Groups.Add(context.Args.ToString());
+                    switch (res)
+                    {
+                        case Enums.EnumServiceHubMethods.JoinGroup:
+                            if (!dbCon.Groups.Contains(context.Args[0].ToString()))
+                                dbCon.Groups.Add(context.Args.ToString());
 
-                        break;
-                    case Enums.EnumServiceHubMethods.LeaveGroup:
-                        var rm = dbCon.Groups.Remove(context.Args[0].ToString());
-                        break;
-                    default:
-                        break;
-                }
+                            break;
+                        case Enums.EnumServiceHubMethods.LeaveGroup:
+                            var rm = dbCon.Groups.Remove(context.Args[0].ToString());
+                            break;
+                        default:
+                            break;
+                    }
+                
             }
             return true;
           
