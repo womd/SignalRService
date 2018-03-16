@@ -235,6 +235,7 @@
     <Compile Include="Rest\RestServiceController.cs" />
     <Compile Include="Utils\ModelExtensinos.cs" />
     <Compile Include="Utils\ProductUtils.cs" />
+    <Compile Include="Utils\SimpleLogger.cs" />
     <Compile Include="Utils\ValidationUtils.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
