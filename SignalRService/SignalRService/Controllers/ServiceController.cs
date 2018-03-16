@@ -49,6 +49,17 @@ namespace SignalRService.Controllers
             return View(servicesetting.ToServiceSettingViewModel());
         }
 
+        public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
+        {
+            var model = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
+            {
+
+                SinalRGroup = basemodel.ServiceUrl
+                
+            };
+            return PartialView("RenderMiner", model);
+        }
+
         public ActionResult SrcStarter(string url)
         {
             var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
