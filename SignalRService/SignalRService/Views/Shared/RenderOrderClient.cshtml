@@ -66,13 +66,14 @@
             return element;
         },
         createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
-            var element = "<li data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\"  data-icon=\"false\" class=\"orderitem\" ><a href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
+            var element = "<li data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\"  data-icon=\"false\" class=\"orderitem\" >" +
                 "<div class=\"caption\">" + caption + "</div>" +
                 "<div class=\"price\">" + amount * unitprice + "</div>" +
                 "<div class=\"pricedetails\">" +
                 "<div class=\"unitcount\">1</div>" +
                 "<div class=\"unitprice\">" + unitprice + "</div>" +
                 "</div>" +
+                "<a href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">btnRemove" +
                 "</a>" +
                 "</li>";
             return element;
@@ -89,7 +90,63 @@
             });
             return itemList;
         }
+       
 
+    }
+
+    var placedOrderList = {
+
+        createItem: function create_orderitem_entry(statusData) {
+            var element = "<li data-icon=\"false\" class=\"clientorderitem\" data-orderid=\"" + statusData.Order.OrderId + "\" data-state=\"" + statusData.Order.State + "\" data-clientId=\"" + statusData.Order.ClientConnectionId + "\" >" +
+                "<div class=\"orderid\">" + statusData.Order.OrderId + "</div>" +
+                "<div class=\"hosttid\">" + statusData.Order.HostConnectionId + "</div>";
+
+            var ordertotal = 0;
+            $(statusData.Order.Items).each(function (idx) {
+                var stagedProduct = hostProducList.getProduct(this.ItemId);
+                element += placedOrderList.createOrderProduct(this.ItemId, stagedProduct.Name, this.Amount, stagedProduct.Price);
+                ordertotal = ordertotal + this.Amount * stagedProduct.Price;
+            })
+
+            element += placedOrderList.createStatusElement(statusData.Order)
+            element += placedOrderList.createOrderProcessElements();
+            element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
+            element += "</li>";
+
+            return element;
+           
+        },
+        createOrderProduct: function create_orderProduct(itemId, caption, amount, unitPrice) {
+            var elememt = "<div class=\"orderproduct\">" +
+                "<div class=\"caption\">" + caption + "</div>" +
+
+                "<div class=\"itemtotal\">" + parseFloat((amount * unitPrice)).toFixed(2) + "</div>" +
+                "<div class=\"unitprice\">" + unitPrice + "</div>" +
+
+                "<div class=\"amount\">" + amount + "</div>" +
+                "</div>";
+            return elememt;
+        },
+        createStatusElement: function create_statusElement(order) {
+            var element = "<div class=\"statuswrapper\" id=\"hostorderstatus\">" +
+                "<div class=\"status\">" + order.StateString + "</div>" +
+                "<div class=\"nextstatus\">" + order.NextStateString + "</div>" +
+                "</div>";
+            return element;
+        },
+        createOrderProcessElements: function create_orderProcessElements() {
+            var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">" +
+                "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
+                "<div class=\"okbtn\"><a onclick=\"orderProcessOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
+                "</div>";
+            return element;
+        },
+        initialize: function build_oderItemsElement() {
+            var element = "<div id=\"clientorderswrapper\">" +
+                "<ul data-role=\"listview\" data-inset=\"true\" id=\"clientorderitemlist\">"; +
+                    "</ul></div>";
+            return element;
+        }
     }
 
     var itemOrderClient = {
@@ -120,6 +177,9 @@
                 var totalsElement = totalsBox.initialize();
                 $(appendTo).append(totalsElement);
 
+                var placedOrderElement = placedOrderList.initialize();
+                $(appendTo).append(placedOrderElement);
+
             }
              
           
@@ -143,6 +203,16 @@
             link.rel = "stylesheet";
             link.href = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css";
             head.appendChild(link);
+        },
+        orderUpdate: function update_order(orderData) {
+            //find statusbox for this order and update
+
+            var orderItem = placedOrderList.createItem(orderData);
+            $('#clientorderitemlist').append(orderItem);
+            $('#clientorderitemlist').listview();
+            $('#clientorderitemlist').listview("refresh");
+
+            console.log("updating orderdata");
         },
         orderListAdd: function add_item_to_orderlist(e) {
             var li_item = $(e).parent();
@@ -205,15 +275,35 @@
             //get orderitems from orderlist
             var orderItems = orderItemList.getOrderItems();
             var order = {
-                OrderId : "",
+                OrderId: makeid(),
                 Items : orderItems,
                 State : 1,
                 ClientConnectionId : servicehub.connection.id,
                 HostConnectionId : ""
             };
 
+            var orderStatusData = {
+                OrderState: 1,
+                NextOrderState: 0,
+                OrderStateString: "ClientPlacedOrder",
+                NextStateString: "",
+                Message: "",
+                Order: order
+            }
+
             //send signalR order-placement
-            servicehub.server.processOrder(order,group);
+            var res = servicehub.server.processOrder(orderStatusData, group);
+            res.done(function (orderData) {
+
+                itemOrderClient.orderUpdate(orderData);
+                console.log("updating orderstatus...");
+
+            }).fail(function () {
+                console.log("failed request placeOrder...");
+            });
+        },
+        orderProcessOkClicked: function processPlacedOrder(e) {
+            //find the orderelement - send it back for staus-change
         }
 
 
@@ -221,7 +311,9 @@
 
 
 
-    function btnBuyClicked() {
+    function btnBuyClicked(e) {
+        //find its data - place order and update item 
+       
         itemOrderClient.placeOrder("@Model.SinalRGroup");
     }
 

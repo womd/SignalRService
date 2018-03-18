@@ -110,69 +110,84 @@ namespace SignalRService.Hubs
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
         }
 
-        private OrderStatusData _processOrderRequest(OrderData order, string group)
+        private OrderStatusData _processOrderRequest(OrderStatusData orderStatus, string group)
         {
             //check id
             int badidx = 0;
-            if(Utils.ValidationUtils.IsDangerousString(order.OrderId, out badidx))
+            if(Utils.ValidationUtils.IsDangerousString(orderStatus.Order.OrderId, out badidx))
             {
                 return new OrderStatusData()
                 {
-                    OrderId = "",
-                    OrderStatus = (int)Enums.EnumOrderState.Error,
-                    OrderStatusString = Enums.EnumOrderState.Error.ToString(),
+                    Order = orderStatus.Order,
+                    OrderState = Enums.EnumOrderState.Error,
+                    OrderStateString = Enums.EnumOrderState.Error.ToString(),
                     Message = "Invalid OrderId...."
                 };
             }
 
-            if(Utils.ValidationUtils.IsDangerousString(order.ClientConnectionId, out badidx) || 
-                Utils.ValidationUtils.IsDangerousString(order.HostConnectionId, out badidx)) 
-            {
+            if (Utils.ValidationUtils.IsDangerousString(orderStatus.Order.ClientConnectionId, out badidx) ||
+                Utils.ValidationUtils.IsDangerousString(orderStatus.Order.HostConnectionId, out badidx))
+                {
                 return new OrderStatusData()
                 {
-                    OrderId = order.OrderId,
-                    OrderStatus = (int)Enums.EnumOrderState.Error,
-                    OrderStatusString = Enums.EnumOrderState.Error.ToString(),
-                    Message = "Invalid OrderId...."
+                    Order = orderStatus.Order,
+                    OrderState = Enums.EnumOrderState.Error,
+                    OrderStateString = Enums.EnumOrderState.Error.ToString(),
+                    Message = "Invalid data...."
                 };
             }
 
+            if(!string.IsNullOrEmpty(orderStatus.OrderStateString))
+            {
+                if(Utils.ValidationUtils.IsDangerousString(orderStatus.OrderStateString, out badidx))
+                {
+                    return new OrderStatusData()
+                    {
+                        Order = orderStatus.Order,
+                        OrderState = Enums.EnumOrderState.Error,
+                        OrderStateString = Enums.EnumOrderState.Error.ToString(),
+                        Message = "Invalid data...."
+                    };
+                }
+            }
 
-            switch (order.State)
+            var retData = new OrderStatusData();
+            retData.Order = orderStatus.Order;
+            switch (orderStatus.OrderState)
             {
                 case Enums.EnumOrderState.ClientPlacedOrder:
                     //its a new order, send it to hosts
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderRequest(order);
+                    retData.NextOrderState = Enums.EnumOrderState.HostConfirmedOrder;
+                    retData.NextOrderStateString = Enums.EnumOrderState.HostConfirmedOrder.ToString();
+
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderRequest(retData);
+                 
                     break;
                 case Enums.EnumOrderState.HostConfirmedOrder:
                     //a host sent it back, deliver it to the client - send orderstatus-update to other hosts
-                    order.HostConnectionId = Context.ConnectionId;
-                    order.State = Enums.EnumOrderState.HostConfirmedOrder;
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(order.ClientConnectionId).clientOrderStatusUpdate(order);
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(order);
+                    retData.Order.HostConnectionId = Context.ConnectionId;
+                    retData.NextOrderState = Enums.EnumOrderState.ClientOrderFinished;
+                    retData.NextOrderStateString = Enums.EnumOrderState.ClientOrderFinished.ToString();
+
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(orderStatus.Order.ClientConnectionId).clientOrderStatusUpdate(retData);
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(retData);
                     break;
                 case Enums.EnumOrderState.ClientOrderFinished:
                     //client sent it back, accnowledging recievement - send orderstatuupdaet to other hosts
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(order);
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(retData);
                     break;
                 case Enums.EnumOrderState.ServerOrderFinished:
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(order.ClientConnectionId).clientOrderStatusUpdate(order);
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(orderStatus.Order.ClientConnectionId).clientOrderStatusUpdate(retData);
                     break;
                 default:
                     break;
             }
 
-
-            return new OrderStatusData()
-            {
-                OrderId = order.OrderId,
-                OrderStatus = (int) order.State,
-                OrderStatusString = order.State.ToString(),
-                Message = "",
-            };
+            retData.Order = orderStatus.Order;
+            return retData;
         }
 
-        public async Task<OrderStatusData> ProcessOrder(OrderData data, string group)
+        public async Task<OrderStatusData> ProcessOrder(OrderStatusData data, string group)
         {
              return await Task.Run(() => _processOrderRequest(data, group));
         }
@@ -202,7 +217,6 @@ namespace SignalRService.Hubs
     {
         public string OrderId { get; set; }
         public List<OrderItem>Items { get; set; }
-        public Enums.EnumOrderState State { get; set; }
         public string ClientConnectionId { get; set; }
         public string HostConnectionId { get; set; }
     }
@@ -228,9 +242,11 @@ namespace SignalRService.Hubs
 
     public class OrderStatusData
     {
-        public string OrderId { get; set; }
-        public int OrderStatus { get; set; }
-        public string OrderStatusString { get; set; }
+        public Enums.EnumOrderState OrderState { get; set; }
+        public Enums.EnumOrderState NextOrderState { get; set; }
+        public string OrderStateString { get; set; }
+        public string NextOrderStateString { get; set; }
         public string Message { get; set; }
+        public OrderData Order { get; set; }
     }
 }

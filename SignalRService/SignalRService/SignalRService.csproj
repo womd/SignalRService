@@ -522,6 +522,7 @@
     <Content Include="Views\Shared\RenderOrderHost.cshtml" />
     <Content Include="Views\Shared\SrcStarter.cshtml" />
     <Content Include="Views\Shared\EXTServiceTest.cshtml" />
+    <Content Include="Views\Shared\Exception.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -612,7 +613,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>@if exist "%25ProgramFiles(x86)%25\MSBuild\14.0\bin" set PATH=%25ProgramFiles(x86)%25\MSBuild\12.0\bin;%25PATH%25 msbuild $(ProjectDir)transformWebConfig.proj /t:TransformWebConfig /p:CurrentConfig=$(ConfigurationName) /p:TargetProjectName=$(TargetPath)</PostBuildEvent>
+    <PostBuildEvent>@if exist "%25ProgramFiles(x86)%25\MSBuild\15.0\bin" set PATH=%25ProgramFiles(x86)%25\MSBuild\15.0\bin;%25PATH%25 msbuild $(ProjectDir)transformWebConfig.proj /t:TransformWebConfig /p:CurrentConfig=$(ConfigurationName) /p:TargetProjectName=$(TargetPath)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

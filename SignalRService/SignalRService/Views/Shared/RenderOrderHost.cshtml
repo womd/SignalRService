@@ -65,23 +65,30 @@
 
     var hostOrderList = {
 
-        createItem: function create_orderitem_entry(orderId, items, state, clientId) {
-            var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderId + "\" data-state=\"" + state + "\" data-clientConnectionId=\"" + clientId + "\" >" +
-                "<div class=\"orderid\">" + orderId + "</div>" +
-                "<div class=\"clientid\">" + clientId + "</div>";
+        createItem: function create_orderitem_entry(orderData) {
+            var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderData.Order.OrderId + "\" data-state=\"" + orderData.Order.State + "\" data-clientConnectionId=\"" + orderData.Order.ClientConnectionId + "\" >" +
+                "<div class=\"orderid\">" + orderData.Order.OrderId + "</div>" +
+                "<div class=\"clientid\">" + orderData.Order.ClientConnectionId + "</div>";
 
             var ordertotal = 0;
-            $(items).each(function (idx) {
+            $(orderData.Order.Items).each(function (idx) {
                 var stagedProduct = hostProducList.getProduct(this.ItemId);
                 element += hostOrderList.createOrderProduct(this.ItemId, stagedProduct.Name, this.Amount, stagedProduct.Price);
                 ordertotal = ordertotal + this.Amount * stagedProduct.Price;
             })
 
+            element += hostOrderList.createStatusElement(orderData.Order)
+            element += hostOrderList.createOrderProcessElements();
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
-            $('#hostorderitemlist').append(element);
-            $('#hostorderitemlist').listview();
-            $('#hostorderitemlist').listview("refresh");
+            return element;
+        },
+        createStatusElement: function create_statusElement(order) {
+            var element = "<div class=\"statuswrapper\" id=\"hostorderstatus\">" +
+                "<div class=\"status\">" + order.StateString + "</div>" +
+                "<div class=\"nextstatus\">" + order.NextStateString + "</div>" +
+                "</div>";
+            return element;
         },
         initialize: function build_oderItemsElement(appendTo) {
             var element = "<div id=\"hostorderswrapper\">" +
@@ -108,6 +115,14 @@
                 "<div class=\"amount\">" + amount + "</div>" +
                 "</div>";
             return elememt;
+        },
+        createOrderProcessElements: function create_orderProcessElements()
+        {
+            var element = "<div class=\"orderprocesswrapper\" id=\"hostorderprocesswrapper\" \">" +
+                "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
+                "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.orderProcessOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
+                "</div>";
+            return element;
         }
     }
 
@@ -293,6 +308,49 @@
             });
             
    
+        },
+        orderProcessOkClicked: function processPlacedOrder(e) {
+            //find orderelement send it to server->client
+            var placedorderelement = $(e).closest('.hostorderitem ');
+            var order = {
+                OrderId: $(placedorderelement).data('orderid'),
+                Items: [],
+                State: 1,
+                StateString: "",
+                NextState : 0,
+                NextStateString : "",
+                ClientConnectionId: $(placedorderelement).data('clientconnectionid'),
+                HostConnectionId: ""
+            };
+
+            var orderStatusData = {
+                OrderState: 2,
+                OrderStateString: "HostConfirmedOrder", 
+                NextOrderState: 0,
+                NextOrderStateString: "",
+                Message: "",
+                Order: order
+            }
+
+            var res = servicehub.server.processOrder(orderStatusData, "@Model.SinalRGroup");
+            res.done(function (orderData) {
+
+                itemOrderClient.orderUpdate(orderData);
+                console.log("updating orderstatus...");
+
+            }).fail(function (err) {
+                console.log("failed request update placeOrder...");
+            });
+        },
+        orderUpdate: function update_order(orderData) {
+            //find statusbox for this order and update
+
+            var orderItem = hostOrderList.createItem(orderData);
+            $('#hostorderitemlist').append(orderItem);
+            $('#hostorderitemlist').listview();
+            $('#hostorderitemlist').listview("refresh");
+
+            console.log("updating orderdata");
         }
     };
 
@@ -486,6 +544,18 @@
 
     .hostorderitem .ordertotal::after {
         content: "€";
-    }    
+    }
+
+    .hostorderitem  .status {
+        display:inline-block;
+    }
+
+    .hostorderitem .status::after {
+        content: " >>";
+    }
+
+    .hostorderitem .nextstatus {
+        float:right;
+    }
 
 </style>
