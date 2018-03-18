@@ -1,4 +1,4 @@
-﻿
+﻿@model SignalRService.ViewModels.SignalRClientsBaseViewModel
 @{
     ViewBag.Title = "SignalRClients-Index";
 }
@@ -6,5 +6,5 @@
 <h2>ClientsList</h2>
 
 
-@Html.Partial("SignalRBase")
+@Html.Partial("SignalRBase",Model.signalRBaseConfigurationViewModel )
 @Html.Partial("ConnectedClientsJTable")

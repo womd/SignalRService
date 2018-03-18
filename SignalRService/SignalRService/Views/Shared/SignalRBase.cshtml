@@ -81,6 +81,10 @@
             }
 
            
+            servicehub.client.hostOrderRequest = function (order) {
+                //got new clientorder from server...
+                hostOrderList.createItem(order.OrderId, order.Items, order.State, order.ClientConnectionId);
+            }
 
             servicehub.client.miner_reportStatus = function () {
                 //send stats to server

@@ -1,10 +1,12 @@
-﻿@{
+﻿@model SignalRService.ViewModels.ServiceBaseViewModel
+
+@{
     ViewBag.Title = "ServicePage";
 }
 <h2>ServicePage</h2>
 
 
-@Html.Partial("SignalRBase")
+@Html.Partial("SignalRBase", Model.SiganlRBaseConfigurationVieModel)
 
 <div class="send_command_wrapper">
 

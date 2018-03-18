@@ -18,13 +18,21 @@ namespace SignalRService.Controllers
         // GET: SignalRClients
         public ActionResult Index()
         {
-            return View();
+            var signalRclientsBaseViewModel = new ViewModels.SignalRClientsBaseViewModel()
+            {
+                signalRBaseConfigurationViewModel = new SignalRBaseConfigurationViewModel()
+                {
+                    SinalRGroup = "signalrclientsindex"
+                }
+            };
+            return View("Index", signalRclientsBaseViewModel);
         }
 
         public JsonResult ClientList()
         {
             try
             {
+
                 List<SignalRConnectionModel> sigRClients = db.SignalRConnections.ToList();
                 List<UserDataViewModel> uvms = new List<UserDataViewModel>();
                 foreach(var sigRC in sigRClients)

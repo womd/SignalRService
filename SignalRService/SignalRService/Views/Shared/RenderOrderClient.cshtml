@@ -9,11 +9,27 @@
                 "<div class=\"description\">total</div>" +
                 "<div class=\"price\">0.00</div>" +
                 "</div>" +
-                "<a href=\"#\" onclick=\"loadPaymentData()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>" +
+                totalsBox.createBuyButton() +
                 "</div>";
 
             return element;
-        }
+        },
+        createBuyButton: function build_BuyButton() {
+            var element = "<a href=\"#\" onclick=\"btnBuyClicked()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>";
+            return element;
+        },
+        calcTotals: function calculate_totals() {
+            var total = 0;
+            var orderitems = $("#orderitemlist").children(".orderitem");
+            $(orderitems).each(function (idx) {
+
+                var unitprice = $(orderitems[idx]).data('price');
+                var amount = $(orderitems[idx]).data('itemcnt');
+                total = total + (unitprice * amount);
+            });
+            $('#totalswrapper .totaldetails').data("sum", total);
+            $('#totalswrapper .totaldetails .price').html(parseFloat(total).toFixed(2));
+        },
     }
 
     var productItemList = {
@@ -45,11 +61,12 @@
         initialize: function build_oderItemsElement(dataInset, dataAutoDividers, dataFilter) {
             var element = "<div id=\"orderswrapper\">" +
                 "<ul data-role=\"listview\" data-inset=\"" + dataInset + "\" data-autodividers=\"" + dataAutoDividers + "\" data-filter=\"" + dataFilter + "\" id=\"orderitemlist\">" +
-                    "<li></li></ul></div>";
+                //"<li></li>" +
+                "</ul></div>";
             return element;
         },
         createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
-            var element = "<li data-icon=\"false\" class=\"orderitem\" ><a data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
+            var element = "<li data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\"  data-icon=\"false\" class=\"orderitem\" ><a href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
                 "<div class=\"caption\">" + caption + "</div>" +
                 "<div class=\"price\">" + amount * unitprice + "</div>" +
                 "<div class=\"pricedetails\">" +
@@ -59,6 +76,18 @@
                 "</a>" +
                 "</li>";
             return element;
+        },
+        getOrderItems: function get_orderItems() {
+            var itemList = [];
+            $('#orderitemlist').children().each(function (idx) {
+
+                var oitem = {
+                    ItemId: $(this).data("itemid"),
+                    Amount: $(this).data("itemcnt")
+                }
+                itemList.push(oitem);
+            });
+            return itemList;
         }
 
     }
@@ -142,7 +171,7 @@
                 $("#orderitemlist").append(oitem).listview('refresh');
             }
 
-            itemOrderClient.calcTotals();
+            totalsBox.calcTotals();
    
             servicehub.server.addToCart(itemid, '@Model.SinalRGroup.ToLower()');
 
@@ -171,22 +200,30 @@
             }
             itemOrderClient.calcTotals();
         },
-        calcTotals: function calculate_totals() {
-            var total = 0;
-            var orderitems = $("#orderitemlist").children(".orderitem");
-            $(orderitems).each(function (idx) {
+        
+        placeOrder: function place_order(group) {
+            //get orderitems from orderlist
+            var orderItems = orderItemList.getOrderItems();
+            var order = {
+                OrderId : "",
+                Items : orderItems,
+                State : 1,
+                ClientConnectionId : servicehub.connection.id,
+                HostConnectionId : ""
+            };
 
-                var unitprice = $(orderitems[idx]).children().first().data('price');
-                var amount = $(orderitems[idx]).children().first().data('itemcnt');
-                total = total + (unitprice * amount);
-            });
-            $('.totaldetails').data("sum", total);
-            $('.totaldetails .price').html(parseFloat(total).toFixed(2));
+            //send signalR order-placement
+            servicehub.server.processOrder(order,group);
         }
 
 
     };
 
+
+
+    function btnBuyClicked() {
+        itemOrderClient.placeOrder("@Model.SinalRGroup");
+    }
 
 </script>
 

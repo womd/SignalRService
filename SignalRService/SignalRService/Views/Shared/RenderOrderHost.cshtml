@@ -12,7 +12,7 @@
             return element;
         },
         createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
-            var element = "<li class=\"productitem\" ><a data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderHost.orderListAdd(this)\">" +
+            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" >" +
                 "<img src=\"" + thumbnailSrc + "\">" +
                 "<div class=\"cpwrapper\">" +
                 "<div class=\"caption\">" + caption + "</div>" +
@@ -46,30 +46,47 @@
                 "<div class=\"savebtn\"><a onclick=\"itemOrderHost.productEditSave('" + hostProducList.signalRGroup + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">speichern</a></div>" +
                 "</div>";
             return element;
+        },
+        getProduct: function get_product(itemId) {
+
+            var pr;
+            $("#hostitemlist").children("*[data-itemid='" + itemId + "']").each(function (idx) {
+                    pr = {
+                    Id: itemId,
+                    Name: $(this).data('caption'),
+                    ImgUrl: "",
+                    Description: "",
+                    Price: $(this).data('price'),
+                }
+            });
+            return pr;
         }
     }
 
-    var itemOrderHost = {
+    var hostOrderList = {
 
-      
-        createOrderItem: function create_orderitem_entry(itemId, caption, amount, unitprice) {
-            var element = "<li data-icon=\"false\" class=\"orderitem\" ><a data-price=\"" + unitprice + "\" data-itemcnt=\"" + amount + "\" data-itemid=\"" + itemId + "\" href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">" +
-                "<div class=\"caption\">" + caption + "</div>" +
-                "<div class=\"price\">" + amount * unitprice + "</div>" +
-                "<div class=\"pricedetails\">" +
-                "<div class=\"unitcount\">1</div>" +
-                "<div class=\"unitprice\">" + unitprice + "</div>" +
-                "</div>" +
+        createItem: function create_orderitem_entry(orderId, items, state, clientId) {
+            var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderId + "\" data-state=\"" + state + "\" data-clientConnectionId=\"" + clientId + "\" >" +
+                "<div class=\"orderid\">" + orderId + "</div>" +
+                "<div class=\"clientid\">" + clientId + "</div>";
 
-                "</a>" +
-                "</li>";
-            return element;
+            var ordertotal = 0;
+            $(items).each(function (idx) {
+                var stagedProduct = hostProducList.getProduct(this.ItemId);
+                element += hostOrderList.createOrderProduct(this.ItemId, stagedProduct.Name, this.Amount, stagedProduct.Price);
+                ordertotal = ordertotal + this.Amount * stagedProduct.Price;
+            })
+
+            element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
+            element += "</li>";
+            $('#hostorderitemlist').append(element);
+            $('#hostorderitemlist').listview();
+            $('#hostorderitemlist').listview("refresh");
         },
-     
-        initializeOrderItems: function build_oderItemsElement(appendTo) {
+        initialize: function build_oderItemsElement(appendTo) {
             var element = "<div id=\"hostorderswrapper\">" +
                 "<ul data-role=\"listview\" data-inset=\"true\" id=\"hostorderitemlist\">"; +
-                    "<li></li></ul></div>";
+                    "</ul></div>";
 
             if ($(appendTo).length == 0) {
                 console.log("could not find item: " + appendTo + " aborting orderclient");
@@ -80,6 +97,22 @@
                 $('#hostorderitemlist').listview("refresh");
             }
         },
+        createOrderProduct: function create_orderProduct(itemId, caption, amount, unitPrice)
+        {
+            var elememt = "<div class=\"orderproduct\">" +
+                 "<div class=\"caption\">" + caption + "</div>" +
+                
+                 "<div class=\"itemtotal\">" + parseFloat((amount * unitPrice)).toFixed(2) + "</div>" +
+                "<div class=\"unitprice\">" + unitPrice + "</div>" +
+
+                "<div class=\"amount\">" + amount + "</div>" +
+                "</div>";
+            return elememt;
+        }
+    }
+
+    var itemOrderHost = {
+
         initializeTotals: function build_totalsElement(appendTo) {
             var element = "<div id=\"hosttotalswrapper\">" +
                 "<div class=\"totaldetails\">" +
@@ -112,11 +145,11 @@
                 $('#hostitemlist').listview();
                 $('#hostitemlist').listview("refresh");
 
-                itemOrderHost.initializeOrderItems('@Model.AppendToSelector');
+                hostOrderList.initialize('@Model.AppendToSelector');
                 itemOrderHost.initializeTotals('@Model.AppendToSelector');
                 itemOrderHost.initializeEditor('@Model.AppendToSelector');
                 itemOrderHost.loadProducts();
-            }
+           }
         },
         stop: function stop() {
             $('#hostitemswrapper').remove();
@@ -414,4 +447,45 @@
         margin-left: 5px;
         font-size: 2em;
     }
+
+    /*orderproduct*/
+    .orderproduct {
+        display:table;
+        width:100%;
+    }
+
+    .orderproduct .caption {
+        float: left;
+    }
+    .orderproduct .amount {
+        float: right;
+        font-size:smaller;
+    }
+    .orderproduct .amount::after {
+        content: " x";
+    }
+    .orderproduct .unitprice {
+        float: right;
+        font-size: smaller;
+        margin-left: 3px;
+    }
+
+    .orderproduct .itemtotal {
+        float:right;
+        margin-left: 5px;
+    }
+
+    .orderproduct .itemtotal::after {
+        content: "€";
+    }
+
+    .hostorderitem .ordertotal {
+        font-size: 1.2em;
+        float:right;
+    }
+
+    .hostorderitem .ordertotal::after {
+        content: "€";
+    }    
+
 </style>

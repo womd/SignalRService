@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web;
 
 namespace SignalRService.Utils
 {
-    public class ProductUtils
+    public static class ProductUtils
     {
+      
+
         public static bool IsValidProductData(Hubs.ProductData data, out List<string>messages)
         {
 

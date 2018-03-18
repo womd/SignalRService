@@ -11,5 +11,10 @@ namespace SignalRService.ViewModels
         public string ServiceName { get; set; }
         public string ServiceUrl { get; set; }
         public string ServiceType { get; set; }
+
+        public ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel { get; set; }
+        public ViewModels.SignalRBaseConfigurationViewModel SiganlRBaseConfigurationVieModel { get; set; }
+        public ViewModels.OrderClientConfigurationViewModel OrderClientConfigurationViewModel { get; set; }
+        public ViewModels.OrderHostConfigurationViewModel OrderHostConfigurationViewModel { get; set; }
     }
 }

