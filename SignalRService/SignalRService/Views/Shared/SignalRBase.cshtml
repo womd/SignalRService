@@ -88,6 +88,21 @@
 
             }
 
+            //----
+            servicehub.client.newOrder = function(ordervm)
+            {
+                if (itemOrderClient) {
+                    var orderItem = placedOrderList.createItem(ordervm);
+                    $('#clientorderitemlist').append(orderItem);
+                    $('#clientorderitemlist').listview();
+                    $('#clientorderitemlist').listview("refresh");
+                }
+
+                console.log("called new order.");
+            }
+
+            //----
+
             servicehub.client.miner_reportStatus = function () {
                 //send stats to server
                 miner.reportStatus();

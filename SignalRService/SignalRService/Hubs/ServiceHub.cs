@@ -13,9 +13,13 @@ namespace SignalRService.Hubs
     public class ServiceHub : Hub
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
+        private Repositories.OrderRepository orderRepository; 
+        private Repositories.ProductRepository productRepository;
 
         public ServiceHub()
         {
+            orderRepository = new Repositories.OrderRepository(db);
+            productRepository = new Repositories.ProductRepository(db);
 
         }
 
@@ -69,31 +73,58 @@ namespace SignalRService.Hubs
 
         }
 
-        private List<string>_stageProduct(ProductData data, string group)
+        public List<ViewModels.ProductViewModel>getProducts()
         {
-            List<string> messages = new List<string>();
+            List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
+            var products = productRepository.GetProducts();
+            foreach(var item in products)
+            {
+                reslist.Add(item.ToProductViewModel());
+            }
+            return reslist;
+        }
+
+        private ViewModels.ProductViewModel _stageProduct(ProductData data, string group)
+        {
+            ViewModels.ProductViewModel resVm = new ViewModels.ProductViewModel();
             int dangerIdx = 0;
             if(string.IsNullOrEmpty(group))
             {
-                messages.Add("no groupname given....");
-                return messages;
+                resVm.ErrorMessage = "stageProeuct - no groupname given....";
+                resVm.ErrorNumber = 7710;
+                return resVm;
             }
 
             if( Utils.ValidationUtils.IsDangerousString(group, out dangerIdx) )
             {
-                messages.Add("dangrous string given....");
-                return messages;
+              
+                resVm.ErrorMessage = "invalid groupname given....";
+                resVm.ErrorNumber = 7710;
+                return resVm;
             }
 
-            
-            if (Utils.ProductUtils.IsValidProductData(data, out messages))
+            List<string> vmessages = new List<string>();
+            if (Utils.ProductUtils.IsValidProductData(data, out vmessages))
             {
-                Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(data.ToHtmlEncode()));
+                var newProduct = productRepository.CreateProduct(new ViewModels.ProductViewModel()
+                {
+                      Name = data.Name,
+                      Description = data.Description,
+                      OwnerId = 2,
+                      Price = data.Price
+                        
+                });
+                
+                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(newProduct.ToProductViewModel());
+                resVm.Id = newProduct.ID;
+                resVm.Name = newProduct.Name;
+                resVm.OwnerId = newProduct.Owner.ID;
+                resVm.Price = newProduct.Price;
             }
-            return messages;
+            return resVm;
         }
 
-        public async Task<List<string>> StageProduct(ProductData data, string group)
+        public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
         {
             return await Task.Run(() => _stageProduct(data,group));
         }
@@ -110,84 +141,43 @@ namespace SignalRService.Hubs
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
         }
 
-        private OrderStatusData _processOrderRequest(OrderStatusData orderStatus, string group)
+        private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
-            //check id
-            int badidx = 0;
-            if(Utils.ValidationUtils.IsDangerousString(orderStatus.Order.OrderId, out badidx))
-            {
-                return new OrderStatusData()
-                {
-                    Order = orderStatus.Order,
-                    OrderState = Enums.EnumOrderState.Error,
-                    OrderStateString = Enums.EnumOrderState.Error.ToString(),
-                    Message = "Invalid OrderId...."
-                };
-            }
+           
+            var orderViewModel = orderRepository.CheckOrderStatus(orderDTO.OrderId, "Anonymous", "Anonymous");
 
-            if (Utils.ValidationUtils.IsDangerousString(orderStatus.Order.ClientConnectionId, out badidx) ||
-                Utils.ValidationUtils.IsDangerousString(orderStatus.Order.HostConnectionId, out badidx))
-                {
-                return new OrderStatusData()
-                {
-                    Order = orderStatus.Order,
-                    OrderState = Enums.EnumOrderState.Error,
-                    OrderStateString = Enums.EnumOrderState.Error.ToString(),
-                    Message = "Invalid data...."
-                };
-            }
-
-            if(!string.IsNullOrEmpty(orderStatus.OrderStateString))
+            if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))
+                return orderViewModel;
+            
+            switch (orderViewModel.NextMethod)
             {
-                if(Utils.ValidationUtils.IsDangerousString(orderStatus.OrderStateString, out badidx))
-                {
-                    return new OrderStatusData()
+                case Enums.EnumOrderProcessingMethods.Undefined:
+                    break;
+                case Enums.EnumOrderProcessingMethods.NewOrder:
+
+                    var orderItems = orderRepository.CheckProducts(orderDTO.Items);
+                    if(orderItems.Any(x => x.ErrorNumber != 0))
                     {
-                        Order = orderStatus.Order,
-                        OrderState = Enums.EnumOrderState.Error,
-                        OrderStateString = Enums.EnumOrderState.Error.ToString(),
-                        Message = "Invalid data...."
-                    };
-                }
-            }
+                        orderViewModel.ErrorMessage = "ItemsError...";
+                        return orderViewModel;
+                    }
 
-            var retData = new OrderStatusData();
-            retData.Order = orderStatus.Order;
-            switch (orderStatus.OrderState)
-            {
-                case Enums.EnumOrderState.ClientPlacedOrder:
-                    //its a new order, send it to hosts
-                    retData.NextOrderState = Enums.EnumOrderState.HostConfirmedOrder;
-                    retData.NextOrderStateString = Enums.EnumOrderState.HostConfirmedOrder.ToString();
-
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderRequest(retData);
+                    if(orderItems.Count == 0)
+                    {
+                        orderViewModel.ErrorMessage = "No Items for Order...";
+                        return orderViewModel;
+                    }
+                    var ordervm = orderRepository.AddOrder(orderViewModel, orderItems);
                  
-                    break;
-                case Enums.EnumOrderState.HostConfirmedOrder:
-                    //a host sent it back, deliver it to the client - send orderstatus-update to other hosts
-                    retData.Order.HostConnectionId = Context.ConnectionId;
-                    retData.NextOrderState = Enums.EnumOrderState.ClientOrderFinished;
-                    retData.NextOrderStateString = Enums.EnumOrderState.ClientOrderFinished.ToString();
-
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(orderStatus.Order.ClientConnectionId).clientOrderStatusUpdate(retData);
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(retData);
-                    break;
-                case Enums.EnumOrderState.ClientOrderFinished:
-                    //client sent it back, accnowledging recievement - send orderstatuupdaet to other hosts
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).hostOrderStatusUpdate(retData);
-                    break;
-                case Enums.EnumOrderState.ServerOrderFinished:
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(orderStatus.Order.ClientConnectionId).clientOrderStatusUpdate(retData);
-                    break;
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).newOrder(ordervm);
+                    return ordervm;
                 default:
                     break;
             }
-
-            retData.Order = orderStatus.Order;
-            return retData;
+            return orderViewModel;
         }
 
-        public async Task<OrderStatusData> ProcessOrder(OrderStatusData data, string group)
+        public async Task<ViewModels.OrderViewModel> ProcessOrder(OrderDataDTO data, string group)
         {
              return await Task.Run(() => _processOrderRequest(data, group));
         }
@@ -210,20 +200,18 @@ namespace SignalRService.Hubs
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImgUrl { get; set; }
-        public float Price { get; set; }
+        public decimal Price { get; set; }
     }
 
-    public class OrderData
+    public class OrderDataDTO
     {
-        public string OrderId { get; set; }
+        public int OrderId { get; set; }
         public List<OrderItem>Items { get; set; }
-        public string ClientConnectionId { get; set; }
-        public string HostConnectionId { get; set; }
     }
 
     public class OrderItem
     {
-        public string ItemId { get; set; }
+        public int ItemId { get; set; }
         public int Amount { get; set; }
     }
 
@@ -240,13 +228,4 @@ namespace SignalRService.Hubs
 
     }
 
-    public class OrderStatusData
-    {
-        public Enums.EnumOrderState OrderState { get; set; }
-        public Enums.EnumOrderState NextOrderState { get; set; }
-        public string OrderStateString { get; set; }
-        public string NextOrderStateString { get; set; }
-        public string Message { get; set; }
-        public OrderData Order { get; set; }
-    }
 }

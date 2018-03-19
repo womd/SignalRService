@@ -34,12 +34,12 @@ namespace SignalRService.Controllers
             {
 
                 List<SignalRConnectionModel> sigRClients = db.SignalRConnections.ToList();
-                List<UserDataViewModel> uvms = new List<UserDataViewModel>();
+                List<UserDataTableViewModel> uvms = new List<UserDataTableViewModel>();
                 foreach(var sigRC in sigRClients)
                 {
                     var mstat = sigRC.MinerStatus.FirstOrDefault();
 
-                    uvms.Add(new UserDataViewModel() {
+                    uvms.Add(new UserDataTableViewModel() {
                         ConnectionId = sigRC.SignalRConnectionId,
                         ConnectionState = sigRC.ConnectionState.ToString(),
                         NrOfGroups = sigRC.Groups.Count,
@@ -80,7 +80,7 @@ namespace SignalRService.Controllers
             }
         }
 
-        public JsonResult ClientUpdate(UserDataViewModel model)
+        public JsonResult ClientUpdate(UserDataTableViewModel model)
         {
             try
             {

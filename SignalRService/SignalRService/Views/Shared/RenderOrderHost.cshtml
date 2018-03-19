@@ -12,9 +12,12 @@
             return element;
         },
         createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
-            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" >" +
-                "<img src=\"" + thumbnailSrc + "\">" +
-                "<div class=\"cpwrapper\">" +
+            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" >";
+
+           
+           //     element += "<img src=\"" + thumbnailSrc + "\">";
+
+            element += "<div class=\"cpwrapper\">" +
                 "<div class=\"caption\">" + caption + "</div>" +
                 "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
                 "</div>" +
@@ -146,8 +149,20 @@
         },
         loadProducts: function load_products() {
 
-            itemOrderHost.loadProductsFromCookie();
-            $("#hostitemlist").listview('refresh');
+            servicehub.server.getProducts()
+                .done(function (productList) {
+                    $(productList).each(function (idx) {
+                        var newitem = hostProducList.createItem(this.Id, "", this.Name, this.Description, this.Price);
+                        $("#hostitemlist").append(newitem);
+                    });
+                    $("#hostitemlist").listview();
+                    $("#hostitemlist").listview('refresh');
+                })
+                .fail(function () {
+                console.log("load_products failed..");
+                });
+
+           
         },
         run: function run(appendTo) {
 
@@ -281,7 +296,7 @@
             var inputelements = $('.producteditwrapper').find("input");
 
             var product = {
-                Id: makeid(),
+                Id: 0,
                 Name: $('.producteditwrapper').find("input[name=caption]").val(),
                 ImgUrl: $('.producteditwrapper').find("input[name=imgurl]").val(),
                 Description: $('.producteditwrapper').find("input[name=description]").val(),
@@ -289,27 +304,7 @@
             }
             return product;
         },
-        getProductsFromCookie: function load_products_from_cookie() {
-            var products = [];
-            var cookies = get_cookies_array();
-            for (var name in cookies) {
-                if (name.indexOf("product_") == 0) {
-                    var productcookie = JSON.parse(getCookie(name));
-                    products.push(productcookie);
-                }
-            }
-            return products;
-        },
-        loadProductsFromCookie: function load_products_from_cookie() {
-
-            var products = itemOrderHost.getProductsFromCookie()
-            $(products).each(function (idx) {
-                $('#hostitemlist').append(hostProducList.createItem(products[idx].Id, products[idx].ImgUrl, products[idx].Name, products[idx].Description, products[idx].Price));
-            });
-            
-   
-        },
-        orderProcessOkClicked: function processPlacedOrder(e) {
+              orderProcessOkClicked: function processPlacedOrder(e) {
             //find orderelement send it to server->client
             var placedorderelement = $(e).closest('.hostorderitem ');
             var order = {

@@ -1,6 +1,7 @@
 ﻿@model SignalRService.ViewModels.OrderClientConfigurationViewModel
 <script>
 
+
     var totalsBox = {
 
         initialize: function build_totalsElement(appendTo) {
@@ -97,9 +98,9 @@
     var placedOrderList = {
 
         createItem: function create_orderitem_entry(statusData) {
-            var element = "<li data-icon=\"false\" class=\"clientorderitem\" data-orderid=\"" + statusData.Order.OrderId + "\" data-state=\"" + statusData.Order.State + "\" data-clientId=\"" + statusData.Order.ClientConnectionId + "\" >" +
-                "<div class=\"orderid\">" + statusData.Order.OrderId + "</div>" +
-                "<div class=\"hosttid\">" + statusData.Order.HostConnectionId + "</div>";
+            var element = "<li data-icon=\"false\" class=\"clientorderitem\" data-orderid=\"" + statusData.OrderIdentifier + "\" data-state=\"" + statusData.OrderState + "\" >" +
+                "<div class=\"orderid\">" + statusData.OrderIdentifier + "</div>" +
+                "<div class=\"hostid\">" + statusData.StoreUser.Name + "</div>";
 
             var ordertotal = 0;
             $(statusData.Order.Items).each(function (idx) {
@@ -153,7 +154,19 @@
 
         loadProducts: function load_products() {
 
-            servicehub.server.requestStageList('@Model.SinalRGroup');
+             servicehub.server.getProducts()
+                .done(function (productList) {
+                    $(productList).each(function (idx) {
+                        var newitem = productItemList.createItem( this.Id, "", this.Name, this.Description, this.Price);
+                        $("#customeritemlist").append(newitem);
+                    });
+                    $("#customeritemlist").listview();
+                    $("#customeritemlist").listview('refresh');
+                })
+                .fail(function () {
+                console.log("load_products failed..");
+                });
+
 
         },
         run: function run(appendTo) {
@@ -274,29 +287,18 @@
         placeOrder: function place_order(group) {
             //get orderitems from orderlist
             var orderItems = orderItemList.getOrderItems();
-            var order = {
-                OrderId: makeid(),
+            var Order = {
+                OrderId: 0,
                 Items : orderItems,
-                State : 1,
-                ClientConnectionId : servicehub.connection.id,
-                HostConnectionId : ""
             };
 
-            var orderStatusData = {
-                OrderState: 1,
-                NextOrderState: 0,
-                OrderStateString: "ClientPlacedOrder",
-                NextStateString: "",
-                Message: "",
-                Order: order
-            }
-
+          
+            console.log("placeOrder - sending orderData");
             //send signalR order-placement
-            var res = servicehub.server.processOrder(orderStatusData, group);
+            var res = servicehub.server.processOrder(Order, group);
             res.done(function (orderData) {
 
-                itemOrderClient.orderUpdate(orderData);
-                console.log("updating orderstatus...");
+                console.log("placeOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
 
             }).fail(function () {
                 console.log("failed request placeOrder...");

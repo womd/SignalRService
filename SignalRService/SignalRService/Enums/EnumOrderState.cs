@@ -8,11 +8,12 @@ namespace SignalRService.Enums
     public enum EnumOrderState
     {
         Undef = 0,
-        ClientPlacedOrder = 1,
-        HostConfirmedOrder = 2,
-        ClientOrderFinished = 3,
-        ServerOrderFinished = 4,
-        Cancel = 4,
-        Error = 5
+        ClientRequestOrderPlacement = 1,
+        ClientPlacedOrder = 2,
+        HostConfirmedOrder = 3,
+        ClientOrderFinished = 4,
+        ServerOrderFinished = 5,
+        Cancel = 6,
+        Error = 7
     }
 }

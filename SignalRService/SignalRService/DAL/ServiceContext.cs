@@ -22,6 +22,9 @@ namespace SignalRService.DAL
         public DbSet<ServiceSettingModel>ServiceSettings { get; set; }
         public DbSet<MinerConfigurationModel>MinerConfiurationModels { get; set; }
         public DbSet<MinerStatusModel>MinerStatus{ get; set; }
+        public DbSet<OrderModel>Orders { get; set; }
+        public DbSet<ProductModel>Products { get; set; }
+        public DbSet<OrderItemModel>OrderItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -29,7 +32,6 @@ namespace SignalRService.DAL
       
            
             base.OnModelCreating(modelBuilder);
-
         }
 
         public void AddConnection(string connectionId, string refererUrl, string remoteIp, string identityName)
@@ -127,6 +129,7 @@ namespace SignalRService.DAL
             SaveChanges();
         }
 
+        
        
 
     }

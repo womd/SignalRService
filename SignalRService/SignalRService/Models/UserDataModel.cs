@@ -17,6 +17,7 @@ namespace SignalRService.Models
         public string IdentityName { get; set; }
 
         public virtual ICollection<SignalRConnectionModel> SignalRConnections { get; set; }
+        public virtual ICollection<ProductModel> Products { get; set; }
 
     }
 }

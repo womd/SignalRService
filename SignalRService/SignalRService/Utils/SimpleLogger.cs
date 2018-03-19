@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Web.Hosting;
 
 namespace SignalRService.Utils
 {
@@ -19,7 +20,10 @@ namespace SignalRService.Utils
         public SimpleLogger(bool append = false)
         {
             DatetimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
-            Filename = Assembly.GetExecutingAssembly().GetName().Name + ".log";
+            string webroot = HostingEnvironment.ApplicationPhysicalPath;
+
+            Filename = webroot + Assembly.GetExecutingAssembly().GetName().Name + ".log";
+            
 
             // Log file header line
             string logHeader = Filename + " is created.";
@@ -118,17 +122,13 @@ namespace SignalRService.Utils
         /// <exception cref="System.IO.IOException"></exception>
         private void WriteLine(string text, bool append = true)
         {
-            try
+          
+            using (StreamWriter Writer = new StreamWriter(Filename, append, Encoding.UTF8))
             {
-                using (StreamWriter Writer = new StreamWriter(Filename, append, Encoding.UTF8))
-                {
-                    if (text != "") Writer.WriteLine(text);
-                }
+                if (text != "") Writer.WriteLine(text);
             }
-            catch
-            {
-                throw;
-            }
+         
+          
         }
 
         /// <summary>

@@ -18,19 +18,19 @@ namespace SignalRService.Migrations
 
         protected override void Seed(ServiceContext context)
         {
-            var dbuser = context.AccountProperties.Add(new Models.AccountPropertiesModel()
-            {
-                UserId = "testuser"
-            });
+            //var dbuser = context.AccountProperties.Add(new Models.AccountPropertiesModel()
+            //{
+            //    UserId = "testuser"
+            //});
 
-            context.ServiceSettings.Add(new Models.ServiceSettingModel()
-            {
-                ServiceName = "testname",
-                ServiceUrl = "testurl",
-                ServiceType = Enums.EnumServiceType.OrderService,
-                Owner = dbuser
+            //context.ServiceSettings.Add(new Models.ServiceSettingModel()
+            //{
+            //    ServiceName = "testname",
+            //    ServiceUrl = "testurl",
+            //    ServiceType = Enums.EnumServiceType.OrderService,
+            //    Owner = dbuser
                 
-            });
+            //});
         }
     }
 }

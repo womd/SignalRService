@@ -55,6 +55,44 @@ namespace SignalRService.Utils
             };
         }
 
+        public static ViewModels.UserDataViewModel ToUserDataViewModel(this Models.UserDataModel model)
+        {
+            var vm = new UserDataViewModel();
+            if(model == null)
+            {
+                model = new UserDataModel();
+                model.ID = 0;
+                model.IdentityName = "Undefined";
+            }
+            vm.Id = model.ID;
+            vm.Name = model.IdentityName;
+            return vm;
+            
+        }
+
+        public static ViewModels.OrderViewModel ToOrderViewModel(this Models.OrderModel model)
+        {
+            return new OrderViewModel() {
+                CustomerUser =  model.CustomerUser.ToUserDataViewModel(),
+                StoreUser = model.StoreUser.ToUserDataViewModel(),
+                OrderIdentifier = model.OrderIdentifier,
+                OrderState = model.OrderState,
+                OrderType = model.OrderType
+            };
+        }
+
+        public static ViewModels.ProductViewModel ToProductViewModel(this Models.ProductModel model)
+        {
+            return new ProductViewModel()
+            {
+                Id = model.ID,
+                Description = model.Description,
+                Name = model.Name,
+                OwnerId = model.Owner.ID,
+                PartNumber = model.PartNo
+            };
+        }
+
 
     }
 }
