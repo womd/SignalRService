@@ -20,9 +20,9 @@
 
             servicehub.client.someoneAddedItemToCart = function (itemid) {
                 //find item and highlight it
-                $('*[data-itemid=' +itemid + ']').addClass("highlight");
+                $('*[data-itemid=' + itemid + ']').addClass("highlight");
                 setTimeout(function () {
-                    $('*[data-itemid=' +itemid + ']').removeClass("highlight");
+                    $('*[data-itemid=' + itemid + ']').removeClass("highlight");
                 }, 500);
             }
 
@@ -43,7 +43,7 @@
                         .fail(function () {
                             console.log("staeingRequest failed...");
                         });
-                   
+
                 }
             }
 
@@ -61,7 +61,7 @@
                     //    $(existingitem).replaceWith(itemOrderHost.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
                     //}    
                 }
-    
+
                 if (itemOrderClient) {
 
                     var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
@@ -80,7 +80,7 @@
                 itemOrderHost.productRemove(id);
             }
 
-           
+
             servicehub.client.hostOrderRequest = function (order) {
                 //got new clientorder from server...
                 var element = hostOrderList.createItem(order);
@@ -89,8 +89,7 @@
             }
 
             //----
-            servicehub.client.newOrder = function(ordervm)
-            {
+            servicehub.client.newOrder = function (ordervm) {
                 if (itemOrderClient) {
                     var orderItem = placedOrderList.createItem(ordervm);
                     $('#clientorderitemlist').append(orderItem);
@@ -98,7 +97,38 @@
                     $('#clientorderitemlist').listview("refresh");
                 }
 
+                if (itemOrderHost) {
+                    var orderItem = hostOrderList.createItem(ordervm);
+                    $('#hostorderitemlist').append(orderItem);
+                    $('#hostorderitemlist').listview();
+                    $('#hostclientorderitemlist').listview("refresh");
+                }
+
                 console.log("called new order.");
+            }
+
+            servicehub.client.updateOrder = function (ordervm) {
+
+                if (itemOrderClient) {
+                    var orderItemElement = $('#clientorderitemlist').find("*[data-orderid='" + ordervm.OrderIdentifier + "']");
+                    $(orderItemElement).remove();
+
+                    var orderItem = placedOrderList.createItem(ordervm);
+                    $('#clientorderitemlist').append(orderItem);
+                    $('#clientorderitemlist').listview();
+                    $('#clientorderitemlist').listview("refresh");
+                }
+
+                if (itemOrderHost) {
+                    var orderItemElement = $('#hostorderitemlist').find("*[data-orderid='" + ordervm.OrderIdentifier + "']");
+                    $(orderItemElement).remove();
+                    
+
+                    var orderItem = hostOrderList.createItem(ordervm);
+                    $('#hostorderitemlist').append(orderItem);
+                    $('#hostorderitemlist').listview();
+                    $('#hostclientorderitemlist').listview("refresh");
+                }
             }
 
             //----

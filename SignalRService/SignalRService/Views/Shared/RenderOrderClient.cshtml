@@ -103,13 +103,15 @@
                 "<div class=\"hostid\">" + statusData.StoreUser.Name + "</div>";
 
             var ordertotal = 0;
-            $(statusData.Order.Items).each(function (idx) {
-                var stagedProduct = hostProducList.getProduct(this.ItemId);
-                element += placedOrderList.createOrderProduct(this.ItemId, stagedProduct.Name, this.Amount, stagedProduct.Price);
-                ordertotal = ordertotal + this.Amount * stagedProduct.Price;
+            $(statusData.Items).each(function (idx) {
+                //var stagedProduct = hostProducList.getProduct(this.Id);
+                //element += placedOrderList.createOrderProduct(this.Id, stagedProduct.Name, this.Amount, stagedProduct.Price);
+                element += placedOrderList.createOrderProduct(this.Id, this.Name, this.Amount, this.Price);
+
+                ordertotal = ordertotal + this.Amount * this.Price;
             })
 
-            element += placedOrderList.createStatusElement(statusData.Order)
+            element += placedOrderList.createStatusElement(statusData)
             element += placedOrderList.createOrderProcessElements();
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
@@ -129,16 +131,29 @@
             return elememt;
         },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"statuswrapper\" id=\"hostorderstatus\">" +
-                "<div class=\"status\">" + order.StateString + "</div>" +
-                "<div class=\"nextstatus\">" + order.NextStateString + "</div>" +
-                "</div>";
+            var element = "<div class=\"clientorderstate state" + order.OrderState + "\">";
+            switch (order.OrderState) {
+                case 0:
+                    element += "<div class=\"OrderState0\">Undef</div>";
+                    break;
+                case 1:
+                    element += "<div class=\"OrderState1\">ClientRequestOrderPlacement</div>";
+                    break;
+                case 2:
+                    element += "<div class=\"OrderState2\">ClientPlacedOrder</div>";
+                    break;
+                case 3:
+                    element += "<div class=\"OrderState3\">HostConfirmedOrder</div>";
+                default:
+                    break;
+            }
+            element += "</div>";
             return element;
         },
         createOrderProcessElements: function create_orderProcessElements() {
             var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">" +
                 "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
-                "<div class=\"okbtn\"><a onclick=\"orderProcessOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
+                "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
                 "</div>";
             return element;
         },
@@ -166,9 +181,23 @@
                 .fail(function () {
                 console.log("load_products failed..");
                 });
-
-
         },
+        loadOrders: function load_orders(type) {
+            servicehub.server.getOrders(type)
+                .done(function (data) {
+
+                    $(data).each(function () {
+                        $('#clientorderitemlist').append( placedOrderList.createItem(this) );
+                    })
+                    $('#clientorderitemlist').listview();
+                    $('#clientorderitemlist').listview("refresh");
+                    
+                })
+                .fail(function () {
+                    console.log("load_orders failed...");
+                });
+        },
+       
         run: function run(appendTo) {
 
 
@@ -195,12 +224,12 @@
 
             }
              
-          
             itemOrderClient.loadProducts();
+            itemOrderClient.loadOrders(2);
         },
         stop: function stop() {
             $('#customeritemswrapper').remove();
-            $('#orderswrapper').remove();
+            $('#clientorderswrapper').remove();
             $('#totalswrapper').remove();
         },
         loadJqueryMobile: function load_jqueryMobile() {
@@ -288,7 +317,7 @@
             //get orderitems from orderlist
             var orderItems = orderItemList.getOrderItems();
             var Order = {
-                OrderId: 0,
+                OrderIdentifier: 0,
                 Items : orderItems,
             };
 
@@ -304,18 +333,29 @@
                 console.log("failed request placeOrder...");
             });
         },
-        orderProcessOkClicked: function processPlacedOrder(e) {
-            //find the orderelement - send it back for staus-change
+        
+        processOrder: function processOrder(e) {
+
+            var Order = {
+                OrderIdentifier: $(e).closest('clientorderitem').data("orderid"),
+                Items: {},
+            };
+
+            console.log("processOrder - sending orderData");
+
+            var res = servicehub.server.processOrder(Order,"@Model.SinalRGroup");
+            res.done(function (orderData) {
+                console.log("processOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
+            }).fail(function () {
+                console.log("failed request placeOrder...");
+            });
         }
 
 
     };
 
 
-
-    function btnBuyClicked(e) {
-        //find its data - place order and update item 
-       
+    function btnBuyClicked() {
         itemOrderClient.placeOrder("@Model.SinalRGroup");
     }
 
@@ -421,5 +461,20 @@
         float: right;
         margin-left: 5px;
         font-size: 2em;
+    }
+
+    .clientorderstate {
+        height: 20px;
+        width: 80px;
+    }
+
+    .clientorderstate.state0 {
+        background-color: cadetblue;
+    }
+    .clientorderstate.state1 {
+        background-color: chocolate;
+    }
+    .clientorderstate.state2 {
+        background-color: aqua;
     }
 </style>

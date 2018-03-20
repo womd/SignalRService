@@ -66,32 +66,65 @@ namespace SignalRService.Utils
             }
             vm.Id = model.ID;
             vm.Name = model.IdentityName;
+            vm.SignalRConnections = model.SignalRConnections.Select(x => x.SignalRConnectionId).ToList();
             return vm;
             
         }
 
-        public static ViewModels.OrderViewModel ToOrderViewModel(this Models.OrderModel model)
+        public static List<ProductViewModel> ToProductViewModels(this List<Models.ProductModel> models)
         {
-            return new OrderViewModel() {
-                CustomerUser =  model.CustomerUser.ToUserDataViewModel(),
-                StoreUser = model.StoreUser.ToUserDataViewModel(),
-                OrderIdentifier = model.OrderIdentifier,
-                OrderState = model.OrderState,
-                OrderType = model.OrderType
+            List<ProductViewModel> retlist = new List<ProductViewModel>();
+            foreach(var item in models)
+            {
+                retlist.Add(item.ToProductViewModel());
+            }
+            return retlist;
+        }
+
+        public static ProductViewModel ToProductViewModel(this Models.ProductModel model)
+        {
+            return new ProductViewModel() {
+                 Id = model.ID,
+                 Description = model.Description,
+                 Name = model.Name,
+                 OwnerId = model.Owner.ID,
+                 PartNumber = model.PartNo,
+                 Price = model.Price
             };
         }
 
-        public static ViewModels.ProductViewModel ToProductViewModel(this Models.ProductModel model)
+        public static ViewModels.OrderViewModel ToOrderViewModel(this Models.OrderModel model)
         {
-            return new ProductViewModel()
+            var vm = new ViewModels.OrderViewModel() {
+                CustomerUser = model.CustomerUser != null ? model.CustomerUser.ToUserDataViewModel() : new UserDataViewModel(),
+                StoreUser = model.StoreUser != null ? model.StoreUser.ToUserDataViewModel(): new UserDataViewModel(),
+                OrderIdentifier = model.OrderIdentifier,
+                OrderState = model.OrderState,
+                OrderType = model.OrderType,
+                Items = new List<OrderItemViewModel>()
+            };
+            foreach(var item in model.Items)
+            {
+                vm.Items.Add(item.ToOrderItemViewModel());
+            }
+            return vm;
+        }
+
+        public static ViewModels.OrderItemViewModel ToOrderItemViewModel(this Models.OrderItemModel model)
+        {
+            return new OrderItemViewModel()
             {
                 Id = model.ID,
-                Description = model.Description,
+                // Description = model.Name
                 Name = model.Name,
-                OwnerId = model.Owner.ID,
-                PartNumber = model.PartNo
+                PartNumber = model.PartNo,
+                Price = model.Price,
+                OwnerId = model.Order.StoreUser.ID,
+                Amount = model.Amount
             };
         }
+
+       
 
 
     }

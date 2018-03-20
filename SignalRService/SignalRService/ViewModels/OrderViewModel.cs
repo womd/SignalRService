@@ -14,6 +14,8 @@ namespace SignalRService.ViewModels
         public Enums.EnumOrderType OrderType { get; set; }
         public string ErrorMessage {get;set;}
         public Enums.EnumOrderProcessingMethods NextMethod { get; set; }
+        public List<ViewModels.OrderItemViewModel> Items { get; set; }
+
     }
 
     

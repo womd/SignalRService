@@ -25,7 +25,7 @@ namespace SignalRService.DAL
         public DbSet<OrderModel>Orders { get; set; }
         public DbSet<ProductModel>Products { get; set; }
         public DbSet<OrderItemModel>OrderItems { get; set; }
-
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

@@ -24,15 +24,18 @@ namespace SignalRService.Repositories
                 ID = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                Owner = userContext.GetUser(product.OwnerId)
+                Owner = userContext.GetUser(product.OwnerId),
+                PartNo = product.PartNumber,
+                Price = product.Price
             };
             return productContext.AddOrUpdateProduct(pr);
         }
 
         public List<ProductModel>GetProducts()
         {
-            var user = userContext.GetUser(2);
+            var user = userContext.GetUser(1);
             return user.Products.ToList();
         }
+
     }
 }

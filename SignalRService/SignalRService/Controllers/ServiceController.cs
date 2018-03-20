@@ -62,7 +62,7 @@ namespace SignalRService.Controllers
             {
                 var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
                 if (servicesetting == null)
-                    return View("UrlNotFound", url);
+                    return View("UrlNotFound");
 
                 return View(servicesetting.ToServiceSettingViewModel());
 

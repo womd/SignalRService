@@ -5,10 +5,12 @@ using System.Web;
 
 namespace SignalRService.Enums
 {
-    public enum EnumOrderProcessingMethods
+    public enum EnumGuiType
     {
-        Undefined = 0,
-        NewOrder = 1,
-        UpdateOrder = 2
+        Undef = 0,
+        Client = 1,
+        Host = 2,
+        Admin = 3,
+       
     }
 }

@@ -13,14 +13,15 @@ namespace SignalRService.Hubs
     public class ServiceHub : Hub
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
-        private Repositories.OrderRepository orderRepository; 
+        private Repositories.OrderRepository orderRepository;
         private Repositories.ProductRepository productRepository;
+        private Repositories.UserRepository userRepository;
 
         public ServiceHub()
         {
             orderRepository = new Repositories.OrderRepository(db);
             productRepository = new Repositories.ProductRepository(db);
-
+            userRepository = new Repositories.UserRepository(db);
         }
 
         public override Task OnConnected()
@@ -31,7 +32,7 @@ namespace SignalRService.Hubs
             //  Context.ConnectionId
             if (Context.Request.User.Identity.IsAuthenticated)
             {
-                db.AddConnection(Context.ConnectionId,refererUrl,remoteIP,Context.Request.User.Identity.Name);
+                db.AddConnection(Context.ConnectionId, refererUrl, remoteIP, Context.Request.User.Identity.Name);
 
             }
             else
@@ -73,15 +74,27 @@ namespace SignalRService.Hubs
 
         }
 
-        public List<ViewModels.ProductViewModel>getProducts()
+        /// <summary>
+        /// clientrequest for loading products
+        /// </summary>
+        /// <returns></returns>
+        public List<ViewModels.ProductViewModel> getProducts()
         {
             List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
             var products = productRepository.GetProducts();
-            foreach(var item in products)
+            foreach (var item in products)
             {
                 reslist.Add(item.ToProductViewModel());
             }
             return reslist;
+        }
+
+        public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType)
+        {
+            //see which user - get orders
+            var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+            var orders = orderRepository.GetOrders(user.Id,guiType);
+            return orders;
         }
 
         private ViewModels.ProductViewModel _stageProduct(ProductData data, string group)
@@ -110,7 +123,7 @@ namespace SignalRService.Hubs
                 {
                       Name = data.Name,
                       Description = data.Description,
-                      OwnerId = 2,
+                      OwnerId = 1,
                       Price = data.Price
                         
                 });
@@ -144,36 +157,55 @@ namespace SignalRService.Hubs
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
            
-            var orderViewModel = orderRepository.CheckOrderStatus(orderDTO.OrderId, "Anonymous", "Anonymous");
-
-            if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))
-                return orderViewModel;
-            
-            switch (orderViewModel.NextMethod)
+            var orderViewModel = orderRepository.CheckOrder(orderDTO.OrderIdentifier);
+            if(orderViewModel == null)
             {
-                case Enums.EnumOrderProcessingMethods.Undefined:
-                    break;
-                case Enums.EnumOrderProcessingMethods.NewOrder:
-
-                    var orderItems = orderRepository.CheckProducts(orderDTO.Items);
-                    if(orderItems.Any(x => x.ErrorNumber != 0))
+                var orderItems = orderRepository.CheckProducts(orderDTO.Items);
+                var productOwnerId = orderItems.FirstOrDefault().OwnerId; // --!
+                var storeUser = userRepository.GetUser(productOwnerId);
+                var customerUser = userRepository.GetUserFromSignalR(Context.ConnectionId);
+              
+                if(storeUser == null || customerUser == null || productOwnerId == -1 || orderItems.Count == 0)
+                {
+                    return new ViewModels.OrderViewModel()
                     {
-                        orderViewModel.ErrorMessage = "ItemsError...";
-                        return orderViewModel;
-                    }
-
-                    if(orderItems.Count == 0)
-                    {
-                        orderViewModel.ErrorMessage = "No Items for Order...";
-                        return orderViewModel;
-                    }
-                    var ordervm = orderRepository.AddOrder(orderViewModel, orderItems);
-                 
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).newOrder(ordervm);
-                    return ordervm;
-                default:
-                    break;
+                        ErrorMessage = "Invalid Order-Data...",
+                    };
+                }
+                orderViewModel = orderRepository.AddOrder(orderItems, customerUser, storeUser);
+                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(storeUser.SignalRConnections).newOrder(orderViewModel);
+                return orderViewModel;
             }
+            else
+            {
+                switch (orderViewModel.OrderState)
+                {
+                    case Enums.EnumOrderState.Undef:
+                        break;
+                    case Enums.EnumOrderState.ClientPlacedOrder:
+                        //the item has been acknowledged from Server
+                        
+                        orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
+                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
+                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(orderViewModel.CustomerUser.SignalRConnections).updateOrder(orderViewModel);
+                        break;
+                    case Enums.EnumOrderState.HostConfirmedOrder:
+                        break;
+                    case Enums.EnumOrderState.ClientOrderFinished:
+                        break;
+                    case Enums.EnumOrderState.ServerOrderFinished:
+                        break;
+                    case Enums.EnumOrderState.Cancel:
+                        break;
+                    case Enums.EnumOrderState.Error:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        
+
             return orderViewModel;
         }
 
@@ -205,8 +237,8 @@ namespace SignalRService.Hubs
 
     public class OrderDataDTO
     {
-        public int OrderId { get; set; }
         public List<OrderItem>Items { get; set; }
+        public string OrderIdentifier { get; set; }
     }
 
     public class OrderItem

@@ -69,28 +69,42 @@
     var hostOrderList = {
 
         createItem: function create_orderitem_entry(orderData) {
-            var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderData.Order.OrderId + "\" data-state=\"" + orderData.Order.State + "\" data-clientConnectionId=\"" + orderData.Order.ClientConnectionId + "\" >" +
-                "<div class=\"orderid\">" + orderData.Order.OrderId + "</div>" +
-                "<div class=\"clientid\">" + orderData.Order.ClientConnectionId + "</div>";
+            var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderData.OrderIdentifier + "\" data-state=\"" + orderData.OrderState + "\" >" +
+                "<div class=\"orderid\">" + orderData.OrderIdentifier + "</div>" +
+                "<div class=\"clientid\">" + orderData.CustomerUser.Name + "</div>";
 
             var ordertotal = 0;
-            $(orderData.Order.Items).each(function (idx) {
-                var stagedProduct = hostProducList.getProduct(this.ItemId);
-                element += hostOrderList.createOrderProduct(this.ItemId, stagedProduct.Name, this.Amount, stagedProduct.Price);
-                ordertotal = ordertotal + this.Amount * stagedProduct.Price;
+            $(orderData.Items).each(function (idx) {
+                element += hostOrderList.createOrderProduct(this.Id, this.Name, this.Amount, this.Price);
+                ordertotal = ordertotal + this.Amount * this.Price;
             })
 
-            element += hostOrderList.createStatusElement(orderData.Order)
+            element += hostOrderList.createStatusElement(orderData)
             element += hostOrderList.createOrderProcessElements();
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
             return element;
         },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"statuswrapper\" id=\"hostorderstatus\">" +
-                "<div class=\"status\">" + order.StateString + "</div>" +
-                "<div class=\"nextstatus\">" + order.NextStateString + "</div>" +
-                "</div>";
+            var element = "<div class=\"hostorderstate state" + order.OrderState + "\">";
+
+                switch (order.OrderState) {
+                case 0:
+                        element += "<div class=\"OrderState0\">Undef</div>";
+                    break;
+                case 1:
+                        element += "<div class=\"OrderState1\">ClientRequestOrderPlacement</div>";
+                        break;
+                case 2:
+                        element += "<div class=\"OrderState2\">ClientPlacedOrder</div>";
+                        break;
+                    case 3:
+                        element += "<div class=\"OrderState3\">HostConfirmedOrder</div>";
+                default:
+                    break;
+            }
+
+            element += "</div>";
             return element;
         },
         initialize: function build_oderItemsElement(appendTo) {
@@ -123,7 +137,7 @@
         {
             var element = "<div class=\"orderprocesswrapper\" id=\"hostorderprocesswrapper\" \">" +
                 "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
-                "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.orderProcessOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
+                "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
                 "</div>";
             return element;
         }
@@ -164,6 +178,20 @@
 
            
         },
+        loadOrders: function load_orders(type) {
+            servicehub.server.getOrders(type)
+                .done(function (data) {
+
+                    $(data).each(function () {
+                        $('#hostorderitemlist').append( hostOrderList.createItem(this));
+                    });
+                    $('#hostorderitemlist').listview();
+                    $('#hostorderitemlist').listview("refresh");
+                })
+                .fail(function () {
+                    console.log("load_orders failed...");
+                });
+        },
         run: function run(appendTo) {
 
             if ($(appendTo).length == 0) {
@@ -179,6 +207,7 @@
                 itemOrderHost.initializeTotals('@Model.AppendToSelector');
                 itemOrderHost.initializeEditor('@Model.AppendToSelector');
                 itemOrderHost.loadProducts();
+                itemOrderHost.loadOrders(1);
            }
         },
         stop: function stop() {
@@ -275,12 +304,12 @@
 
             var stageRes = servicehub.server.stageProduct(product, group)
                 .done(function (data) {
-                    if (data.length == 0) {
+                    if (!data.ErrorMessage) {
                         //ok no errors
-                        setCookie("product_" + product.Id, JSON.stringify(product), 365);
+                        console.log("product successfuly staged..");
                     }
                     else {
-                        showMessageDailog(data.toString(), "#edititemwrapper");
+                        showMessageDailog(data.ErrorMessage, "#edititemwrapper");
                     }
                 })
                 .fail(function (data) {
@@ -290,7 +319,7 @@
         },
         productRemove: function remove_product(id) {
             $("*[data-itemid='" + id + "']").parent().remove();
-            remove_productCookie(id);
+       
         },
         getProductFromInput: function get_product_from_input() {
             var inputelements = $('.producteditwrapper').find("input");
@@ -304,39 +333,29 @@
             }
             return product;
         },
-              orderProcessOkClicked: function processPlacedOrder(e) {
-            //find orderelement send it to server->client
-            var placedorderelement = $(e).closest('.hostorderitem ');
-            var order = {
-                OrderId: $(placedorderelement).data('orderid'),
-                Items: [],
-                State: 1,
-                StateString: "",
-                NextState : 0,
-                NextStateString : "",
-                ClientConnectionId: $(placedorderelement).data('clientconnectionid'),
-                HostConnectionId: ""
-            };
+        processOrder: function processOrder(e) {
 
-            var orderStatusData = {
-                OrderState: 2,
-                OrderStateString: "HostConfirmedOrder", 
-                NextOrderState: 0,
-                NextOrderStateString: "",
-                Message: "",
-                Order: order
+                var Order = {
+                    OrderIdentifier: $(e).closest('.hostorderitem').data("orderid"),
+                    Items: null
+                    
+                };
+
+            if (!Order.OrderIdentifier) {
+                console.log("processOrder -> could not find orderidentifier...");
+
+            } else {
+                console.log("processOrder - sending orderData");
+
+                var res = servicehub.server.processOrder(Order, "@Model.SinalRGroup");
+                res.done(function (orderData) {
+                    console.log("processOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
+                }).fail(function () {
+                    console.log("failed request placeOrder...");
+                });
             }
-
-            var res = servicehub.server.processOrder(orderStatusData, "@Model.SinalRGroup");
-            res.done(function (orderData) {
-
-                itemOrderClient.orderUpdate(orderData);
-                console.log("updating orderstatus...");
-
-            }).fail(function (err) {
-                console.log("failed request update placeOrder...");
-            });
         },
+
         orderUpdate: function update_order(orderData) {
             //find statusbox for this order and update
 
@@ -353,60 +372,7 @@
         servicehub.server.removeProduct(id,"@Model.SinalRGroup");
     }
    
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-    function getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
-
-    function makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }
-
-    function get_cookies_array() {
-
-        var cookies = {};
-
-        if (document.cookie && document.cookie != '') {
-            var split = document.cookie.split(';');
-            for (var i = 0; i < split.length; i++) {
-                var name_value = split[i].split("=");
-                name_value[0] = name_value[0].replace(/^ /, '');
-                cookies[decodeURIComponent(name_value[0])] = decodeURIComponent(name_value[1]);
-            }
-        }
-
-        return cookies;
-    }
-
-    
-
-    function remove_productCookie(pid) {
-        document.cookie = "product_" + pid + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
+   
 
 
 </script>
@@ -551,6 +517,23 @@
 
     .hostorderitem .nextstatus {
         float:right;
+    }
+
+    .hostorderstate {
+         height: 20px;
+         width: 80px;
+    }
+
+
+    .hostorderstate.state0 {
+        background-color: cadetblue;
+    }
+    .hostorderstate.state1 {
+        background-color: chocolate;
+    }
+
+    .hostorderstate.state2 {
+        background-color:aqua;
     }
 
 </style>

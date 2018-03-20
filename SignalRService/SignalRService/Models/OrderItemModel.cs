@@ -16,5 +16,6 @@ namespace SignalRService.Models
         public string Name { get; set; }
         public Decimal Price { get; set; }
         public virtual OrderModel Order { get; set; }
+        public int Amount { get; set; }
     }
 }

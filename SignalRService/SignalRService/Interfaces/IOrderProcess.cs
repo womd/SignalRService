@@ -8,7 +8,7 @@ namespace SignalRService.Interfaces
 {
     public interface IOrderProcess
     {
-        Enums.EnumOrderProcessingMethods GetNexProcess(Enums.EnumOrderState currentState);
+      
        
     }
 }

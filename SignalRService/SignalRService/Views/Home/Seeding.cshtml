@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "Seeding";
+}
+
+<h2>...</h2>
+
+@Ajax.ActionLink("Seed TestData", "SeedTestData", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "testseedbtn", @class = "btn btn-primary" })
+
+<script>
+    function onSuccess() {
+        alert("Seed TestData done...");
+    }
+
+</script>

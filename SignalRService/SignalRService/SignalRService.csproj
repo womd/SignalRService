@@ -213,6 +213,7 @@
     <Compile Include="DAL\ServiceContext.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
     <Compile Include="Enums\EnumOrderProcessingMethods.cs" />
+    <Compile Include="Enums\EnumGuiType.cs" />
     <Compile Include="Enums\EnumOrderType.cs" />
     <Compile Include="Enums\EnumOrderState.cs" />
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
@@ -227,29 +228,9 @@
     <Compile Include="Hubs\ServiceHub.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
-    <Compile Include="Migrations\201803151044262_Initialize.cs" />
-    <Compile Include="Migrations\201803151044262_Initialize.Designer.cs">
-      <DependentUpon>201803151044262_Initialize.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201803161028279_DbRefactor.cs" />
-    <Compile Include="Migrations\201803161028279_DbRefactor.Designer.cs">
-      <DependentUpon>201803161028279_DbRefactor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201803190836077_OrderModel.cs" />
-    <Compile Include="Migrations\201803190836077_OrderModel.Designer.cs">
-      <DependentUpon>201803190836077_OrderModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201803191203331_OrderData.cs" />
-    <Compile Include="Migrations\201803191203331_OrderData.Designer.cs">
-      <DependentUpon>201803191203331_OrderData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201803191446517_ProductData.cs" />
-    <Compile Include="Migrations\201803191446517_ProductData.Designer.cs">
-      <DependentUpon>201803191446517_ProductData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201803191601438_OrderItems.cs" />
-    <Compile Include="Migrations\201803191601438_OrderItems.Designer.cs">
-      <DependentUpon>201803191601438_OrderItems.cs</DependentUpon>
+    <Compile Include="Migrations\201803201253554_InitializeDB.cs" />
+    <Compile Include="Migrations\201803201253554_InitializeDB.Designer.cs">
+      <DependentUpon>201803201253554_InitializeDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountProperitesModel.cs" />
@@ -263,7 +244,9 @@
     <Compile Include="Repositories\ProductContext.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\UserContext.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
+    <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
     <Compile Include="ViewModels\SignalRClientsBaseViewModel.cs" />
@@ -550,7 +533,6 @@
     <Content Include="Views\Shared\SignalRBase.cshtml" />
     <Content Include="Views\SignalRClients\Index.cshtml" />
     <Content Include="Views\ServiceConfiguration\Index.cshtml" />
-    <Content Include="Views\Service\UrlNotFound.cshtml" />
     <Content Include="Views\Shared\Goto.cshtml" />
     <Content Include="Views\Shared\RenderMiner.cshtml" />
     <Content Include="Views\Shared\RenderOrderClient.cshtml" />
@@ -559,6 +541,10 @@
     <Content Include="Views\Shared\SrcStarter.cshtml" />
     <Content Include="Views\Shared\EXTServiceTest.cshtml" />
     <Content Include="Views\Shared\Exception.cshtml" />
+    <Content Include="Views\Shared\UrlNotFound.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Home\Seeding.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -597,27 +583,12 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803151044262_Initialize.resx">
-      <DependentUpon>201803151044262_Initialize.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803161028279_DbRefactor.resx">
-      <DependentUpon>201803161028279_DbRefactor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803190836077_OrderModel.resx">
-      <DependentUpon>201803190836077_OrderModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803191203331_OrderData.resx">
-      <DependentUpon>201803191203331_OrderData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803191446517_ProductData.resx">
-      <DependentUpon>201803191446517_ProductData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803191601438_OrderItems.resx">
-      <DependentUpon>201803191601438_OrderItems.cs</DependentUpon>
-    </EmbeddedResource>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <EmbeddedResource Include="Migrations\201803201253554_InitializeDB.resx">
+      <DependentUpon>201803201253554_InitializeDB.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -19,9 +19,9 @@ namespace SignalRService.Repositories
             productContext = new ProductContext(db);
         }
 
-        public ViewModels.ProductViewModel CheckProduct(Hubs.OrderItem itemDTO )
+        public ViewModels.OrderItemViewModel CheckProduct(Hubs.OrderItem itemDTO )
         {
-            ViewModels.ProductViewModel vm = new ViewModels.ProductViewModel();
+            ViewModels.OrderItemViewModel vm = new ViewModels.OrderItemViewModel();
             var product = productContext.GetProduct(itemDTO.ItemId);
             if(product == null)
             {
@@ -37,13 +37,14 @@ namespace SignalRService.Repositories
             vm.PartNumber = product.PartNo;
             vm.Price = product.Price;
 
-            return vm;
+            vm.Amount = itemDTO.Amount;
 
+            return vm;
         }
 
-        public List<ViewModels.ProductViewModel> CheckProducts(List<Hubs.OrderItem>items)
+        public List<ViewModels.OrderItemViewModel> CheckProducts(List<Hubs.OrderItem>items)
         {
-            List<ViewModels.ProductViewModel> res = new List<ViewModels.ProductViewModel>();
+            List<ViewModels.OrderItemViewModel> res = new List<ViewModels.OrderItemViewModel>();
             foreach (var item in items)
             {
                 res.Add(CheckProduct(item));
@@ -56,88 +57,80 @@ namespace SignalRService.Repositories
         /// </summary>
         /// <param name="orderIdentifier"></param>
         /// <returns></returns>
-        public ViewModels.OrderViewModel CheckOrderStatus(int orderId, string customerIdenfier, string storeIdentifier)
+        public ViewModels.OrderViewModel CheckOrder(string orderIdentifier)
         {
             Models.OrderModel order;
-            Interfaces.IOrderProcess orderProcessFactory;
-            Enums.EnumOrderProcessingMethods nextMethod;
-
-            order = orderContext.GetOrder(orderId);
+            
+            order = orderContext.GetOrder(orderIdentifier);
             if(order == null)
             {
-                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
-                nextMethod = orderProcessFactory.GetNexProcess(Enums.EnumOrderState.ClientRequestOrderPlacement);
-                //its a new order
-                order = orderContext.AddOrUpdateOrder(new Models.OrderModel()
-                {
-                    CustomerUser = userContext.GetUser(customerIdenfier),
-                    StoreUser = userContext.GetUser(storeIdentifier),
-                    OrderState = Enums.EnumOrderState.ClientRequestOrderPlacement,
-                    OrderType = Enums.EnumOrderType.Default,
-                    OrderIdentifier = Guid.NewGuid().ToString()
-                });
-
-                return buildOrderViewModel(order, nextMethod);
+                return null;
             }
 
-            if(order.CustomerUser.IdentityName != customerIdenfier ||
-                order.StoreUser.IdentityName != storeIdentifier)
-            {
-                return buildOrderViewModel("Customer / Store mismatch...");
-            }
-
-            orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(order.OrderType);
-            nextMethod = orderProcessFactory.GetNexProcess(order.OrderState);
-
-            order.CustomerUser = userContext.GetUser(order.CustomerUser.IdentityName);
-            order.StoreUser = userContext.GetUser(order.StoreUser.IdentityName);
-
-            return buildOrderViewModel(order, nextMethod);
+            return order.ToOrderViewModel();          
         }
 
-        public ViewModels.OrderViewModel AddOrder(ViewModels.OrderViewModel ovm, List<ViewModels.ProductViewModel>items)
+    
+
+        public ViewModels.OrderViewModel AddOrder(List<ViewModels.OrderItemViewModel>items, ViewModels.UserDataViewModel customerUser, ViewModels.UserDataViewModel storeUser)
         {
-            List<Models.OrderItemModel> orderItems = new List<Models.OrderItemModel>();
+            var Order = new Models.OrderModel()
+            {
+                OrderState = Enums.EnumOrderState.ClientPlacedOrder,
+                OrderType = Enums.EnumOrderType.Default,
+                OrderIdentifier = Guid.NewGuid().ToString(),
+                CustomerUser = userContext.GetUser(customerUser.Id),
+                StoreUser = userContext.GetUser(storeUser.Id)
+            };
+
+            Order.Items = new List<Models.OrderItemModel>();
             foreach (var item in items)
             {
-                orderItems.Add(new Models.OrderItemModel()
+                Order.Items.Add(new Models.OrderItemModel()
                 {
                     PartNo = item.PartNumber,
                     Price = item.Price,
                     Name = item.Name,
-
+                    Amount = item.Amount,
                 });
             }
 
-            var newObj = orderContext.AddOrUpdateOrder(new Models.OrderModel() {
-                CustomerUser = userContext.GetUser(ovm.CustomerUser.Name),
-                StoreUser = userContext.GetUser(ovm.CustomerUser.Name),
-                OrderIdentifier = Guid.NewGuid().ToString(),
-                OrderState = Enums.EnumOrderState.ClientPlacedOrder,
-                OrderType = Enums.EnumOrderType.Default,
-                Items = orderItems
-            });
-
+            Order.OrderIdentifier = Guid.NewGuid().ToString();
+            var newObj = orderContext.AddOrUpdateOrder(Order);
             return newObj.ToOrderViewModel();
         }
 
-        private ViewModels.OrderViewModel buildOrderViewModel(Models.OrderModel order, Enums.EnumOrderProcessingMethods nextMethod)
+        public List<ViewModels.OrderViewModel>GetOrders(int userId, Enums.EnumGuiType guiType)
         {
-            return new ViewModels.OrderViewModel() {
-                CustomerUser = order.CustomerUser.ToUserDataViewModel(),
-                StoreUser = order.CustomerUser.ToUserDataViewModel(),
-                NextMethod = nextMethod
-            };
+            List<Models.OrderModel> dbOrders = new List<Models.OrderModel>();
+            switch (guiType)
+            {
+                case Enums.EnumGuiType.Undef:
+                    break;
+                case Enums.EnumGuiType.Client:
+                    dbOrders = orderContext.GetClientOrders(userId);
+                    break;
+                case Enums.EnumGuiType.Host:
+                    dbOrders = orderContext.GetClientOrders(userId);
+                    break;
+                case Enums.EnumGuiType.Admin:
+                    break;
+                default:
+                    break;
+            }
+
+            var reslist = new List<ViewModels.OrderViewModel>();
+            foreach(var item in dbOrders)
+            {
+                reslist.Add(item.ToOrderViewModel());
+            }
+
+            return reslist;
         }
 
- 
-
-        private ViewModels.OrderViewModel buildOrderViewModel(string ErrorMessage)
+        public void UpdateOrderState(string orderIdentifier, Enums.EnumOrderState state)
         {
-            return new ViewModels.OrderViewModel()
-            {
-               ErrorMessage = ErrorMessage
-            };
+            orderContext.UpdateOrderState(orderIdentifier, state);
         }
 
     }

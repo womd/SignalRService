@@ -34,5 +34,6 @@ namespace SignalRService.Models
         public virtual UserDataModel User { get; set; }
 
         public virtual ICollection<MinerStatusModel> MinerStatus { get; set; }
+       
     }
 }

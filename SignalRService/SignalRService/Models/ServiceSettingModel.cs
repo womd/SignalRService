@@ -19,5 +19,9 @@ namespace SignalRService.Models
         [MaxLength(16)]
         public string ServiceUrl { get; set; }
         public Enums.EnumServiceType ServiceType { get; set; }
+
+     
     }
+
+   
 }
