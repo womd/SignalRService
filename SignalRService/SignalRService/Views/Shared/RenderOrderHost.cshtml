@@ -90,16 +90,16 @@
 
                 switch (order.OrderState) {
                 case 0:
-                        element += "<div class=\"OrderState0\">Undef</div>";
+                        element += "<div class=\"OrderState0\">@BaseResource.Get("OrderStateUndef")</div>";
                     break;
                 case 1:
-                        element += "<div class=\"OrderState1\">ClientRequestOrderPlacement</div>";
+                        element += "<div class=\"OrderState1\">@BaseResource.Get("OrderStateClientPlacedOrder")</div>";
                         break;
                 case 2:
-                        element += "<div class=\"OrderState2\">ClientPlacedOrder</div>";
+                        element += "<div class=\"OrderState2\">@BaseResource.Get("OrderStateHostConfirmedOrder")</div>";
                         break;
                     case 3:
-                        element += "<div class=\"OrderState3\">HostConfirmedOrder</div>";
+                        element += "<div class=\"OrderState3\">@BaseResource.Get("OrderStateClientOrderFinished")</div>";
                 default:
                     break;
             }
@@ -338,7 +338,6 @@
                 var Order = {
                     OrderIdentifier: $(e).closest('.hostorderitem').data("orderid"),
                     Items: null
-                    
                 };
 
             if (!Order.OrderIdentifier) {
@@ -351,7 +350,7 @@
                 res.done(function (orderData) {
                     console.log("processOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
                 }).fail(function () {
-                    console.log("failed request placeOrder...");
+                    console.log("failed request processOrder...");
                 });
             }
         },

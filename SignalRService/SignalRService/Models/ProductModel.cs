@@ -7,7 +7,7 @@ using System.Web;
 
 namespace SignalRService.Models
 {
-    public class ProductModel
+    public class ProductModel : BaseModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

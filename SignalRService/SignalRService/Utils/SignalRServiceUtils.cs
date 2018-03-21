@@ -19,6 +19,13 @@ namespace SignalRService.Utils
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.clientCallback(data);
         }
 
+        public static List<string>JoinClientLists(List<string>item1,List<string>item2)
+        {
+            List<string> clientlist = new List<string>();
+            clientlist.AddRange(item1);
+            clientlist.AddRange(item2);
+            return clientlist;
+        }
       
     }
 }

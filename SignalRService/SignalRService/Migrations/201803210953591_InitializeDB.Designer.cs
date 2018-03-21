@@ -13,7 +13,7 @@ namespace SignalRService.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201803201253554_InitializeDB"; }
+            get { return "201803210953591_InitializeDB"; }
         }
         
         string IMigrationMetadata.Source

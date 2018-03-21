@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewBag.Title = BaseResource.Get("TitleLocalizationIndex");
+}
+
+<div id="LocalizationTable"></div>
+
+<script>
+        function init_ClientsJTable() {
+
+            $('#LocalizationTable').jtable({
+                title: '@BaseResource.Get("TitleLocalizationTable")',
+                //sorting: true,
+                actions: {
+                    listAction: '@Url.Action("List", "Localization", null)',
+                    createAction: '@Url.Action("Create", "Localization", null)',
+                    updateAction: '@Url.Action("Update", "Localization", null)',
+                    deleteAction: '@Url.Action("Delete", "Localization", null)'
+                },
+                fields: {
+                    Id: {
+                        key: true,
+                        list: true,
+                        visibility: "hidden"
+                    },
+                    Culture: {
+                        title: '@BaseResource.Get("LocalizationCulture")',
+                        create: true,
+                        edit: true,
+                    },
+                    Key: {
+                        title: '@BaseResource.Get("LocalizationKey")',
+                        create: true,
+                        edit: true,
+                    },
+                    Value: {
+                        title: '@BaseResource.Get("LocalizationValue")',
+                        create: true,
+                        edit: true
+                    },
+                    LastModDate: {
+                        title: '@BaseResource.Get("LocalizationLastModeDate")',
+                        create: false,
+                        edit: false,
+                        type: 'date'
+                    },
+                    ModUser: {
+                        title: '@BaseResource.Get("LocalizationModUser")',
+                        create: false,
+                        edit: false,
+                        visibility: "hidden"
+                    },
+                    WasHit: {
+                        title: '@BaseResource.Get("LocalizationWasHit")',
+                        create: false,
+                        edit: false,
+                        visibility: "hidden"
+                    },
+                    TranslationStatus: {
+                        title: '@BaseResource.Get("LocalizationTStatus")',
+                        create: false,
+                        edit: false,
+                        visibility: "hidden"
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_ClientsJTable();
+        $('#LocalizationTable').jtable('load');
+
+    });
+
+
+</script>
+

@@ -205,7 +205,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocalizationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
@@ -219,6 +221,7 @@
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
+    <Compile Include="Enums\EnumTranslationState.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
     <Compile Include="Global.asax.cs">
@@ -228,12 +231,16 @@
     <Compile Include="Hubs\ServiceHub.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
-    <Compile Include="Migrations\201803201253554_InitializeDB.cs" />
-    <Compile Include="Migrations\201803201253554_InitializeDB.Designer.cs">
-      <DependentUpon>201803201253554_InitializeDB.cs</DependentUpon>
+    <Compile Include="Localization\BaseResource.cs" />
+    <Compile Include="Localization\UiResources.cs" />
+    <Compile Include="Migrations\201803210953591_InitializeDB.cs" />
+    <Compile Include="Migrations\201803210953591_InitializeDB.Designer.cs">
+      <DependentUpon>201803210953591_InitializeDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountProperitesModel.cs" />
+    <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\LocalizationModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
@@ -246,13 +253,16 @@
     <Compile Include="Repositories\UserContext.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
+    <Compile Include="Localization\LocalizationProvider.cs" />
+    <Compile Include="Utils\CultureHelper.cs" />
+    <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
     <Compile Include="ViewModels\SignalRClientsBaseViewModel.cs" />
     <Compile Include="Models\SignalRConnectionModel.cs" />
     <Compile Include="Rest\RestServiceController.cs" />
-    <Compile Include="Utils\ModelExtensinos.cs" />
+    <Compile Include="Utils\ModelExtensions.cs" />
     <Compile Include="Utils\ProductUtils.cs" />
     <Compile Include="Utils\SimpleLogger.cs" />
     <Compile Include="Utils\ValidationUtils.cs" />
@@ -342,6 +352,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="HTML_CLIENT_EXTERNAL\HtmlClientUsingHub.html" />
+    <Content Include="Localization\LocalizationSrc.xml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -545,6 +556,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Home\Seeding.cshtml" />
+    <Content Include="Views\Localization\Index.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -586,8 +598,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803201253554_InitializeDB.resx">
-      <DependentUpon>201803201253554_InitializeDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803210953591_InitializeDB.resx">
+      <DependentUpon>201803210953591_InitializeDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -187,9 +187,21 @@ namespace SignalRService.Hubs
                         
                         orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
                         orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
-                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(orderViewModel.CustomerUser.SignalRConnections).updateOrder(orderViewModel);
+
+                        var sclients = Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections);
+                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
+                            Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                            ).updateOrder(orderViewModel);
+
                         break;
                     case Enums.EnumOrderState.HostConfirmedOrder:
+                        //the item has been receive-ack by client
+                        orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
+                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
+
+                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
+                            Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                            ).updateOrder(orderViewModel);
                         break;
                     case Enums.EnumOrderState.ClientOrderFinished:
                         break;

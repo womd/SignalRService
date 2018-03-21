@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
+using System.Xml.Serialization;
 
 namespace SignalRService.Controllers
 {
     
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
+        private readonly HostingEnvironment _app;
         private DAL.ServiceContext db = new DAL.ServiceContext();
 
         public ActionResult Index()
@@ -38,7 +41,55 @@ namespace SignalRService.Controllers
         public ActionResult SeedTestData()
         {
             _seed_testdata();
+            _seed_localization();
             return Json(new { Success = true, Message = "seeding testdata complete" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult SaveLocalization()
+        {
+            var tpath = Server.MapPath("~");
+            tpath += "Localization/LocalizationSrc.xml";
+            var respath = Localization.BaseResource.CreateLocalizationSrc(db,tpath);
+            return Json(new { Success = true, Message = "localization save to: " + respath }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult SeedLocalization()
+        {
+            try
+            {
+                List<Models.LocalizationModel> items = new List<Models.LocalizationModel>();
+                var fpath = Server.MapPath("~");
+                fpath += "Localization\\LocalizationSrc.xml";
+
+                using (var stream = System.IO.File.OpenRead(fpath))
+                {
+                    var serializer = new XmlSerializer(typeof(List<Models.LocalizationModel>));
+                    items = serializer.Deserialize(stream) as List<Models.LocalizationModel>;
+
+                    int maxCounter = items.Count;
+                    int counter = 0;
+                    foreach (var item in items)
+                    {
+                        var indb = db.Localization.FirstOrDefault(ln => ln.Key == item.Key && ln.Culture == item.Culture);
+                        if(indb == null)
+                        {
+                            db.Localization.Add(indb);
+                        } 
+                        else
+                        {
+                            indb.Value = item.Value;
+                        }
+                    }
+                    db.SaveChanges();
+                }
+
+                return Json(new { Success = true, Message = "language seeding complete" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = true, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+                throw ex;
+            }
         }
 
         private void _seed_testdata()
@@ -59,6 +110,11 @@ namespace SignalRService.Controllers
             };
             db.ServiceSettings.Add(defaultSetting);
             db.SaveChanges();
+        }
+
+        public void _seed_localization()
+        {
+          
         }
     }
 }

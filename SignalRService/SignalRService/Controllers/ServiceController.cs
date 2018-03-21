@@ -10,11 +10,9 @@ using SignalRService.Utils;
 namespace SignalRService.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class ServiceController : Controller
+    public class ServiceController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
-
-       
         public ActionResult Index()
         {
             var baseViewModel = new ViewModels.ServiceBaseViewModel()

@@ -32,12 +32,18 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
                     @{
-                if (User != null && User.Identity.IsAuthenticated)
+        if (User != null && User.Identity.IsAuthenticated)
+        {
+                <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
+                <li>@Html.ActionLink("Clients", "Index", "SignalRClients")</li>
+                <li>@Html.ActionLink("CS", "Index", "Service")</li>
+
+                if (User.IsInRole("Admin"))
                 {
-                    <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
-                    <li>@Html.ActionLink("Clients", "Index", "SignalRClients")</li>
-                    <li>@Html.ActionLink("CS", "Index", "Service")</li>
+                    <li>@Html.ActionLink("Localization", "Index", "Localization")</li>
                 }
+
+        }
                     }
 
                 </ul>

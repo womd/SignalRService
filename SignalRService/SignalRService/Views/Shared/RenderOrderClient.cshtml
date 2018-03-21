@@ -134,16 +134,16 @@
             var element = "<div class=\"clientorderstate state" + order.OrderState + "\">";
             switch (order.OrderState) {
                 case 0:
-                    element += "<div class=\"OrderState0\">Undef</div>";
+                    element += "<div class=\"OrderState0\">@BaseResource.Get("OrderStateUndef")</div>";
                     break;
                 case 1:
-                    element += "<div class=\"OrderState1\">ClientRequestOrderPlacement</div>";
+                    element += "<div class=\"OrderState1\">@BaseResource.Get("OrderStateClientPlacedOrder")</div>";
                     break;
                 case 2:
-                    element += "<div class=\"OrderState2\">ClientPlacedOrder</div>";
+                    element += "<div class=\"OrderState2\">@BaseResource.Get("OrderStateHostConfirmedOrder")</div>";
                     break;
                 case 3:
-                    element += "<div class=\"OrderState3\">HostConfirmedOrder</div>";
+                    element += "<div class=\"OrderState3\">@BaseResource.Get("OrderStateClientOrderFinished")</div>";
                 default:
                     break;
             }
@@ -327,6 +327,12 @@
             var res = servicehub.server.processOrder(Order, group);
             res.done(function (orderData) {
 
+                if (orderData.ErrorMessage) {
+                    showMessageDailog(orderData.ErrorMessage, "#orderswrapper");
+                }
+                else {
+                    $('#orderitemlist').children().remove();
+                }
                 console.log("placeOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
 
             }).fail(function () {
@@ -337,18 +343,23 @@
         processOrder: function processOrder(e) {
 
             var Order = {
-                OrderIdentifier: $(e).closest('clientorderitem').data("orderid"),
-                Items: {},
+                OrderIdentifier: $(e).closest('.clientorderitem').data("orderid"),
+                Items: null,
             };
 
-            console.log("processOrder - sending orderData");
+            if (!Order.OrderIdentifier) {
+                console.log("processOrder -> could not find orderidentifier...");
+            }
+            else {
+                console.log("client processOrder - sending orderData");
 
-            var res = servicehub.server.processOrder(Order,"@Model.SinalRGroup");
-            res.done(function (orderData) {
-                console.log("processOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
-            }).fail(function () {
-                console.log("failed request placeOrder...");
-            });
+                var res = servicehub.server.processOrder(Order, "@Model.SinalRGroup");
+                res.done(function (orderData) {
+                    console.log("processOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
+                }).fail(function () {
+                    console.log("failed request processOrder...");
+                });
+            }
         }
 
 
@@ -476,5 +487,8 @@
     }
     .clientorderstate.state2 {
         background-color: aqua;
+    }
+    .clientorderstate.state3 {
+        background-color: darkgrey;
     }
 </style>

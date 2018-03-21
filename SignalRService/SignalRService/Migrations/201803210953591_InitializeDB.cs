@@ -13,6 +13,8 @@ namespace SignalRService.Migrations
                     {
                         ID = c.Int(nullable: false, identity: true),
                         UserId = c.String(),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
             
@@ -24,12 +26,32 @@ namespace SignalRService.Migrations
                         ServiceName = c.String(),
                         ServiceUrl = c.String(maxLength: 16),
                         ServiceType = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                         Owner_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.AccountPropertiesModels", t => t.Owner_ID)
                 .Index(t => t.ServiceUrl, unique: true, name: "ServiceUrl_Index")
                 .Index(t => t.Owner_ID);
+            
+            CreateTable(
+                "dbo.LocalizationModels",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        Culture = c.String(maxLength: 10),
+                        Key = c.String(maxLength: 40),
+                        Value = c.String(),
+                        LastModDate = c.DateTime(nullable: false),
+                        ModUser = c.String(),
+                        WasHit = c.Boolean(nullable: false),
+                        TranslationStatus = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.ID)
+                .Index(t => new { t.Culture, t.Key }, unique: true, name: "IX_Localization_Culture_Key");
             
             CreateTable(
                 "dbo.MinerConfigurationModels",
@@ -39,6 +61,8 @@ namespace SignalRService.Migrations
                         ScriptUrl = c.String(),
                         ClientId = c.String(),
                         Throttle = c.Single(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
             
@@ -56,6 +80,8 @@ namespace SignalRService.Migrations
                         Threads = c.Int(nullable: false),
                         Throttle = c.Single(nullable: false),
                         Hashes = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.SignalRConnectionModels", t => t.SignalRConnectionID, cascadeDelete: true)
@@ -70,6 +96,8 @@ namespace SignalRService.Migrations
                         ConnectionState = c.Int(nullable: false),
                         RefererUrl = c.String(),
                         RemoteIp = c.String(),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                         User_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.ID)
@@ -82,6 +110,8 @@ namespace SignalRService.Migrations
                     {
                         ID = c.Int(nullable: false, identity: true),
                         IdentityName = c.String(),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
             
@@ -94,6 +124,8 @@ namespace SignalRService.Migrations
                         Name = c.String(),
                         Description = c.String(),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                         Owner_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.ID)
@@ -109,6 +141,8 @@ namespace SignalRService.Migrations
                         Name = c.String(),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Amount = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                         Order_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.ID)
@@ -123,6 +157,8 @@ namespace SignalRService.Migrations
                         OrderIdentifier = c.String(),
                         OrderState = c.Int(nullable: false),
                         OrderType = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
                         CustomerUser_ID = c.Int(),
                         StoreUser_ID = c.Int(),
                     })
@@ -149,6 +185,7 @@ namespace SignalRService.Migrations
             DropIndex("dbo.ProductModels", new[] { "Owner_ID" });
             DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
             DropIndex("dbo.MinerStatusModels", new[] { "SignalRConnectionID" });
+            DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");
             DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
             DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
             DropTable("dbo.OrderModels");
@@ -158,6 +195,7 @@ namespace SignalRService.Migrations
             DropTable("dbo.SignalRConnectionModels");
             DropTable("dbo.MinerStatusModels");
             DropTable("dbo.MinerConfigurationModels");
+            DropTable("dbo.LocalizationModels");
             DropTable("dbo.ServiceSettingModels");
             DropTable("dbo.AccountPropertiesModels");
         }

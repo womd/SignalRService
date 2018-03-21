@@ -7,7 +7,7 @@ using System.Web;
 
 namespace SignalRService.Utils
 {
-    public static class ModelExtensinos
+    public static class ModelExtensions
     {
         public static ServiceSettingViewModel ToServiceSettingViewModel(this ServiceSettingModel dbmodel )
         {
@@ -124,7 +124,19 @@ namespace SignalRService.Utils
             };
         }
 
-       
+        public static ViewModels.LocalizationViewModel ToLocalizationViewModel(this Models.LocalizationModel model)
+        {
+            return new LocalizationViewModel() {
+                Culture = model.Culture,
+                Key = model.Key,
+                LastModDate = model.LastModDate,
+                ModUser = model.ModUser,
+                TranslationStatus = model.TranslationStatus,
+                Id = model.ID,
+                Value = model.Value,
+                WasHit = model.WasHit
+            };
+        }
 
 
     }

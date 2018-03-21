@@ -11,11 +11,10 @@ using System.Web.Mvc;
 namespace SignalRService.Controllers
 {
    
-    public class SignalRClientsController : Controller
+    public class SignalRClientsController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
 
-        // GET: SignalRClients
         public ActionResult Index()
         {
             var signalRclientsBaseViewModel = new ViewModels.SignalRClientsBaseViewModel()

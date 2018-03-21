@@ -7,9 +7,12 @@
 
 @Ajax.ActionLink("Seed TestData", "SeedTestData", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "testseedbtn", @class = "btn btn-primary" })
 
+@Ajax.ActionLink("Seed Localization", "SeedLocalization", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "locseedbtn", @class = "btn btn-primary" })
+@Ajax.ActionLink("Save Localization", "SaveLocalization", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "locsavebtn", @class = "btn btn-primary" })
+
 <script>
     function onSuccess() {
-        alert("Seed TestData done...");
+        alert("success called...");
     }
 
 </script>

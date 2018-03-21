@@ -9,10 +9,10 @@ using System.Web.Mvc;
 namespace SignalRService.Controllers
 {
     [Authorize]
-    public class ServiceConfigurationController : Controller
+    public class ServiceConfigurationController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
-        // GET: ServiceConfiguration
+
         public ActionResult Index()
         {
             return View();

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SignalRService.Models
 {
-    public class AccountPropertiesModel
+    public class AccountPropertiesModel : BaseModel
     {
         [Key]
         public int ID { get; set; }
