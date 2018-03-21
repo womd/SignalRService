@@ -332,6 +332,7 @@
                 }
                 else {
                     $('#orderitemlist').children().remove();
+                    totalsBox.calcTotals();
                 }
                 console.log("placeOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
 

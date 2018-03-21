@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Transports;
 using SignalRService.Extensions;
 using SignalRService.Utils;
 
@@ -24,6 +25,20 @@ namespace SignalRService.Hubs
             userRepository = new Repositories.UserRepository(db);
         }
 
+        private int _RemoveDeadConnections()
+        {
+            var heartBeat = GlobalHost.DependencyResolver.Resolve<ITransportHeartbeat>();
+            var conns = heartBeat.GetConnections().Select(x => x.ConnectionId).ToList();
+
+            var rmcnt = 0;
+            var deadConnections = db.SignalRConnections.Where(x => !conns.Contains(x.SignalRConnectionId)).ToList();
+            rmcnt = deadConnections.Count;
+            db.SignalRConnections.RemoveRange(deadConnections);
+            db.SaveChanges();
+            return rmcnt;
+        }
+
+
         public override Task OnConnected()
         {
             string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
@@ -40,6 +55,7 @@ namespace SignalRService.Hubs
                 db.AddConnection(Context.ConnectionId, refererUrl, remoteIP);
             }
 
+            _RemoveDeadConnections();
             return base.OnConnected();
         }
 
@@ -89,12 +105,18 @@ namespace SignalRService.Hubs
             return reslist;
         }
 
+        [Authorize]
         public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType)
         {
             //see which user - get orders
             var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
-            var orders = orderRepository.GetOrders(user.Id,guiType);
-            return orders;
+            if (Context.Request.User.Identity.Name == user.Name)
+            {
+                var orders = orderRepository.GetOrders(user.Id, guiType);
+                return orders;
+            } else {
+                return new List<ViewModels.OrderViewModel>();
+            }
         }
 
         private ViewModels.ProductViewModel _stageProduct(ProductData data, string group)
@@ -137,6 +159,7 @@ namespace SignalRService.Hubs
             return resVm;
         }
 
+        [Authorize]
         public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
         {
             return await Task.Run(() => _stageProduct(data,group));
@@ -149,6 +172,7 @@ namespace SignalRService.Hubs
             Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).restageAll(group));
         }
 
+        [Authorize]
         public void RemoveProduct(string id, string group)
         {
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
@@ -221,6 +245,7 @@ namespace SignalRService.Hubs
             return orderViewModel;
         }
 
+        [Authorize]
         public async Task<ViewModels.OrderViewModel> ProcessOrder(OrderDataDTO data, string group)
         {
              return await Task.Run(() => _processOrderRequest(data, group));

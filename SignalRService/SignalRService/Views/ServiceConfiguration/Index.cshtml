@@ -32,7 +32,10 @@
                     ServiceUrl: {
                         title: 'Url',
                         create: true,
-                        edit: true
+                        edit: true,
+                        display: function (data) {
+                            return "<a href=\"/GoTo/" + data.record.ServiceUrl + "\">" + data.record.ServiceUrl + "</a>";
+                        }
                     },
                     ServiceType: {
                         title: 'ServiceType',

@@ -13,6 +13,11 @@ namespace SignalRService
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            routes.MapRoute("GotoRooute",
+                            "GoTo/{url}",
+                            new { controller = "Service", action = "Goto", url = UrlParameter.Optional }
+                            );
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
