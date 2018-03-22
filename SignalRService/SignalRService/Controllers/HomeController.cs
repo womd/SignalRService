@@ -73,7 +73,7 @@ namespace SignalRService.Controllers
                         var indb = db.Localization.FirstOrDefault(ln => ln.Key == item.Key && ln.Culture == item.Culture);
                         if(indb == null)
                         {
-                            db.Localization.Add(indb);
+                            db.Localization.Add(item);
                         } 
                         else
                         {

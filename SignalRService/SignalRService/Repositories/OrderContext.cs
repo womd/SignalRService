@@ -57,5 +57,24 @@ namespace SignalRService.Repositories
             dbOrder.OrderState = state;
             _db.SaveChanges();
         }
+
+        public List<Models.OrderModel>GetOrders()
+        {
+            return _db.Orders.ToList();
+        }
+
+        /// <summary>
+        /// removes an order and its items
+        /// </summary>
+        /// <param name="orderIdentifier"></param>
+        public void Remove(string orderIdentifier)
+        {
+            var toRemove = _db.Orders.FirstOrDefault(x => x.OrderIdentifier == orderIdentifier);
+
+            _db.OrderItems.RemoveRange(toRemove.Items);
+            _db.Orders.Remove(toRemove);
+
+            _db.SaveChanges();
+        }
     }
 }

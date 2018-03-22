@@ -11,7 +11,7 @@ namespace SignalRService.ViewModels
         public string PartNumber { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int OwnerId { get; set; }
+        public UserDataViewModel Owner { get; set; }
         public int ErrorNumber { get; set; }
         public string ErrorMessage { get; set; }
         public decimal Price { get; set; }

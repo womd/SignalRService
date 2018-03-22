@@ -1,0 +1,59 @@
+﻿
+
+<div id="ProductListJTable"></div>
+
+
+    <script>
+
+        function init_ClientsJTable() {
+
+            $('#ProductListJTable').jtable({
+                title: 'BaseResource.Get("TitleProductList")',
+                actions: {
+                    listAction: '@Url.Action("List", "Product", null)',
+                    createAction: '@Url.Action("Create", "Product", null)',
+                    updateAction: '@Url.Action("Update", "Product", null)',
+                    deleteAction: '@Url.Action("Delete", "Product", null)'
+                },
+                fields: {
+                    Id: {
+                        title: '@BaseResource.Get("Id")',
+                        key: true,
+                        list: false
+                    },
+                    PartNumber: {
+                        title: '@BaseResource.Get("PartNumber")'
+                    },
+                    Name: {
+                        title: '@BaseResource.Get("ProductName")',
+                    },
+                    Description: {
+                        title: '@BaseResource.Get("Description")'
+                    },
+                    Owner: {
+                        title: '@BaseResource.Get("Owner")',
+                        display: function (data) {
+                            return data.record.Owner.Name;
+                        }
+                    },
+                    Price: {
+                        title: '@BaseResource.Get("Price")',
+                        display: function (data) {
+                            return parseFloat(data.record.Price).toFixed(2);
+                        }
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_ClientsJTable();
+        $('#ProductListJTable').jtable('load');
+
+    });
+
+
+
+    </script>
+

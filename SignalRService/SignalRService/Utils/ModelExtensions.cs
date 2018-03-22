@@ -87,7 +87,7 @@ namespace SignalRService.Utils
                  Id = model.ID,
                  Description = model.Description,
                  Name = model.Name,
-                 OwnerId = model.Owner.ID,
+                 Owner = model.Owner.ToUserDataViewModel(),
                  PartNumber = model.PartNo,
                  Price = model.Price
             };
@@ -108,6 +108,16 @@ namespace SignalRService.Utils
                 vm.Items.Add(item.ToOrderItemViewModel());
             }
             return vm;
+        }
+
+        public static List<ViewModels.OrderViewModel> ToOrderViewModels(this List<Models.OrderModel> models)
+        {
+            List<ViewModels.OrderViewModel> res = new List<OrderViewModel>();
+            foreach(var item in models)
+            {
+                res.Add(item.ToOrderViewModel());
+            }
+            return res;
         }
 
         public static ViewModels.OrderItemViewModel ToOrderItemViewModel(this Models.OrderItemModel model)

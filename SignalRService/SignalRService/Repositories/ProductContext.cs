@@ -52,5 +52,10 @@ namespace SignalRService.Repositories
             return _db.Products.Where(ln => ln.Owner.ID == user.ID).ToList();
         }
 
+        public List<ProductModel>GetProducts()
+        {
+            return _db.Products.ToList();
+        }
+
     }
 }

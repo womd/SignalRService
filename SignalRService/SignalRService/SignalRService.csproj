@@ -209,6 +209,8 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocalizationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\SignalRClientsController.cs" />
@@ -485,13 +487,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="transformWebConfig.proj.xml" />
-    <Content Include="Web.base.config" />
-    <Content Include="Web.base.Debug.config">
-      <DependentUpon>Web.base.config</DependentUpon>
-    </Content>
-    <Content Include="Web.base.Release.config">
-      <DependentUpon>Web.base.config</DependentUpon>
-    </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
@@ -557,14 +552,12 @@
     </Content>
     <Content Include="Views\Home\Seeding.cshtml" />
     <Content Include="Views\Localization\Index.cshtml" />
+    <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Order\OrderList.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\Product\ProductList.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="Web.base.ATNID1003HostConfiguration.config">
-      <DependentUpon>Web.base.config</DependentUpon>
-    </None>
-    <None Include="Web.base.SomeeHostConfiguration.config">
-      <DependentUpon>Web.base.config</DependentUpon>
     </None>
     <Content Include="web.config" />
     <None Include="web.Debug.config">
@@ -579,7 +572,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Product\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

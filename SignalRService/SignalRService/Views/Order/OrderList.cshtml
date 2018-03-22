@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = BaseResource.Get("TitleOrderList");
+}
+
+<div id="OrderListJTable"></div>
+
+
+    <script>
+
+        function init_ClientsJTable() {
+
+            $('#OrderListJTable').jtable({
+                title: '@BaseResource.Get("TitleOrderList")',
+                actions: {
+                    listAction: '@Url.Action("List", "Order", null)',
+                    createAction: '@Url.Action("Create", "Order", null)',
+                    updateAction: '@Url.Action("Update", "Order", null)',
+                    deleteAction: '@Url.Action("Delete", "Order", null)'
+                },
+                fields: {
+                    CustomerUser: {
+                        title: '@BaseResource.Get("CustomerName")',
+                        display: function (data) {
+                            return data.record.CustomerUser.Name;
+                        }
+                    },
+                    StoreUser: {
+                        title: '@BaseResource.Get("StoreUserName")',
+                        display: function (data) {
+                            return data.record.StoreUser.Name;
+                        }
+                    },
+                    OrderIdentifier: {
+                        title: '@BaseResource.Get("OrderIdentifier")',
+                        key: true
+                    },
+                    OrderState: {
+                        title: '@BaseResource.Get("OrderState")'
+                    },
+                    OrderType: {
+                        title: '@BaseResource.Get("OrderType")'
+                    },
+                    NextMethod: {
+                        title: '@BaseResource.Get("NextMethod")'
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_ClientsJTable();
+        $('#OrderListJTable').jtable('load');
+
+    });
+
+
+
+    </script>
+
