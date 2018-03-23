@@ -18,6 +18,6 @@ namespace SignalRService.Models
 
         public virtual ICollection<SignalRConnectionModel> SignalRConnections { get; set; }
         public virtual ICollection<ProductModel> Products { get; set; }
-
+        public virtual ICollection<ServiceSettingModel> ServiceSettings { get; set; }
     }
 }

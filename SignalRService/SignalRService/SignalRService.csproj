@@ -214,6 +214,7 @@
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\SignalRClientsController.cs" />
+    <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
     <Compile Include="Enums\EnumOrderProcessingMethods.cs" />
@@ -235,12 +236,11 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201803210953591_InitializeDB.cs" />
-    <Compile Include="Migrations\201803210953591_InitializeDB.Designer.cs">
-      <DependentUpon>201803210953591_InitializeDB.cs</DependentUpon>
+    <Compile Include="Migrations\201803232033536_InitializeDb.cs" />
+    <Compile Include="Migrations\201803232033536_InitializeDb.Designer.cs">
+      <DependentUpon>201803232033536_InitializeDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountProperitesModel.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
@@ -261,6 +261,7 @@
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
+    <Compile Include="ViewModels\RoleViewModel.cs" />
     <Compile Include="ViewModels\SignalRClientsBaseViewModel.cs" />
     <Compile Include="Models\SignalRConnectionModel.cs" />
     <Compile Include="Rest\RestServiceController.cs" />
@@ -284,6 +285,7 @@
     <Compile Include="Utils\SignalRServiceUtils.cs" />
     <Compile Include="ViewModels\ServiceSettingViewModel.cs" />
     <Compile Include="ViewModels\UserDataViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -557,6 +559,8 @@
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\Product\ProductList.cshtml" />
     <Content Include="web.Base.config" />
+    <Content Include="Views\UserRoles\Index.cshtml" />
+    <Content Include="Views\UserRoles\RolesJTable.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -591,8 +595,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803210953591_InitializeDB.resx">
-      <DependentUpon>201803210953591_InitializeDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803232033536_InitializeDb.resx">
+      <DependentUpon>201803232033536_InitializeDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -10,7 +10,7 @@ namespace SignalRService.ViewModels
         public int Id { get; set; }
         public string ServiceName { get; set; }
         public string ServiceUrl { get; set; }
-        public string ServiceType { get; set; }
+        public int ServiceType { get; set; }
 
         public ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel { get; set; }
         public ViewModels.SignalRBaseConfigurationViewModel SiganlRBaseConfigurationVieModel { get; set; }

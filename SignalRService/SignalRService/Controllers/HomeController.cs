@@ -94,8 +94,8 @@ namespace SignalRService.Controllers
 
         private void _seed_testdata()
         {
-            var defAccountProp = new Models.AccountPropertiesModel() { UserId = "anonymous" };
-            db.AccountProperties.Add(defAccountProp);
+            var defAccountProp = new Models.UserDataModel() { IdentityName = "anonymous" };
+            db.UserData.Add(defAccountProp);
 
             //var defaultUser = new Models.UserDataModel() { IdentityName = "Anonymous" };
             //db.UserData.Add(defaultUser);

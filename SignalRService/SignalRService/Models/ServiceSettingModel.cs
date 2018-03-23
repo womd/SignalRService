@@ -12,7 +12,7 @@ namespace SignalRService.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public virtual AccountPropertiesModel Owner { get; set; }
+        public virtual UserDataModel Owner { get; set; }
 
         public string ServiceName { get; set; }
         [Index("ServiceUrl_Index", IsUnique = true)]

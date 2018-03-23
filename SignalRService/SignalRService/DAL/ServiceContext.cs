@@ -18,7 +18,6 @@ namespace SignalRService.DAL
 
         public DbSet<SignalRConnectionModel>SignalRConnections { get; set; }
         public DbSet<UserDataModel>UserData { get; set; }
-        public DbSet<AccountPropertiesModel>AccountProperties { get; set; }
         public DbSet<ServiceSettingModel>ServiceSettings { get; set; }
         public DbSet<MinerConfigurationModel>MinerConfiurationModels { get; set; }
         public DbSet<MinerStatusModel>MinerStatus{ get; set; }

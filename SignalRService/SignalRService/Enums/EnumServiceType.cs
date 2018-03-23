@@ -7,6 +7,8 @@ namespace SignalRService.Enums
 {
     public enum EnumServiceType
     {
-        OrderService = 0
+        OrderService = 0,
+        TaxiService = 1,
+        SecurityService = 2
     }
 }

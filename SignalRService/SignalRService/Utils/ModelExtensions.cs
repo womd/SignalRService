@@ -16,7 +16,7 @@ namespace SignalRService.Utils
                 Id = dbmodel.ID,
                 ServiceName = dbmodel.ServiceName,
                 ServiceUrl = dbmodel.ServiceUrl,
-                ServiceType = dbmodel.ServiceType.ToString(),
+                ServiceType = (int)dbmodel.ServiceType,
                 MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
                 {
                     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",

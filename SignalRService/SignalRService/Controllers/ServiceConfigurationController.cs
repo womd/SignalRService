@@ -1,4 +1,5 @@
-﻿using SignalRService.Utils;
+﻿using SignalRService.Localization;
+using SignalRService.Utils;
 using SignalRService.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -18,53 +19,97 @@ namespace SignalRService.Controllers
             return View();
         }
 
-        public JsonResult ServiceList()
+        [Authorize]
+        public JsonResult List()
         {
             if (!Request.IsAuthenticated)
                 return Json(new { Result = "ERROR", Message = "unauthorized" }, JsonRequestBehavior.AllowGet);
 
+            List<Models.ServiceSettingModel> dblist = new List<Models.ServiceSettingModel>();
             List<ServiceSettingViewModel> data = new List<ServiceSettingViewModel>();
 
-            var services = db.ServiceSettings.Where(ln => ln.Owner.UserId == Request.LogonUserIdentity.User.Value);
-            foreach(var item in services)
+            if (User.IsInRole("Admin"))
+                dblist = db.ServiceSettings.ToList();
+            else
+                dblist = db.ServiceSettings.Where(ln => ln.Owner.IdentityName == User.Identity.Name).ToList();
+         
+            foreach (var item in dblist)
             {
                 data.Add( item.ToServiceSettingViewModel());
             }
-
             return Json(new { Result = "OK", Records = data }, JsonRequestBehavior.AllowGet);
 
         }
 
-        public JsonResult ServiceCreate(ServiceSettingViewModel model)
+        [Authorize]
+        public JsonResult Create(ServiceSettingViewModel model)
         {
-            if (!Request.IsAuthenticated)
-                return Json(new { Result = "ERROR", Message = "unauthorized" }, JsonRequestBehavior.AllowGet);
+            if (db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
 
-                if(db.ServiceSettings.Any(ln => ln.Owner.UserId == Request.LogonUserIdentity.User.Value && ln.ServiceName == model.ServiceName || ln.ServiceUrl == model.ServiceUrl))
-                    return Json(new { Result = "ERROR", Message = "duplicate name/url" }, JsonRequestBehavior.AllowGet);
-
-            var accountPropertie = db.AccountProperties.FirstOrDefault(ln => ln.UserId == Request.LogonUserIdentity.User.Value);
-            if(accountPropertie == null)
+            var userdata = db.UserData.FirstOrDefault(ln => ln.IdentityName == User.Identity.Name);
+            if(userdata == null)
             {
-                accountPropertie = db.AccountProperties.Add(new Models.AccountPropertiesModel()
+                userdata = db.UserData.Add(new Models.UserDataModel()
                 {
-                    UserId = Request.LogonUserIdentity.User.Value
+                    IdentityName = User.Identity.Name
                 });
             }    
             
-
             var dbobj = db.ServiceSettings.Add(new Models.ServiceSettingModel()
             {
-                Owner = accountPropertie,
+                Owner = userdata,
                 ServiceName = model.ServiceName,
                 ServiceUrl = model.ServiceUrl,
-                ServiceType = (Enums.EnumServiceType.OrderService),
-                  
-            });
+                ServiceType = (Enums.EnumServiceType)model.ServiceType,
+             });
 
             db.SaveChanges();
 
             return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [Authorize]
+        public JsonResult Update(ServiceSettingViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidData") });
+
+            try
+            {
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == model.Id);
+                if(dbObj == null)
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidSettingsId") });
+
+                if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
+
+                dbObj.ServiceName = model.ServiceName;
+                dbObj.ServiceType = (Enums.EnumServiceType)model.ServiceType;
+                dbObj.ServiceUrl = model.ServiceUrl;
+                db.SaveChanges();
+
+                return Json(new { Result = "OK", Message = "data saved.." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        public JsonResult Delete(int Id)
+        {
+            try
+            {
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == Id);
+                db.ServiceSettings.Remove(dbObj);
+                db.SaveChanges();
+                return Json(new { Result = "OK" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
         }
     }
 }

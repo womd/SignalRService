@@ -13,10 +13,10 @@
          $('#ServiceConfigurationTable').jtable({
                 title: 'Table of Services',
                 actions: {
-                    listAction: '@Url.Action("ServiceList", "ServiceConfiguration", null)',
-                    createAction: '@Url.Action("ServiceCreate", "ServiceConfiguration", null)',
-                    updateAction: '@Url.Action("ServiceUpdate", "ServiceConfiguration", null)',
-                    deleteAction: '@Url.Action("ServiceDelete","GettingStarted/DeletePerson", null)'
+                    listAction: '@Url.Action("List", "ServiceConfiguration", null)',
+                    createAction: '@Url.Action("Create", "ServiceConfiguration", null)',
+                    updateAction: '@Url.Action("Update", "ServiceConfiguration", null)',
+                    deleteAction: '@Url.Action("Delete", "ServiceConfiguration", null)'
                 },
                 fields: {
                     Id: {
@@ -40,7 +40,12 @@
                     ServiceType: {
                         title: 'ServiceType',
                         create: true,
-                        edit: true
+                        edit: true,
+                        options: {
+                            '0': '@BaseResource.Get("ServiceType0")',
+                            '1': '@BaseResource.Get("ServiceType1")',
+                            '2': '@BaseResource.Get("ServiceType2")'
+                        }
                     }
                 }
             });
