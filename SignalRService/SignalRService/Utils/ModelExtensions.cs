@@ -95,6 +95,9 @@ namespace SignalRService.Utils
 
         public static ViewModels.OrderViewModel ToOrderViewModel(this Models.OrderModel model)
         {
+            if (model == null)
+                return null;
+
             var vm = new ViewModels.OrderViewModel() {
                 CustomerUser = model.CustomerUser != null ? model.CustomerUser.ToUserDataViewModel() : new UserDataViewModel(),
                 StoreUser = model.StoreUser != null ? model.StoreUser.ToUserDataViewModel(): new UserDataViewModel(),

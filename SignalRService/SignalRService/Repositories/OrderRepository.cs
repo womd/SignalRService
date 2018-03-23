@@ -57,19 +57,7 @@ namespace SignalRService.Repositories
         /// </summary>
         /// <param name="orderIdentifier"></param>
         /// <returns></returns>
-        public ViewModels.OrderViewModel CheckOrder(string orderIdentifier)
-        {
-            Models.OrderModel order;
-            
-            order = orderContext.GetOrder(orderIdentifier);
-            if(order == null)
-            {
-                return null;
-            }
-
-            return order.ToOrderViewModel();          
-        }
-
+     
     
 
         public ViewModels.OrderViewModel AddOrder(List<ViewModels.OrderItemViewModel>items, ViewModels.UserDataViewModel customerUser, ViewModels.UserDataViewModel storeUser)
@@ -126,6 +114,11 @@ namespace SignalRService.Repositories
             }
 
             return reslist;
+        }
+
+        public ViewModels.OrderViewModel GetOrder(string orderIdentifier)
+        {
+            return orderContext.GetOrder(orderIdentifier).ToOrderViewModel();
         }
 
         public void UpdateOrderState(string orderIdentifier, Enums.EnumOrderState state)

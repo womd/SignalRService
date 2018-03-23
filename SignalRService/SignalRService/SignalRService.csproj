@@ -556,6 +556,7 @@
     <Content Include="Views\Order\OrderList.cshtml" />
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\Product\ProductList.cshtml" />
+    <Content Include="web.Base.config" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

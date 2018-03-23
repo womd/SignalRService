@@ -182,10 +182,24 @@ namespace SignalRService.Hubs
 
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
-           
-            var orderViewModel = orderRepository.CheckOrder(orderDTO.OrderIdentifier);
+
+            if (Utils.ValidationUtils.IsDangerousString(orderDTO.OrderIdentifier, out int badidx))
+            {
+                return new ViewModels.OrderViewModel() { ErrorMessage = "Invalid orderIdentifier" };
+            }
+
+       
+            var orderViewModel = orderRepository.GetOrder(orderDTO.OrderIdentifier);
+
             if(orderViewModel == null)
             {
+                var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                orderViewModel = orderProcessFactory.CheckOrder(orderDTO);
+                if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))
+                {
+                    return orderViewModel;
+                }
+
                 var orderItems = orderRepository.CheckProducts(orderDTO.Items);
                 var productOwnerId = orderItems.FirstOrDefault().OwnerId; // --!
                 var storeUser = userRepository.GetUser(productOwnerId);
@@ -204,46 +218,10 @@ namespace SignalRService.Hubs
             }
             else
             {
-                switch (orderViewModel.OrderState)
-                {
-                    case Enums.EnumOrderState.Undef:
-                        break;
-                    case Enums.EnumOrderState.ClientPlacedOrder:
-                        //the item has been acknowledged from Server
-                        
-                        orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
-                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
-
-                        var sclients = Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections);
-                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
-                            Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
-                            ).updateOrder(orderViewModel);
-
-                        break;
-                    case Enums.EnumOrderState.HostConfirmedOrder:
-                        //the item has been receive-ack by client
-                        orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
-                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
-
-                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
-                            Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
-                            ).updateOrder(orderViewModel);
-                        break;
-                    case Enums.EnumOrderState.ClientOrderFinished:
-                        break;
-                    case Enums.EnumOrderState.ServerOrderFinished:
-                        break;
-                    case Enums.EnumOrderState.Cancel:
-                        break;
-                    case Enums.EnumOrderState.Error:
-                        break;
-                    default:
-                        break;
-                }
+                var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                var orderVMResult = orderProcessFactory.ProcessOrder(orderViewModel);
+                orderViewModel = orderVMResult;
             }
-
-        
-
             return orderViewModel;
         }
 
