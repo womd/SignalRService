@@ -35,14 +35,11 @@
         if (User != null && User.Identity.IsAuthenticated)
         {
                 <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
-                <li>@Html.ActionLink("Clients", "Index", "SignalRClients")</li>
-                <li>@Html.ActionLink("CS", "Index", "Service")</li>
-
+               
                 if (User.IsInRole("Admin"))
                 {
-                    <li>@Html.ActionLink("Localization", "Index", "Localization")</li>
+                    <li> @AdminMenu() </li>
                 }
-
         }
                     }
 
@@ -67,3 +64,22 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+@helper AdminMenu() { 
+
+<ul id="adminmenu">
+    <li>@Html.ActionLink("Seeding", "Seeding", "Home")</li>
+    <li>@Html.ActionLink("Localization", "Index", "Localization")</li>
+    <li>@Html.ActionLink("Users/Roles", "Index", "UserRoles")</li>
+    <li>@Html.ActionLink("SignalRClients", "Index", "SignalRClients")</li>
+    <li>@Html.ActionLink("CS", "Index", "Service")</li>
+
+</ul>
+
+    <script>
+        $(function () {
+            $("#adminmenu").menu();
+        });
+    </script>
+
+}

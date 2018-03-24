@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class UserDataTableViewModel
+    public class UserDataSignalRTableViewModel
     {
         public string ConnectionId { get; set; }
         public string ConnectionState { get; set; }

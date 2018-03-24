@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace SignalRService.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserRolesController : BaseController
     {
         private Models.ApplicationDbContext appDbContext = new Models.ApplicationDbContext();
@@ -21,6 +22,8 @@ namespace SignalRService.Controllers
         {
             return View();
         }
+
+        #region roles-table
 
         public JsonResult RolesList()
         {
@@ -86,5 +89,87 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
         }
+
+        #endregion
+
+        #region users2roles-table
+
+        public JsonResult User2RolesList()
+        {
+            try
+            {
+                List<ViewModels.UserRolesViewModel> resList = new List<ViewModels.UserRolesViewModel>();
+                foreach (var user in appDbContext.Users)
+                {
+                    List<ViewModels.RoleViewModel> uroles = new List<ViewModels.RoleViewModel>();
+                    foreach(var role in user.Roles)
+                    {
+                        var xrole = appDbContext.Roles.FirstOrDefault(ln => ln.Id == role.RoleId);
+                        uroles.Add(new ViewModels.RoleViewModel() { Id = xrole.Id, Name = xrole.Name });
+                    }
+
+                    resList.Add(new ViewModels.UserRolesViewModel()
+                    {
+                        IdentityName = user.UserName,
+                        IdentityId = user.Id,
+                        Roles = uroles
+                    });
+                }
+                return Json(new { Result = "OK", Records = resList });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+         
+        }
+
+        public JsonResult User2RolesCreate(string IdentityName, string Roles)
+        {
+            if (!ModelState.IsValid)
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidData") });
+
+            try
+            {
+                var user = appDbContext.Users.FirstOrDefault(ln => ln.UserName == IdentityName);
+                if(user == null)
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("UserNotFound") });
+
+                var role = appDbContext.Roles.FirstOrDefault(ln => ln.Name == Roles);
+                if(role == null)
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("RoleNotFound") });
+
+                user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole() { RoleId = role.Id, UserId = user.Id });
+                appDbContext.SaveChanges();
+
+                return Json(new { Result = "OK" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+
+        }
+
+        public JsonResult User2RolesDelete(string IdentityId)
+        {
+            try
+            {
+                var user = appDbContext.Users.FirstOrDefault(ln => ln.Id == IdentityId);
+                var uroles = user.Roles.ToList();
+                foreach(var item in uroles)
+                {
+                    user.Roles.Remove(item);
+                }
+                appDbContext.SaveChanges();
+                return Json(new { Result = "OK", Message = "removed all roles..." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

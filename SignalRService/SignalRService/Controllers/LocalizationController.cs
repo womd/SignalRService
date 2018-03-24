@@ -9,7 +9,7 @@ using SignalRService.Utils;
 
 namespace SignalRService.Controllers
 {
-   
+    [Authorize(Roles = "Admin")]
     public class LocalizationController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
@@ -20,6 +20,7 @@ namespace SignalRService.Controllers
         }
 
         #region jtable-grid 
+
         public JsonResult List()
         {
             try
@@ -37,7 +38,6 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
         }
-
         public JsonResult Create(LocalizationViewModel model)
         {
             if(!ModelState.IsValid)
@@ -62,7 +62,6 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
         }
-
         public JsonResult Update(LocalizationViewModel model)
         {
             if(!ModelState.IsValid)
@@ -87,7 +86,6 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
         }
-
         public JsonResult Delete(int Id)
         {
             try

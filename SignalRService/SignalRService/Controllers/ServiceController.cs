@@ -73,25 +73,25 @@ namespace SignalRService.Controllers
 
         }
 
-        public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
-        {
-            var modelx = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
-            {
+        //public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
+        //{
+        //    var modelx = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
+        //    {
 
-                SinalRGroup = basemodel.ServiceUrl
+        //        SinalRGroup = basemodel.ServiceUrl
                 
-            };
-            return PartialView("RenderMiner", modelx);
-        }
+        //    };
+        //    return PartialView("RenderMiner", modelx);
+        //}
 
-        public ActionResult SrcStarter(string url)
-        {
-            var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
-            if (servicesetting == null)
-                return View("UrlNotFound", url);
+        //public ActionResult SrcStarter(string url)
+        //{
+        //    var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
+        //    if (servicesetting == null)
+        //        return View("UrlNotFound", url);
 
-            return View(servicesetting.ToServiceSettingViewModel());
-        }
+        //    return View(servicesetting.ToServiceSettingViewModel());
+        //}
 
         public ActionResult Test()
         {

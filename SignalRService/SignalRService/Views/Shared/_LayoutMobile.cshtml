@@ -18,22 +18,6 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div data-role="collapsible" data-mini="true">
-                <h2>Menu</h2>
-                <ul data-role="listview">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-
-                    @{
-                if (User != null && User.Identity.IsAuthenticated)
-                {
-                    <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
-                    <li>@Html.ActionLink("Clients", "Index", "SignalRClients")</li>
-                    <li>@Html.ActionLink("CS", "Index", "Service")</li>
-                }
-                    }
-
-                </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>

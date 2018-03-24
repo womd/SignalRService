@@ -9,6 +9,7 @@ using SignalRService.Utils;
 
 namespace SignalRService.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();

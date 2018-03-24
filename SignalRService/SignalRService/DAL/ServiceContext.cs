@@ -28,7 +28,6 @@ namespace SignalRService.DAL
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
             base.OnModelCreating(modelBuilder);
         }
 
@@ -78,8 +77,7 @@ namespace SignalRService.DAL
             });
             SaveChanges();
         }
-
-            public void RemoveConnection(string connectionId)
+        public void RemoveConnection(string connectionId)
         {
             var rmObj = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if (rmObj != null)
@@ -88,14 +86,12 @@ namespace SignalRService.DAL
                 SaveChanges();
             }
         }
-
         public void UpdateConnectionState(string connectionId, Enums.EnumSignalRConnectionState state)
         {
             var dbObj = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             dbObj.ConnectionState = state;
             SaveChanges();
         }
-
         public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId)
         {
             var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
@@ -126,9 +122,6 @@ namespace SignalRService.DAL
             }
             SaveChanges();
         }
-
-        
-       
 
     }
 }

@@ -1,0 +1,57 @@
+﻿
+<div id="User2RolesJTable"></div>
+
+
+    <script>
+
+        function init_User2RolesJTable() {
+
+            $('#User2RolesJTable').jtable({
+                title: '@BaseResource.Get("TitleUser2RolesJTable")',
+                actions: {
+                    listAction: '@Url.Action("User2RolesList", "UserRoles", null)',
+                    createAction: '@Url.Action("User2RolesCreate", "UserRoles", null)',
+                    updateAction: '@Url.Action("User2RolesUpdate", "UserRoles", null)',
+                    deleteAction: '@Url.Action("User2RolesDelete", "UserRoles", null)'
+                },
+                fields: {
+                    IdentityId: {
+                        title: '@BaseResource.Get("IdentityId")',
+                        key: true,
+                        list: true
+                    },
+                    IdentityName: {
+                        title: '@BaseResource.Get("IdentityName")',
+                        create: true,
+                        edit: true
+                    },
+                    Roles: {
+                        title: '@BaseResource.Get("Roles")',
+                        display: function (data) {
+                            if (data.record.Roles.length > 0) {
+
+                                var res = "<div classs='roleswrapper'>";
+                                $(data.record).each(function (idx) {
+                                    res += "<div class='roleelement'><div class='roleId'>" + this.Roles[idx].Id + "</div><div class='roleName'>" + this.Roles[idx].Name + "</div></div>";
+                                });
+                                res += "</div>";
+                                return res;
+                            }
+                            return "";
+                        }
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_User2RolesJTable();
+        $('#User2RolesJTable').jtable('load');
+
+    });
+
+
+
+    </script>
+

@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -20,16 +21,35 @@ namespace SignalRService.Models
         }
     }
 
+    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+    {
+        protected override void Seed(ApplicationDbContext context)
+        {
+            //add default roles
+            var role = context.Roles.Add(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "Admin" });
+           
+            base.Seed(context);
+        }
+    }
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("ServiceContext", throwIfV1Schema: false)
         {
+            Database.SetInitializer(new ApplicationDbContextInitializer());
         }
 
         public static ApplicationDbContext Create()
         {
+
             return new ApplicationDbContext();
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+          
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

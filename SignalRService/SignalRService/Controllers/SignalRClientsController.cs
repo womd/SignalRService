@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.SignalR;
-using SignalRService.Hubs;
+﻿using SignalRService.Hubs;
 using SignalRService.Models;
 using SignalRService.ViewModels;
 using System;
@@ -10,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SignalRService.Controllers
 {
-   
+    [Authorize(Roles = "Admin")]
     public class SignalRClientsController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
@@ -33,12 +32,12 @@ namespace SignalRService.Controllers
             {
 
                 List<SignalRConnectionModel> sigRClients = db.SignalRConnections.ToList();
-                List<UserDataTableViewModel> uvms = new List<UserDataTableViewModel>();
+                List<UserDataSignalRTableViewModel> uvms = new List<UserDataSignalRTableViewModel>();
                 foreach(var sigRC in sigRClients)
                 {
                     var mstat = sigRC.MinerStatus.FirstOrDefault();
 
-                    uvms.Add(new UserDataTableViewModel() {
+                    uvms.Add(new UserDataSignalRTableViewModel() {
                         ConnectionId = sigRC.SignalRConnectionId,
                         ConnectionState = sigRC.ConnectionState.ToString(),
                         NrOfGroups = sigRC.Groups.Count,
@@ -66,11 +65,7 @@ namespace SignalRService.Controllers
             {
                 var rmObj = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == ConnectionId);
                 db.SignalRConnections.Remove(rmObj);
-        
-                //todo:
-                //- send delete to other clients
-                //- close / block the deleted client
-
+                db.SaveChanges();
                 return Json(new { Result = "OK" });
             }
             catch (Exception ex)
@@ -79,11 +74,11 @@ namespace SignalRService.Controllers
             }
         }
 
-        public JsonResult ClientUpdate(UserDataTableViewModel model)
+        public JsonResult ClientUpdate(UserDataSignalRTableViewModel model)
         {
             try
             {
-                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
+                Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
                 return Json(new { Result = "OK", Message = "throttle update sent" });
             }
             catch(Exception ex)

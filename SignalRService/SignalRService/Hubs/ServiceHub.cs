@@ -7,6 +7,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Transports;
 using SignalRService.Extensions;
+using SignalRService.Localization;
 using SignalRService.Utils;
 
 namespace SignalRService.Hubs
@@ -55,7 +56,7 @@ namespace SignalRService.Hubs
                 db.AddConnection(Context.ConnectionId, refererUrl, remoteIP);
             }
 
-            _RemoveDeadConnections();
+           // _RemoveDeadConnections();
             return base.OnConnected();
         }
 
@@ -184,15 +185,16 @@ namespace SignalRService.Hubs
         {
 
             if (Utils.ValidationUtils.IsDangerousString(orderDTO.OrderIdentifier, out int badidx))
-            {
                 return new ViewModels.OrderViewModel() { ErrorMessage = "Invalid orderIdentifier" };
-            }
-
-       
+            
             var orderViewModel = orderRepository.GetOrder(orderDTO.OrderIdentifier);
 
             if(orderViewModel == null)
             {
+                if(orderDTO.Items.Count == 0)
+                    return new ViewModels.OrderViewModel() { ErrorMessage = BaseResource.Get("NoItemsForOrder") };
+
+
                 var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
                 orderViewModel = orderProcessFactory.CheckOrder(orderDTO);
                 if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))

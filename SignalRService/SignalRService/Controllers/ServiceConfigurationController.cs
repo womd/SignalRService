@@ -19,7 +19,6 @@ namespace SignalRService.Controllers
             return View();
         }
 
-        [Authorize]
         public JsonResult List()
         {
             if (!Request.IsAuthenticated)
@@ -41,7 +40,6 @@ namespace SignalRService.Controllers
 
         }
 
-        [Authorize]
         public JsonResult Create(ServiceSettingViewModel model)
         {
             if (db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
@@ -69,7 +67,6 @@ namespace SignalRService.Controllers
             return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
         }
 
-        [Authorize]
         public JsonResult Update(ServiceSettingViewModel model)
         {
             if (!ModelState.IsValid)

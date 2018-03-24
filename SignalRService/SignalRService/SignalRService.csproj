@@ -236,9 +236,9 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201803232033536_InitializeDb.cs" />
-    <Compile Include="Migrations\201803232033536_InitializeDb.Designer.cs">
-      <DependentUpon>201803232033536_InitializeDb.cs</DependentUpon>
+    <Compile Include="Migrations\201803241848330_InitializeDB.cs" />
+    <Compile Include="Migrations\201803241848330_InitializeDB.Designer.cs">
+      <DependentUpon>201803241848330_InitializeDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -279,7 +279,8 @@
     <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderClientConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderHostConfigurationViewModel.cs" />
-    <Compile Include="ViewModels\UserDataTableViewModel.cs" />
+    <Compile Include="ViewModels\UserRolesViewModel.cs" />
+    <Compile Include="ViewModels\UserDataSignaRTableViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\SignalRServiceUtils.cs" />
@@ -561,6 +562,7 @@
     <Content Include="web.Base.config" />
     <Content Include="Views\UserRoles\Index.cshtml" />
     <Content Include="Views\UserRoles\RolesJTable.cshtml" />
+    <Content Include="Views\UserRoles\User2RolesJTable.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -595,8 +597,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803232033536_InitializeDb.resx">
-      <DependentUpon>201803232033536_InitializeDb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803241848330_InitializeDB.resx">
+      <DependentUpon>201803241848330_InitializeDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -3,7 +3,7 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitializeDb : DbMigration
+    public partial class InitializeDB : DbMigration
     {
         public override void Up()
         {

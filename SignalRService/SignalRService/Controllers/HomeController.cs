@@ -41,7 +41,6 @@ namespace SignalRService.Controllers
         public ActionResult SeedTestData()
         {
             _seed_testdata();
-            _seed_localization();
             return Json(new { Success = true, Message = "seeding testdata complete" }, JsonRequestBehavior.AllowGet);
         }
 
@@ -92,6 +91,22 @@ namespace SignalRService.Controllers
             }
         }
 
+        public ActionResult AddChkAdminUser()
+        {
+            Models.ApplicationDbContext appContext = new Models.ApplicationDbContext();
+            var usr = appContext.Users.FirstOrDefault(ln => ln.Email == "chk.mailbox@gmail.com");
+            if (usr == null)
+                return Json(new { Success = false, Message = "chk user not found.." }, JsonRequestBehavior.AllowGet);
+
+            var role = appContext.Roles.FirstOrDefault(ln => ln.Name == "Admin");
+            if (role == null)
+                return Json(new { Success = false, Message = "Admin role not found" }, JsonRequestBehavior.AllowGet);
+
+            usr.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole() { RoleId = role.Id, UserId = usr.Id });
+            appContext.SaveChanges();
+            return Json(new { Success = true, Message = "added user chk for admin-role" }, JsonRequestBehavior.AllowGet);
+        }
+
         private void _seed_testdata()
         {
             var defAccountProp = new Models.UserDataModel() { IdentityName = "anonymous" };
@@ -112,9 +127,6 @@ namespace SignalRService.Controllers
             db.SaveChanges();
         }
 
-        public void _seed_localization()
-        {
-          
-        }
+       
     }
 }

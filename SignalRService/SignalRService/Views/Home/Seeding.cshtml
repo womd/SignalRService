@@ -10,6 +10,8 @@
 @Ajax.ActionLink("Seed Localization", "SeedLocalization", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "locseedbtn", @class = "btn btn-primary" })
 @Ajax.ActionLink("Save Localization", "SaveLocalization", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "locsavebtn", @class = "btn btn-primary" })
 
+@Ajax.ActionLink("Add CK-User as admin", "AddChkAdminUser", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "cuabtn", @class = "btn btn-primary" })
+
 <script>
     function onSuccess() {
         alert("success called...");

@@ -9,6 +9,7 @@ using SignalRService.Utils;
 
 namespace SignalRService.Controllers
 {
+    [Authorize]
     public class OrderController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();

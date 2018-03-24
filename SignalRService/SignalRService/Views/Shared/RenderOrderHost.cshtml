@@ -63,6 +63,17 @@
                 }
             });
             return pr;
+        },
+        refresh: function refresh_listItems() {
+            $("#hostitemlist").children().remove();
+            $(itemOrderHost._data_ProductList).each(function (idx) {
+                var newitem = hostProducList.createItem(this.Id, "", this.Name, this.Description, this.Price);
+                $("#hostitemlist").append(newitem);
+            });
+            $("#hostitemlist").listview();
+            $("#hostitemlist").listview('refresh');
+
+            
         }
     }
 
@@ -80,7 +91,7 @@
             })
 
             element += hostOrderList.createStatusElement(orderData)
-            element += hostOrderList.createOrderProcessElements();
+            element += hostOrderList.createOrderProcessElements(orderData);
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
             return element;
@@ -107,19 +118,12 @@
             element += "</div>";
             return element;
         },
-        initialize: function build_oderItemsElement(appendTo) {
+        initialize: function build_oderItemsElement() {
             var element = "<div id=\"hostorderswrapper\">" +
                 "<ul data-role=\"listview\" data-inset=\"true\" id=\"hostorderitemlist\">"; +
-                    "</ul></div>";
+                "</ul></div>";
+            return element;
 
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-                $(appendTo).append(element);
-                $('#hostorderitemlist').listview();
-                $('#hostorderitemlist').listview("refresh");
-            }
         },
         createOrderProduct: function create_orderProduct(itemId, caption, amount, unitPrice)
         {
@@ -133,44 +137,54 @@
                 "</div>";
             return elememt;
         },
-        createOrderProcessElements: function create_orderProcessElements()
+        createOrderProcessElements: function create_orderProcessElements(order)
         {
-            var element = "<div class=\"orderprocesswrapper\" id=\"hostorderprocesswrapper\" \">" +
-                "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
-                "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
-                "</div>";
+            var element = "<div class=\"orderprocesswrapper\" id=\"hostorderprocesswrapper\" \">";
+
+            switch (order.OrderState) {
+                case 0:
+                    break;
+                case 1:
+                    element += "<div class=\"okbtn\"><a onclick=\"itemOrderHost.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderConfirm")</a></div>";
+                    element += "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderCancel")</a></div>";
+                    break;
+                case 2:
+                    element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForClientReceiveAck")</div>";
+                    element += "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderCancel")</a></div>";
+                    break;
+                case 3:
+                    break;
+            }
+
+            element += "</div>";
             return element;
+        },
+        refresh : function redraw_items() {
+
+            $(itemOrderHost._data_OrderList).each(function () {
+                $('#hostorderitemlist').append(hostOrderList.createItem(this));
+            });
+            $('#hostorderitemlist').listview();
+            $('#hostorderitemlist').listview("refresh");
         }
     }
 
     var itemOrderHost = {
 
-        initializeTotals: function build_totalsElement(appendTo) {
-            var element = "<div id=\"hosttotalswrapper\">" +
-                "<div class=\"totaldetails\">" +
-                "<div class=\"description\">total</div>" +
-                "<div class=\"price\">0.00</div>" +
-                "</div>" +
-                "<a href=\"#\" onclick=\"loadPaymentData()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>" +
-                "</div>";
+        productListTargetSelector: "#hostProductsTab",
+        orderListTargetSelector: "#hostTabOrders",
 
-            $(appendTo).append(element);
-        },
-        initializeEditor: function build_editorElement(appendTo) {
-            var element = "<div id=\"edititemwrapper\"></div>";
-            $(appendTo).append(element);
-            $('#edititemwrapper').append(hostProducList.createEditItem());
-        },
+        _data_ProductList: [],
+        _data_OrderList: [],
+
         loadProducts: function load_products() {
 
             servicehub.server.getProducts()
                 .done(function (productList) {
-                    $(productList).each(function (idx) {
-                        var newitem = hostProducList.createItem(this.Id, "", this.Name, this.Description, this.Price);
-                        $("#hostitemlist").append(newitem);
-                    });
-                    $("#hostitemlist").listview();
-                    $("#hostitemlist").listview('refresh');
+
+                    itemOrderHost._data_ProductList = productList;
+                    hostProducList.refresh();
+                    
                 })
                 .fail(function () {
                 console.log("load_products failed..");
@@ -182,11 +196,9 @@
             servicehub.server.getOrders(type)
                 .done(function (data) {
 
-                    $(data).each(function () {
-                        $('#hostorderitemlist').append( hostOrderList.createItem(this));
-                    });
-                    $('#hostorderitemlist').listview();
-                    $('#hostorderitemlist').listview("refresh");
+                    itemOrderHost._data_OrderList = data;
+                    hostOrderList.refresh();
+                    
                 })
                 .fail(function () {
                     console.log("load_orders failed...");
@@ -194,27 +206,30 @@
         },
         run: function run(appendTo) {
 
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-                var plistelement = hostProducList.initialize('@Model.AppendToSelector', "true", "true", "true");
-                $(appendTo).append(plistelement);
+           
+                var plistelement = hostProducList.initialize("true", "true", "true");
+                $(itemOrderHost.productListTargetSelector).append(plistelement);
+
+                var productEdit = hostProducList.createEditItem();
+                $(itemOrderHost.productListTargetSelector).append(productEdit);
+
+                itemOrderHost.loadProducts();
+
                 $('#hostitemlist').listview();
                 $('#hostitemlist').listview("refresh");
 
-                hostOrderList.initialize('@Model.AppendToSelector');
-                itemOrderHost.initializeTotals('@Model.AppendToSelector');
-                itemOrderHost.initializeEditor('@Model.AppendToSelector');
-                itemOrderHost.loadProducts();
-                itemOrderHost.loadOrders(1);
-           }
+
+                var hostorderlist = hostOrderList.initialize();
+                $(itemOrderHost.orderListTargetSelector).append(hostorderlist);
+
+                itemOrderHost.loadOrders(2);
+          
         },
         stop: function stop() {
             $('#hostitemswrapper').remove();
             $('#hostorderswrapper').remove();
             $('#hosttotalswrapper').remove();
-            $('#edititemwrapper').remove();
+            $('.producteditwrapper').remove();
             
         },
         loadJqueryMobile: function load_jqueryMobile() {
@@ -356,13 +371,17 @@
         },
 
         orderUpdate: function update_order(orderData) {
-            //find statusbox for this order and update
-
-            var orderItem = hostOrderList.createItem(orderData);
-            $('#hostorderitemlist').append(orderItem);
-            $('#hostorderitemlist').listview();
-            $('#hostorderitemlist').listview("refresh");
-
+            //find in orderlist , update it, redraw
+            var dataelement = itemOrderHost._data_OrderList.find(x => x.OrderIdentifier === orderData.OrderIdentifier);
+            if (!dataelement)
+            {
+                itemOrderHost._data_OrderList.push(orderData);
+            }
+            else {
+                dataelement = orderData;
+              
+            }
+            hostOrderList.refresh();
             console.log("updating orderdata");
         }
     };
@@ -375,6 +394,19 @@
 
 
 </script>
+
+<div data-role="tabs" id="hosttabs">
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#hostProductsTab" data-ajax="false">@BaseResource.Get("HostProductsTab")</a></li>
+            <li><a href="#hostTabOrders" data-ajax="false">@BaseResource.Get("HostOrdersTab")</a></li>
+        </ul>
+    </div>
+    <div id="hostProductsTab" class="ui-body-d ui-content"></div>
+    <div id="hostTabOrders"></div>
+       
+</div>
+
 
 <style>
 
