@@ -46,6 +46,12 @@
                             '1': '@BaseResource.Get("ServiceType1")',
                             '2': '@BaseResource.Get("ServiceType2")'
                         }
+                    },
+                    User: {
+                        title: 'OwnerName',
+                        create: true,
+                        edit: true,
+                        display: function (data) { return data.record.User.Name }
                     }
                 }
             });

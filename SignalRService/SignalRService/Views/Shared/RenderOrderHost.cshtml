@@ -82,6 +82,7 @@
         createItem: function create_orderitem_entry(orderData) {
             var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderData.OrderIdentifier + "\" data-state=\"" + orderData.OrderState + "\" >" +
                 "<div class=\"orderid\">" + orderData.OrderIdentifier + "</div>" +
+                "<div class=\"orderid\">" + orderData.CreationDate + "</div>" +
                 "<div class=\"clientid\">" + orderData.CustomerUser.Name + "</div>";
 
             var ordertotal = 0;
@@ -161,6 +162,11 @@
         },
         refresh : function redraw_items() {
 
+            itemOrderHost._data_OrderList.sort(function (a, b) {
+                var x = new Date(b.CreationDate).getTime() - new Date(a.CreationDate).getTime();
+                return x;
+            });
+
             $(itemOrderHost._data_OrderList).each(function () {
                 $('#hostorderitemlist').append(hostOrderList.createItem(this));
             });
@@ -204,6 +210,7 @@
                     console.log("load_orders failed...");
                 });
         },
+
         run: function run(appendTo) {
 
            
@@ -372,13 +379,13 @@
 
         orderUpdate: function update_order(orderData) {
             //find in orderlist , update it, redraw
-            var dataelement = itemOrderHost._data_OrderList.find(x => x.OrderIdentifier === orderData.OrderIdentifier);
-            if (!dataelement)
+            var dataIndex = itemOrderHost._data_OrderList.findIndex(x => x.OrderIdentifier === orderData.OrderIdentifier);
+            if (dataIndex == -1)
             {
                 itemOrderHost._data_OrderList.push(orderData);
             }
             else {
-                dataelement = orderData;
+                itemOrderHost._data_OrderList[dataIndex] = orderData;
               
             }
             hostOrderList.refresh();
@@ -404,7 +411,6 @@
     </div>
     <div id="hostProductsTab" class="ui-body-d ui-content"></div>
     <div id="hostTabOrders"></div>
-       
 </div>
 
 
@@ -528,6 +534,8 @@
     .orderproduct .itemtotal::after {
         content: "€";
     }
+
+
 
     .hostorderitem .ordertotal {
         font-size: 1.2em;

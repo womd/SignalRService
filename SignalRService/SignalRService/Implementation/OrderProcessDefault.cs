@@ -32,6 +32,12 @@ namespace SignalRService.Implementation
             switch (orderViewModel.OrderState)
             {
                 case Enums.EnumOrderState.Undef:
+                    //its a new order 
+                    orderViewModel = orderRepository.AddOrder(orderViewModel.Items, orderViewModel.CustomerUser, orderViewModel.StoreUser);
+
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
+                        Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                        ).updateOrder(orderViewModel);
                     break;
                 case Enums.EnumOrderState.ClientPlacedOrder:
                     //the item has been acknowledged from Server
@@ -39,7 +45,6 @@ namespace SignalRService.Implementation
                     orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
                     orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
 
-                    var sclients = Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections);
                     GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
                         Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
                         ).updateOrder(orderViewModel);

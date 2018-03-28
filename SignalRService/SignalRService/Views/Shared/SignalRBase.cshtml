@@ -1,4 +1,4 @@
-﻿@model  SignalRService.ViewModels.SignalRBaseConfigurationViewModel
+﻿@model  SignalRService.ViewModels.ServiceSettingViewModel
 
   
     <script>
@@ -88,46 +88,15 @@
 
             }
 
-            //----
-            servicehub.client.newOrder = function (ordervm) {
-                if (itemOrderClient) {
-                    var orderItem = placedOrderList.createItem(ordervm);
-                    $('#clientorderitemlist').append(orderItem);
-                    $('#clientorderitemlist').listview();
-                    $('#clientorderitemlist').listview("refresh");
-                }
-
-                if (itemOrderHost) {
-                    var orderItem = hostOrderList.createItem(ordervm);
-                    $('#hostorderitemlist').append(orderItem);
-                    $('#hostorderitemlist').listview();
-                    $('#hostclientorderitemlist').listview("refresh");
-                }
-
-                console.log("called new order.");
-            }
-
+         
             servicehub.client.updateOrder = function (ordervm) {
 
-                if (itemOrderClient) {
-                    var orderItemElement = $('#clientorderitemlist').find("*[data-orderid='" + ordervm.OrderIdentifier + "']");
-                    $(orderItemElement).remove();
-
-                    var orderItem = placedOrderList.createItem(ordervm);
-                    $('#clientorderitemlist').append(orderItem);
-                    $('#clientorderitemlist').listview();
-                    $('#clientorderitemlist').listview("refresh");
+                if (typeof itemOrderClient !== 'undefined') {
+                    itemOrderClient.orderUpdate(ordervm);
                 }
 
-                if (itemOrderHost) {
-                    var orderItemElement = $('#hostorderitemlist').find("*[data-orderid='" + ordervm.OrderIdentifier + "']");
-                    $(orderItemElement).remove();
-                    
-
-                    var orderItem = hostOrderList.createItem(ordervm);
-                    $('#hostorderitemlist').append(orderItem);
-                    $('#hostorderitemlist').listview();
-                    $('#hostclientorderitemlist').listview("refresh");
+                if (typeof itemOrderHost !== 'undefined') {
+                    itemOrderHost.orderUpdate(ordervm);
                 }
             }
 
@@ -145,15 +114,32 @@
             // Start the connection.
             $.connection.hub.start().done(function () {
 
+
+
                 @if (Model != null)
                 {
                         <text>
-                            servicehub.server.joinGroup("@Model.SinalRGroup");
+                            servicehub.server.joinGroup("@Model.SiganlRBaseConfigurationVieModel.SinalRGroup");
                         </text>
                 }
 
+                @{
+                    if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+                    {
+                        <text>
+                        itemOrderHost.run(".body-content");
+                        </text>
+                    }
+                    else
+                    {
+                        <text>
+                        itemOrderClient.run(".body-content");
+                        </text>
+                    }
+                }
 
-                });
+
+                    });
 
         });
 

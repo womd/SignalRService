@@ -22,6 +22,7 @@ namespace SignalRService.DAL
         public DbSet<MinerConfigurationModel>MinerConfiurationModels { get; set; }
         public DbSet<MinerStatusModel>MinerStatus{ get; set; }
         public DbSet<OrderModel>Orders { get; set; }
+        public DbSet<OrderJournalModel>OrderJournal { get; set; }
         public DbSet<ProductModel>Products { get; set; }
         public DbSet<OrderItemModel>OrderItems { get; set; }
         public DbSet<LocalizationModel> Localization { get; set; }

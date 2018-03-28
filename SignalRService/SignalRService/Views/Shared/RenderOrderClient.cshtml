@@ -54,6 +54,15 @@
                 "</a>" +
                 "</li>";
             return element;
+        },
+        refresh: function redraw_items() {
+
+            $(itemOrderClient._data_ProductList).each(function (idx) {
+                var newitem = productItemList.createItem(this.Id, "", this.Name, this.Description, this.Price);
+                $("#customeritemlist").append(newitem);
+            });
+            $("#customeritemlist").listview();
+            $("#customeritemlist").listview('refresh');
         }
     }
 
@@ -74,7 +83,7 @@
                 "<div class=\"unitcount\">1</div>" +
                 "<div class=\"unitprice\">" + unitprice + "</div>" +
                 "</div>" +
-                "<a href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">btnRemove" +
+                "<a href=\"#\" onclick=\"itemOrderClient.orderListRemove(this)\">@BaseResource.Get("BtnClientOrderItemRemove")" +
                 "</a>" +
                 "</li>";
             return element;
@@ -91,7 +100,7 @@
             });
             return itemList;
         }
-       
+
 
     }
 
@@ -100,7 +109,8 @@
         createItem: function create_orderitem_entry(statusData) {
             var element = "<li data-icon=\"false\" class=\"clientorderitem\" data-orderid=\"" + statusData.OrderIdentifier + "\" data-state=\"" + statusData.OrderState + "\" >" +
                 "<div class=\"orderid\">" + statusData.OrderIdentifier + "</div>" +
-                "<div class=\"hostid\">" + statusData.StoreUser.Name + "</div>";
+                "<div class=\"createdate\">" + statusData.CreationDate + "</div>" +
+                "<div class=\"username\">" + statusData.StoreUser.Name + "</div>";
 
             var ordertotal = 0;
             $(statusData.Items).each(function (idx) {
@@ -112,12 +122,12 @@
             })
 
             element += placedOrderList.createStatusElement(statusData)
-            element += placedOrderList.createOrderProcessElements();
+            element += placedOrderList.createOrderProcessElements(statusData);
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
 
             return element;
-           
+
         },
         createOrderProduct: function create_orderProduct(itemId, caption, amount, unitPrice) {
             var elememt = "<div class=\"orderproduct\">" +
@@ -150,11 +160,25 @@
             element += "</div>";
             return element;
         },
-        createOrderProcessElements: function create_orderProcessElements() {
-            var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">" +
-                "<div class=\"nokbtn\"><a onclick=\"orderProcessNotOkClicked(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">nicht OK</a></div>" +
-                "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">OK</a></div>" +
-                "</div>";
+        createOrderProcessElements: function create_orderProcessElements(order) {
+            var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">";
+
+              switch (order.OrderState) {
+                case 0:
+                    break;
+                  case 1:
+                     element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForHostConfirm")</div>";
+                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderClient.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("ClientBtnOrderCancel")</a></div>";
+                    break;
+                case 2:
+                       element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForDelivery")</div>";
+                       element += "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("ClientBtnOrderReceiveAck")</a></div>";
+                    break;
+                case 3:
+                    break;
+            }
+
+            element += "</div>";
             return element;
         },
         initialize: function build_oderItemsElement() {
@@ -162,21 +186,37 @@
                 "<ul data-role=\"listview\" data-inset=\"true\" id=\"clientorderitemlist\">"; +
                     "</ul></div>";
             return element;
+        },
+        refresh: function redraw_items() {
+
+
+            $(itemOrderClient._data_OrderList).each(function () {
+                        $('#clientorderitemlist').append( placedOrderList.createItem(this) );
+                    })
+                    $('#clientorderitemlist').listview();
+                    $('#clientorderitemlist').listview("refresh");
+
         }
+
     }
 
     var itemOrderClient = {
 
+        productListTargetSelector: "#clientProductsTab",
+        orderListTargetSelector: "#clientTabOrders",
+
+        _data_ProductList: [],
+        _data_OrderList: [],
+
         loadProducts: function load_products() {
 
              servicehub.server.getProducts()
-                .done(function (productList) {
-                    $(productList).each(function (idx) {
-                        var newitem = productItemList.createItem( this.Id, "", this.Name, this.Description, this.Price);
-                        $("#customeritemlist").append(newitem);
-                    });
-                    $("#customeritemlist").listview();
-                    $("#customeritemlist").listview('refresh');
+                 .done(function (productList) {
+
+                     itemOrderClient._data_ProductList = productList;
+                     productItemList.refresh();
+
+                
                 })
                 .fail(function () {
                 console.log("load_products failed..");
@@ -186,45 +226,35 @@
             servicehub.server.getOrders(type)
                 .done(function (data) {
 
-                    $(data).each(function () {
-                        $('#clientorderitemlist').append( placedOrderList.createItem(this) );
-                    })
-                    $('#clientorderitemlist').listview();
-                    $('#clientorderitemlist').listview("refresh");
-                    
+                    itemOrderClient._data_OrderList = data;
+                    placedOrderList.refresh();
+
                 })
                 .fail(function () {
                     console.log("load_orders failed...");
                 });
         },
-       
+
         run: function run(appendTo) {
 
-
-            if ($(appendTo).length == 0) {
-                console.log("could not find item: " + appendTo + " aborting orderclient");
-            }
-            else {
-
-                var itemlistElement = productItemList.initialize("true", "false", "false");
-                $(appendTo).append(itemlistElement);
-                $('#customeritemlist').listview();
-                $('#customeritemlist').listview("refresh");
-
-                var orderlistElement = orderItemList.initialize("true", "false", "false");
-                $(appendTo).append(orderlistElement);
-                $('#orderitemlist').listview();
-                $('#orderitemlist').listview("refresh");
-
-                var totalsElement = totalsBox.initialize();
-                $(appendTo).append(totalsElement);
-
-                var placedOrderElement = placedOrderList.initialize();
-                $(appendTo).append(placedOrderElement);
-
-            }
-             
+            var itemlistElement = productItemList.initialize("true", "false", "false");
+            $(itemOrderClient.productListTargetSelector).append(itemlistElement);
             itemOrderClient.loadProducts();
+
+            var totalsElement = totalsBox.initialize();
+            $(itemOrderClient.productListTargetSelector).append(totalsElement);
+
+          
+
+            var orderlistElement = orderItemList.initialize("true", "false", "false");
+            $(itemOrderClient.productListTargetSelector).append(orderlistElement);
+            $('#orderitemlist').listview();
+            $('#orderitemlist').listview("refresh");
+
+            var placedOrderElement = placedOrderList.initialize();
+            $(itemOrderClient.orderListTargetSelector).append(placedOrderElement);
+
+           
             itemOrderClient.loadOrders(1);
         },
         stop: function stop() {
@@ -248,19 +278,22 @@
         },
         orderUpdate: function update_order(orderData) {
             //find statusbox for this order and update
+            var dataIndex = itemOrderClient._data_OrderList.findIndex(x => x.OrderIdentifier == orderData.OrderIdentifier);
+            if (dataIndex == -1) {
+                itemOrderClient._data_OrderList.push(orderData);
+            }
+            else {
+                itemOrderClient._data_OrderList[dataIndex] = orderData;
+            }
 
-            var orderItem = placedOrderList.createItem(orderData);
-            $('#clientorderitemlist').append(orderItem);
-            $('#clientorderitemlist').listview();
-            $('#clientorderitemlist').listview("refresh");
-
+            placedOrderList.refresh();
             console.log("updating orderdata");
         },
         orderListAdd: function add_item_to_orderlist(e) {
             var li_item = $(e).parent();
             var itemid = $(li_item).data("itemid");
             var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
-          
+
             if (itemInOrderlist.length > 0) {
 
 
@@ -278,18 +311,20 @@
 
             }
             else {
-               
+
                 var oitem = orderItemList.createOrderItem($(li_item).data("itemid"), $(li_item).data("caption"), 1, $(li_item).data("price"));
                 $("#orderitemlist").append(oitem).listview('refresh');
             }
 
             totalsBox.calcTotals();
-   
+
             servicehub.server.addToCart(itemid, '@Model.SinalRGroup.ToLower()');
 
         },
         orderListRemove: function remove_item_from_orderlist(e) {
-            var itemid = $(e).data("itemid");
+
+       
+            var itemid = $(e).closest('.orderitem').data("itemid");
             var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
             if (itemInOrderlist.length > 0) {
 
@@ -298,7 +333,7 @@
                 countcurr--;
 
                 if (countcurr == 0) {
-                    $(itemInOrderlist).parent().remove();
+                    $(itemInOrderlist).remove();
                 }
 
                 itemInOrderlist.data("itemcnt", countcurr);
@@ -310,9 +345,9 @@
                 var cntelement = $(itemInOrderlist).find(".unitcount");
                 cntelement.html(countcurr);
             }
-            itemOrderClient.calcTotals();
+            totalsBox.calcTotals();
         },
-        
+
         placeOrder: function place_order(group) {
             //get orderitems from orderlist
             var orderItems = orderItemList.getOrderItems();
@@ -321,7 +356,7 @@
                 Items : orderItems,
             };
 
-          
+
             console.log("placeOrder - sending orderData");
             //send signalR order-placement
             var res = servicehub.server.processOrder(Order, group);
@@ -340,7 +375,7 @@
                 console.log("failed request placeOrder...");
             });
         },
-        
+
         processOrder: function processOrder(e) {
 
             var Order = {
@@ -373,6 +408,19 @@
 
 </script>
 
+
+<div data-role="tabs" id="clienttabs">
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#clientProductsTab" data-ajax="false">@BaseResource.Get("ClientProductsTab")</a></li>
+            <li><a href="#clientTabOrders" data-ajax="false">@BaseResource.Get("ClientOrdersTab")</a></li>
+        </ul>
+    </div>
+    <div id="clientProductsTab" class="ui-body-d ui-content"></div>
+    <div id="clientTabOrders"></div>
+</div>
+
+
 <style>
 
     /* style for productitem-clientlist*/
@@ -381,7 +429,6 @@
         -moz-border-radius: 5px 5px 5px 5px;
         -webkit-border-radius: 5px 5px 5px 5px;
         border: 0px solid #000000;
-
         -webkit-box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
         -moz-box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
         box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.75);
@@ -480,16 +527,54 @@
         width: 80px;
     }
 
-    .clientorderstate.state0 {
-        background-color: cadetblue;
+    /*orderproduct*/
+    .orderproduct {
+        display: table;
+        width: 100%;
     }
-    .clientorderstate.state1 {
-        background-color: chocolate;
+    .orderproduct .caption {
+        float: left;
     }
-    .clientorderstate.state2 {
-        background-color: aqua;
+    .orderproduct .amount {
+        float: right;
+        font-size: smaller;
     }
-    .clientorderstate.state3 {
-        background-color: darkgrey;
+    .orderproduct .amount::after {
+        content: " x";
     }
+    .orderproduct .unitprice {
+        float: right;
+        font-size: smaller;
+        margin-left: 3px;
+    }
+    .orderproduct .itemtotal {
+        float: right;
+        margin-left: 5px;
+    }
+    .orderproduct .itemtotal::after{
+        content: "€";
+    }
+    .clientorderitem .ordertotal {
+        font-size: 1.2em;
+        float: right;
+    }
+        .clientorderitem .ordertotal::after {
+            content: "€";
+    }
+
+        .clientorderstate.state0 {
+            background-color: cadetblue;
+        }
+
+        .clientorderstate.state1 {
+            background-color: chocolate;
+        }
+
+        .clientorderstate.state2 {
+            background-color: aqua;
+        }
+
+        .clientorderstate.state3 {
+            background-color: darkgrey;
+        }
 </style>

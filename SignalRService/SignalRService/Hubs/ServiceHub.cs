@@ -7,6 +7,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Transports;
 using SignalRService.Extensions;
+using SignalRService.Interfaces;
 using SignalRService.Localization;
 using SignalRService.Utils;
 
@@ -122,20 +123,19 @@ namespace SignalRService.Hubs
             return orders;
         }
 
-        private ViewModels.ProductViewModel _stageProduct(ProductData data, string group)
+        private ViewModels.ProductViewModel _stageProduct(ProductData data, string group, string connectionId)
         {
             ViewModels.ProductViewModel resVm = new ViewModels.ProductViewModel();
             int dangerIdx = 0;
             if(string.IsNullOrEmpty(group))
             {
-                resVm.ErrorMessage = "stageProeuct - no groupname given....";
+                resVm.ErrorMessage = "stageProduct - no groupname given....";
                 resVm.ErrorNumber = 7710;
                 return resVm;
             }
 
             if( Utils.ValidationUtils.IsDangerousString(group, out dangerIdx) )
             {
-              
                 resVm.ErrorMessage = "invalid groupname given....";
                 resVm.ErrorNumber = 7710;
                 return resVm;
@@ -146,11 +146,10 @@ namespace SignalRService.Hubs
             {
                 var newProduct = productRepository.CreateProduct(new ViewModels.ProductViewModel()
                 {
-                      Name = data.Name,
-                      Description = data.Description,
-                      Owner = new ViewModels.UserDataViewModel() { Id = 1, Name = "Anonymous" },
-                      Price = data.Price
-                        
+                    Name = data.Name,
+                    Description = data.Description,
+                    Owner = userRepository.GetUserFromSignalR(connectionId),
+                    Price = data.Price
                 });
                 
                 GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(newProduct.ToProductViewModel());
@@ -162,10 +161,11 @@ namespace SignalRService.Hubs
             return resVm;
         }
 
-  //      [Authorize]
+        [Authorize]
         public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
         {
-            return await Task.Run(() => _stageProduct(data,group));
+            
+            return await Task.Run(() => _stageProduct(data,group, Context.ConnectionId));
         }
 
      
@@ -183,7 +183,7 @@ namespace SignalRService.Hubs
 
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
-
+            IOrderProcess orderProcessFactory;
             if (Utils.ValidationUtils.IsDangerousString(orderDTO.OrderIdentifier, out int badidx))
                 return new ViewModels.OrderViewModel() { ErrorMessage = "Invalid orderIdentifier" };
             
@@ -195,7 +195,7 @@ namespace SignalRService.Hubs
                     return new ViewModels.OrderViewModel() { ErrorMessage = BaseResource.Get("NoItemsForOrder") };
 
 
-                var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
                 orderViewModel = orderProcessFactory.CheckOrder(orderDTO);
                 if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))
                 {
@@ -214,16 +214,16 @@ namespace SignalRService.Hubs
                         ErrorMessage = "Invalid Order-Data...",
                     };
                 }
-                orderViewModel = orderRepository.AddOrder(orderItems, customerUser, storeUser);
-                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(storeUser.SignalRConnections).newOrder(orderViewModel);
-                return orderViewModel;
+
+                orderViewModel.Items = orderItems;
+                orderViewModel.CustomerUser = customerUser;
+                orderViewModel.StoreUser = storeUser;
             }
-            else
-            {
-                var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+          
+                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
                 var orderVMResult = orderProcessFactory.ProcessOrder(orderViewModel);
                 orderViewModel = orderVMResult;
-            }
+           
             return orderViewModel;
         }
 

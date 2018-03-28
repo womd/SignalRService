@@ -236,9 +236,9 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201803241848330_InitializeDB.cs" />
-    <Compile Include="Migrations\201803241848330_InitializeDB.Designer.cs">
-      <DependentUpon>201803241848330_InitializeDB.cs</DependentUpon>
+    <Compile Include="Migrations\201803280808190_InitializeDB.cs" />
+    <Compile Include="Migrations\201803280808190_InitializeDB.Designer.cs">
+      <DependentUpon>201803280808190_InitializeDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -246,6 +246,7 @@
     <Compile Include="Models\MinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
+    <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="Rest\RestProductController.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
+    <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
@@ -597,8 +599,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803241848330_InitializeDB.resx">
-      <DependentUpon>201803241848330_InitializeDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803280808190_InitializeDB.resx">
+      <DependentUpon>201803280808190_InitializeDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

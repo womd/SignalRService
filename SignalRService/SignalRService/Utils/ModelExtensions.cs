@@ -39,7 +39,8 @@ namespace SignalRService.Utils
                 {
                     AppendToSelector = ".body-content",
                     SinalRGroup = dbmodel.ServiceUrl.ToLower()
-                }
+                },
+                User = dbmodel.Owner.ToUserDataViewModel()
             };
         }
 
@@ -104,6 +105,7 @@ namespace SignalRService.Utils
                 OrderIdentifier = model.OrderIdentifier,
                 OrderState = model.OrderState,
                 OrderType = model.OrderType,
+                CreationDate = model.CreationDate,
                 Items = new List<OrderItemViewModel>()
             };
             foreach(var item in model.Items)

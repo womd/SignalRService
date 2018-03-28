@@ -15,7 +15,7 @@ namespace SignalRService.ViewModels
         public string ErrorMessage {get;set;}
         public Enums.EnumOrderProcessingMethods NextMethod { get; set; }
         public List<ViewModels.OrderItemViewModel> Items { get; set; }
-
+        public DateTime CreationDate { get; set; }
     }
 
     
