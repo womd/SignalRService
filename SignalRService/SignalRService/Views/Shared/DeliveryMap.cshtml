@@ -1,0 +1,68 @@
+﻿
+
+<div id="map"></div>
+
+<style>
+    #map {
+        height: 200px;
+        width: 100%;
+    }
+</style>
+
+<script>
+    var map;
+    function initMap() {
+        var uluru = { lat: -25.363, lng: 131.044 };
+            map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 4,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
+        });
+
+        var watchID = navigator.geolocation.watchPosition(function (position) {
+            servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
+        });
+    }
+
+        var dmap = {
+
+            client_data: [],
+            client_markers: [],
+
+
+            updateItem: function (data) {
+                var midx = dmap.client_data.findIndex(x => x.ConnectionId == data.ConnectionId);
+                if (midx == -1) {
+                    dmap.client_data.push(data);
+                } else {
+                    dmap.client_data[midx] = data;
+                }
+                dmap.drawMarkers();
+
+            },
+            drawMarkers: function () {
+
+                dmap.client_markers = [];
+                $(dmap.client_data).each(function () {
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(this.lat, this.lon),
+                        title: this.ConnectionId,
+                    });
+                    marker.setMap(map);
+                    dmap.client_markers.push(marker);
+                    map.setCenter({ lat: this.lat, lng: this.lon });
+                });
+            }
+        }
+
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnVkphssiZuiljaa3ULIiRHw-k6e9_bcg&callback=initMap">
+</script>

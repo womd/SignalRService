@@ -207,19 +207,41 @@ namespace SignalRService.Hubs
 
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
-            IOrderProcess orderProcessFactory;
+            IOrderProcess orderProcessFactory = null;
             if (Utils.ValidationUtils.IsDangerousString(orderDTO.OrderIdentifier, out int badidx))
                 return new ViewModels.OrderViewModel() { ErrorMessage = "Invalid orderIdentifier" };
             
             var orderViewModel = orderRepository.GetOrder(orderDTO.OrderIdentifier);
 
-            if(orderViewModel == null)
+            var service = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if(service == null)
+                return new ViewModels.OrderViewModel() { ErrorMessage = "could not get service..." };
+
+            
+
+            switch (service.ServiceType)
+            {
+                case Enums.EnumServiceType.OrderService:
+                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                    break;
+                case Enums.EnumServiceType.TaxiService:
+                    break;
+                case Enums.EnumServiceType.SecurityService:
+                    break;
+                case Enums.EnumServiceType.OrderServiceDrone:
+                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Drone);
+                    break;
+                default:
+                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                    break;
+            }
+
+
+            if (orderViewModel == null)
             {
                 if(orderDTO.Items.Count == 0)
                     return new ViewModels.OrderViewModel() { ErrorMessage = BaseResource.Get("NoItemsForOrder") };
 
-
-                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
                 orderViewModel = orderProcessFactory.CheckOrder(orderDTO);
                 if (!string.IsNullOrEmpty(orderViewModel.ErrorMessage))
                 {
@@ -255,6 +277,17 @@ namespace SignalRService.Hubs
         public async Task<ViewModels.OrderViewModel> ProcessOrder(OrderDataDTO data, string group)
         {
              return await Task.Run(() => _processOrderRequest(data, group));
+        }
+
+        public async Task BroadCastLocation(double lat, double lon)
+        {
+            ViewModels.LocationViewModel loc = new ViewModels.LocationViewModel()
+            {
+                Lat = lat,
+                Lon = lon,
+                ConnectionId = Context.ConnectionId
+            };
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.updatePosition(loc);
         }
 
         public void MinerReportStatus(MinerStatusData data)

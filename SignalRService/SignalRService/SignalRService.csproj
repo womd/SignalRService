@@ -232,6 +232,7 @@
     </Compile>
     <Compile Include="HubPipelineModules\GroupMonitorPipelineModule.cs" />
     <Compile Include="Hubs\ServiceHub.cs" />
+    <Compile Include="Implementation\OrderProcessDrone.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Utils\CultureHelper.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
+    <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
@@ -566,6 +568,9 @@
     <Content Include="Views\UserRoles\RolesJTable.cshtml" />
     <Content Include="Views\UserRoles\User2RolesJTable.cshtml" />
     <Content Include="Views\Shared\_LoginPartialMobile.cshtml" />
+    <Content Include="Views\Shared\RenderDroneHost.cshtml" />
+    <Content Include="Views\Shared\RenderDroneClient.cshtml" />
+    <Content Include="Views\Shared\DeliveryMap.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

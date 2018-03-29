@@ -11,6 +11,7 @@ namespace SignalRService.ViewModels
         public string ServiceName { get; set; }
         public string ServiceUrl { get; set; }
         public int ServiceType { get; set; }
+        public Enums.EnumServiceType EnumServiceTpe { get; set; }
         public ViewModels.UserDataViewModel User { get; set; }
 
         public ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel { get; set; }

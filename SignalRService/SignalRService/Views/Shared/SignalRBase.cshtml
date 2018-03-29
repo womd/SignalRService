@@ -111,6 +111,10 @@
                 miner.client().setThrottle(data);
             }
 
+            servicehub.client.updatePosition = function(data) {
+                dmap.updateItem(data);
+            }
+
             // Start the connection.
             $.connection.hub.start().done(function () {
 

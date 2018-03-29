@@ -7,6 +7,8 @@
 @*@Html.Action("RenderSignalRBase","Service")*@
 
 
+
+
 @Html.Partial("SignalRBase", Model)
 
 
@@ -17,14 +19,38 @@
 
 
 @{
-    if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+
+    switch (Model.EnumServiceTpe)
     {
-        @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
+        case SignalRService.Enums.EnumServiceType.OrderService:
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
+            }
+            else
+            {
+                @Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
+            }
+            break;
+        case SignalRService.Enums.EnumServiceType.TaxiService:
+            break;
+        case SignalRService.Enums.EnumServiceType.SecurityService:
+            break;
+        case SignalRService.Enums.EnumServiceType.OrderServiceDrone:
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                @Html.Partial("RenderDroneHost", Model.OrderHostConfigurationViewModel)
+            }
+            else
+            {
+                @Html.Partial("RenderDroneClient", Model.OrderClientConfigurationViewModel)
+            }
+            break;
+        default:
+            break;
     }
-    else
-    {
-        @Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
-    }
+
+
 }
 
 

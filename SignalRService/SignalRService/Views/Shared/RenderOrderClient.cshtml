@@ -414,10 +414,12 @@
         <ul>
             <li><a href="#clientProductsTab" data-ajax="false">@BaseResource.Get("ClientProductsTab")</a></li>
             <li><a href="#clientTabOrders" data-ajax="false">@BaseResource.Get("ClientOrdersTab")</a></li>
+            <li><a href="#clientDeliveryMap" data-ajax="false">@BaseResource.Get("ClientDeliveryMapTab")</a></li>
         </ul>
     </div>
     <div id="clientProductsTab" class="ui-body-d ui-content"></div>
     <div id="clientTabOrders"></div>
+    <div id="clientDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
 
 

@@ -9,6 +9,7 @@ namespace SignalRService.Enums
     {
         OrderService = 0,
         TaxiService = 1,
-        SecurityService = 2
+        SecurityService = 2,
+        OrderServiceDrone = 3
     }
 }

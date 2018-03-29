@@ -15,6 +15,8 @@ namespace SignalRService.Factories
             {
                 case Enums.EnumOrderType.Default:
                     return new Implementation.OrderProcessDefault();
+                case Enums.EnumOrderType.Drone:
+                    return new Implementation.OrderProcessDrone();
                 default:
                     return null;
             }
