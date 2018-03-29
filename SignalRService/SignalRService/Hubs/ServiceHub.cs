@@ -96,31 +96,55 @@ namespace SignalRService.Hubs
         /// clientrequest for loading products
         /// </summary>
         /// <returns></returns>
-        public List<ViewModels.ProductViewModel> getProducts()
+        public List<ViewModels.ProductViewModel> getProducts(string group)
         {
             List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
-            var products = productRepository.GetProducts();
-            foreach (var item in products)
+            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if (dbService == null)
+                return reslist;
+
+            var oproducts = dbService.Owner.Products.ToList();
+            foreach(var item in oproducts)
             {
                 reslist.Add(item.ToProductViewModel());
             }
+
             return reslist;
         }
 
      //   [Authorize]
-        public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType)
+        public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType, string group)
         {
-            //see which user - get orders
+            List<ViewModels.OrderViewModel> reslist = new List<ViewModels.OrderViewModel>();
+            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if (dbService == null)
+                return reslist;
+
+            List<Models.OrderModel> dbres = new List<Models.OrderModel>();
             var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
-            var orders = orderRepository.GetOrders(user.Id, guiType);
-            //if (Context.Request.User.Identity.Name == user.Name)
-            //{
-            //    var orders = orderRepository.GetOrders(user.Id, guiType);
-            //    return orders;
-            //} else {
-            //    return new List<ViewModels.OrderViewModel>();
-            //}
-            return orders;
+
+            switch (guiType)
+            {
+                case Enums.EnumGuiType.Undef:
+                    break;
+                case Enums.EnumGuiType.Client:
+                    dbres = db.Orders.Where(ln => ln.CustomerUser.IdentityName == user.Name && ln.StoreUser.ID == dbService.Owner.ID).ToList();
+                    break;
+                case Enums.EnumGuiType.Host:
+                    dbres = db.Orders.Where(ln => ln.StoreUser.ID == user.Id).ToList();
+                    break;
+                case Enums.EnumGuiType.Admin:
+                    break;
+                default:
+                    break;
+            }
+
+           foreach(var item in dbres)
+            {
+                reslist.Add(item.ToOrderViewModel());
+            }
+
+            return reslist;
         }
 
         private ViewModels.ProductViewModel _stageProduct(ProductData data, string group, string connectionId)

@@ -6,6 +6,7 @@
 
 @*@Html.Action("RenderSignalRBase","Service")*@
 
+
 @Html.Partial("SignalRBase", Model)
 
 
@@ -18,39 +19,15 @@
 @{
     if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
     {
-
-        <fieldset data-role="controlgroup">
-            <legend></legend>
-            <input type="checkbox" name="checkbox-client" id="checkbox-client" onclick="toggle_orderClient(this)">
-            <label for="checkbox-client">Client</label>
-            <input type="checkbox" name="checkbox-host" id="checkbox-host" onclick="toggle_orderHost(this)">
-            <label for="checkbox-host">Host</label>
-        </fieldset>
-
         @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
-
-        <script>
-            function toggle_orderClient(e) {
-                if (e.checked) {
-                    itemOrderClient.run(".body-content");
-                }
-                else {
-                    itemOrderClient.stop();
-                }
-            }
-            function toggle_orderHost(e) {
-                if (e.checked) {
-                    itemOrderHost.run(".body-content");
-                }
-                else {
-                    itemOrderHost.stop();
-                }
-            }
-        </script>
     }
-  }
+    else
+    {
+        @Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
+    }
+}
 
-@Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
+
 
 
 

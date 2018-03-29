@@ -565,6 +565,7 @@
     <Content Include="Views\UserRoles\Index.cshtml" />
     <Content Include="Views\UserRoles\RolesJTable.cshtml" />
     <Content Include="Views\UserRoles\User2RolesJTable.cshtml" />
+    <Content Include="Views\Shared\_LoginPartialMobile.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

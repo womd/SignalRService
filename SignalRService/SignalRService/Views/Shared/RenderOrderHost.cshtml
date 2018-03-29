@@ -185,7 +185,7 @@
 
         loadProducts: function load_products() {
 
-            servicehub.server.getProducts()
+            servicehub.server.getProducts("@Model.SinalRGroup")
                 .done(function (productList) {
 
                     itemOrderHost._data_ProductList = productList;
@@ -199,7 +199,7 @@
            
         },
         loadOrders: function load_orders(type) {
-            servicehub.server.getOrders(type)
+            servicehub.server.getOrders(type,"@Model.SinalRGroup")
                 .done(function (data) {
 
                     itemOrderHost._data_OrderList = data;

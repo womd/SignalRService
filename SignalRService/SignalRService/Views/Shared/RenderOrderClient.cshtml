@@ -7,7 +7,7 @@
         initialize: function build_totalsElement(appendTo) {
             var element = "<div id=\"totalswrapper\">" +
                 "<div class=\"totaldetails\">" +
-                "<div class=\"description\">total</div>" +
+                "<div class=\"description\">@BaseResource.Get("Total")</div>" +
                 "<div class=\"price\">0.00</div>" +
                 "</div>" +
                 totalsBox.createBuyButton() +
@@ -16,7 +16,7 @@
             return element;
         },
         createBuyButton: function build_BuyButton() {
-            var element = "<a href=\"#\" onclick=\"btnBuyClicked()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\">Bestellen</a>";
+            var element = "<a href=\"#\" onclick=\"btnBuyClicked()\" class=\"ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left\"> @BaseResource.Get("BtnPlaceOrderText") </a>";
             return element;
         },
         calcTotals: function calculate_totals() {
@@ -210,7 +210,7 @@
 
         loadProducts: function load_products() {
 
-             servicehub.server.getProducts()
+             servicehub.server.getProducts("@Model.SinalRGroup")
                  .done(function (productList) {
 
                      itemOrderClient._data_ProductList = productList;
@@ -223,7 +223,7 @@
                 });
         },
         loadOrders: function load_orders(type) {
-            servicehub.server.getOrders(type)
+            servicehub.server.getOrders(type,"@Model.SinalRGroup")
                 .done(function (data) {
 
                     itemOrderClient._data_OrderList = data;
@@ -241,15 +241,15 @@
             $(itemOrderClient.productListTargetSelector).append(itemlistElement);
             itemOrderClient.loadProducts();
 
-            var totalsElement = totalsBox.initialize();
-            $(itemOrderClient.productListTargetSelector).append(totalsElement);
-
-          
-
+            
             var orderlistElement = orderItemList.initialize("true", "false", "false");
             $(itemOrderClient.productListTargetSelector).append(orderlistElement);
             $('#orderitemlist').listview();
             $('#orderitemlist').listview("refresh");
+
+            var totalsElement = totalsBox.initialize();
+            $(itemOrderClient.productListTargetSelector).append(totalsElement);
+
 
             var placedOrderElement = placedOrderList.initialize();
             $(itemOrderClient.orderListTargetSelector).append(placedOrderElement);
