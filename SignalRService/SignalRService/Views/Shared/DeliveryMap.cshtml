@@ -4,38 +4,38 @@
 
 <style>
     #map {
-        height: 200px;
+        height: 400px;
         width: 100%;
     }
 </style>
 
 <script>
-    var map;
-    function initMap() {
-        var uluru = { lat: -25.363, lng: 131.044 };
-            map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 4,
-            center: uluru
-        });
-        var marker = new google.maps.Marker({
-            position: uluru,
-            map: map
-        });
-
-        navigator.geolocation.getCurrentPosition(function (position) {
-            servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
-        });
-
-        var watchID = navigator.geolocation.watchPosition(function (position) {
-            servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
-        });
-    }
+   
 
         var dmap = {
 
             client_data: [],
             client_markers: [],
 
+            initialize: function () {
+
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+
+                    var ucentr = { lat: position.coords.latitude, lng: position.coords.longitude };
+                    window.map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 4,
+                        center: ucentr
+                    });
+
+                    servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
+
+                });
+
+                var watchID = navigator.geolocation.watchPosition(function (position) {
+                    servicehub.server.broadCastLocation(position.coords.latitude, position.coords.longitude);
+                });
+            },
 
             updateItem: function (data) {
                 var midx = dmap.client_data.findIndex(x => x.ConnectionId == data.ConnectionId);
@@ -52,17 +52,16 @@
                 dmap.client_markers = [];
                 $(dmap.client_data).each(function () {
                     var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(this.lat, this.lon),
+                        position: new google.maps.LatLng(this.Lat, this.Lon),
                         title: this.ConnectionId,
                     });
-                    marker.setMap(map);
+                    marker.setMap(window.map);
                     dmap.client_markers.push(marker);
-                    map.setCenter({ lat: this.lat, lng: this.lon });
                 });
             }
         }
 
 </script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnVkphssiZuiljaa3ULIiRHw-k6e9_bcg&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnVkphssiZuiljaa3ULIiRHw-k6e9_bcg">
 </script>

@@ -407,10 +407,12 @@
         <ul>
             <li><a href="#hostProductsTab" data-ajax="false">@BaseResource.Get("HostProductsTab")</a></li>
             <li><a href="#hostTabOrders" data-ajax="false">@BaseResource.Get("HostOrdersTab")</a></li>
+            <li><a href="#hostDeliveryMap" data-ajax="false">@BaseResource.Get("HostDeliveryMapTab")</a></li>
         </ul>
     </div>
     <div id="hostProductsTab" class="ui-body-d ui-content"></div>
     <div id="hostTabOrders"></div>
+    <div id="hostDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
 
 
