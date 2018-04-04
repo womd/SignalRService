@@ -58,6 +58,13 @@ namespace SignalRService.Repositories
             _db.SaveChanges();
         }
 
+        public void UpdateShippingState(string orderIdentifier, Enums.EnumShippingState shippingState)
+        {
+            var dbOrder = _db.Orders.FirstOrDefault(ln => ln.OrderIdentifier == orderIdentifier);
+            dbOrder.ShippingState = shippingState;
+            _db.SaveChanges();
+        }
+
         public List<Models.OrderModel>GetOrders()
         {
             return _db.Orders.ToList();

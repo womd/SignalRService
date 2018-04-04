@@ -27,7 +27,7 @@ namespace SignalRService.Implementation
         }
 
 
-        public ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel orderViewModel)
+        public ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel orderViewModel, bool SentFromStoreUser)
         {
             switch (orderViewModel.OrderState)
             {

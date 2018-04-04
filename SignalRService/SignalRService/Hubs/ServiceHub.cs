@@ -283,9 +283,13 @@ namespace SignalRService.Hubs
                 orderViewModel.CustomerUser = customerUser;
                 orderViewModel.StoreUser = storeUser;
             }
-          
+
+            bool isStoreUser = false;
+            if (Context.User.Identity.Name == orderViewModel.StoreUser.Name)
+                isStoreUser = true;
+
                 orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
-                var orderVMResult = orderProcessFactory.ProcessOrder(orderViewModel);
+                var orderVMResult = orderProcessFactory.ProcessOrder(orderViewModel, isStoreUser);
                 orderViewModel = orderVMResult;
            
             return orderViewModel;

@@ -17,7 +17,7 @@ namespace SignalRService.Interfaces
         ViewModels.OrderViewModel CheckOrder(OrderDataDTO orderDto);
 
       
-        ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel order);
+        ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel order, bool sentFromStoreUser);
         
     }
 }

@@ -27,7 +27,7 @@ namespace SignalRService.Implementation
         }
 
 
-        public ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel orderViewModel)
+        public ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel orderViewModel, bool SentFromStoreUser)
         {
             switch (orderViewModel.OrderState)
             {
@@ -51,13 +51,22 @@ namespace SignalRService.Implementation
 
                     break;
                 case Enums.EnumOrderState.HostConfirmedOrder:
-                    //the item has been receive-ack by client
-                    orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
-                    orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
-
+                    if (SentFromStoreUser)
+                    {
+                        //store user launched shipping
+                        orderViewModel.ShippingState = Enums.EnumShippingState.Launched;
+                        orderRepository.UpdateShippingState(orderViewModel.OrderIdentifier, Enums.EnumShippingState.Launched);
+                    }
+                    else
+                    {
+                        //the item has been receive-ack by client
+                        orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
+                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
+                    }
                     GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
-                        Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
-                        ).updateOrder(orderViewModel);
+                         Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                         ).updateOrder(orderViewModel);
+
                     break;
                 case Enums.EnumOrderState.ClientOrderFinished:
 

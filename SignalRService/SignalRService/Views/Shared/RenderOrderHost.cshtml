@@ -88,7 +88,8 @@
                 ordertotal = ordertotal + this.Amount * this.Price;
             })
 
-            element += hostOrderList.createStatusElement(orderData)
+            element += hostOrderList.createStatusElement(orderData);
+            element += hostOrderList.createShippingStatusElement(orderData);
             element += hostOrderList.createOrderProcessElements(orderData);
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
             element += "</li>";
@@ -115,6 +116,27 @@
 
             element += "</div>";
             return element;
+        },
+                createShippingStatusElement: function (orderdata) {
+
+            var element = "<div class=\"hostshippingstate\">"; 
+
+            switch (orderdata.ShippingState) {
+                case 0:
+                    break;
+                case 1:
+                    element += "@BaseResource.Get("ShippingState1")";
+                    break;
+                case 2:
+                    element += "@BaseResource.Get("ShippingState2")";
+                    break;
+                default:
+                    break;
+            }
+
+            element += "</div>";
+            return element;
+
         },
         initialize: function build_oderItemsElement() {
             var element = "<div id=\"hostorderswrapper\">" +
@@ -147,6 +169,9 @@
                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderCancel")</a></div>";
                     break;
                 case 2:
+                    if (order.ShippingState == 0) {
+                        element += "<div class=\"okbtn\"><a onclick=\"itemOrderHost.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnShippingLaunch")</a></div>";
+                    }
                     element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForClientReceiveAck")</div>";
                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderCancel")</a></div>";
                     break;
