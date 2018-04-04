@@ -13,10 +13,10 @@ namespace SignalRService.Utils
         {
             return new ServiceSettingViewModel()
             {
-                Id = dbmodel.ID,
+                Id = dbmodel.Id,
                 ServiceName = dbmodel.ServiceName,
                 ServiceUrl = dbmodel.ServiceUrl,
-                ServiceType = (int)dbmodel.ServiceType,
+                ServiceType = (int) dbmodel.ServiceType,
                 EnumServiceTpe = dbmodel.ServiceType,
                 MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
                 {
@@ -41,7 +41,10 @@ namespace SignalRService.Utils
                     AppendToSelector = ".body-content",
                     SinalRGroup = dbmodel.ServiceUrl.ToLower()
                 },
-                User = dbmodel.Owner.ToUserDataViewModel()
+                User = dbmodel.Owner.ToUserDataViewModel(),
+                StripeSecretKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "",
+                StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : ""
+                
             };
         }
 
@@ -52,7 +55,6 @@ namespace SignalRService.Utils
                 Id = HttpUtility.HtmlEncode(model.Id),
                 Name = HttpUtility.HtmlEncode(model.Name),
                 Description = HttpUtility.HtmlEncode(model.Description),
-                ImgUrl = HttpUtility.HtmlEncode(model.ImgUrl),
                 Price = model.Price
             };
         }
@@ -68,7 +70,7 @@ namespace SignalRService.Utils
             }
             vm.Id = model.ID;
             vm.Name = model.IdentityName;
-            vm.SignalRConnections = model.SignalRConnections.Select(x => x.SignalRConnectionId).ToList();
+            vm.SignalRConnections = model.SignalRConnections != null ? model.SignalRConnections.Select(x => x.SignalRConnectionId).ToList() : new List<string>();
             return vm;
             
         }
@@ -107,6 +109,8 @@ namespace SignalRService.Utils
                 OrderState = model.OrderState,
                 OrderType = model.OrderType,
                 CreationDate = model.CreationDate,
+                PaymentState = model.PaymentState,
+                ShippingState = model.ShippingState,
                 Items = new List<OrderItemViewModel>()
             };
             foreach(var item in model.Items)

@@ -12,7 +12,7 @@ namespace SignalRService.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-
+        public string ProductIdentifier { get; set; }
         public string PartNo { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

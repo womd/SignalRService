@@ -3,7 +3,7 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitializeDB : DbMigration
+    public partial class InitDb : DbMigration
     {
         public override void Up()
         {
@@ -92,6 +92,7 @@ namespace SignalRService.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
+                        ProductIdentifier = c.String(),
                         PartNo = c.String(),
                         Name = c.String(),
                         Description = c.String(),
@@ -108,7 +109,7 @@ namespace SignalRService.Migrations
                 "dbo.ServiceSettingModels",
                 c => new
                     {
-                        ID = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         ServiceName = c.String(),
                         ServiceUrl = c.String(maxLength: 16),
                         ServiceType = c.Int(nullable: false),
@@ -116,10 +117,23 @@ namespace SignalRService.Migrations
                         Archived = c.Boolean(nullable: false),
                         Owner_ID = c.Int(),
                     })
-                .PrimaryKey(t => t.ID)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.UserDataModels", t => t.Owner_ID)
                 .Index(t => t.ServiceUrl, unique: true, name: "ServiceUrl_Index")
                 .Index(t => t.Owner_ID);
+            
+            CreateTable(
+                "dbo.StripeSettingsModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        SecretKey = c.String(),
+                        PublishableKey = c.String(),
+                        Service_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.ServiceSettingModels", t => t.Service_Id)
+                .Index(t => t.Service_Id);
             
             CreateTable(
                 "dbo.OrderItemModels",
@@ -146,6 +160,8 @@ namespace SignalRService.Migrations
                         OrderIdentifier = c.String(),
                         OrderState = c.Int(nullable: false),
                         OrderType = c.Int(nullable: false),
+                        PaymentState = c.Int(nullable: false),
+                        ShippingState = c.Int(nullable: false),
                         CreationDate = c.DateTime(nullable: false),
                         Archived = c.Boolean(nullable: false),
                         CustomerUser_ID = c.Int(),
@@ -186,6 +202,7 @@ namespace SignalRService.Migrations
             DropForeignKey("dbo.OrderItemModels", "Order_ID", "dbo.OrderModels");
             DropForeignKey("dbo.OrderModels", "CustomerUser_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.SignalRConnectionModels", "User_ID", "dbo.UserDataModels");
+            DropForeignKey("dbo.StripeSettingsModels", "Service_Id", "dbo.ServiceSettingModels");
             DropForeignKey("dbo.ServiceSettingModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.MinerStatusModels", "SignalRConnectionID", "dbo.SignalRConnectionModels");
@@ -195,6 +212,7 @@ namespace SignalRService.Migrations
             DropIndex("dbo.OrderModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderModels", new[] { "CustomerUser_ID" });
             DropIndex("dbo.OrderItemModels", new[] { "Order_ID" });
+            DropIndex("dbo.StripeSettingsModels", new[] { "Service_Id" });
             DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
             DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
             DropIndex("dbo.ProductModels", new[] { "Owner_ID" });
@@ -204,6 +222,7 @@ namespace SignalRService.Migrations
             DropTable("dbo.OrderJournalModels");
             DropTable("dbo.OrderModels");
             DropTable("dbo.OrderItemModels");
+            DropTable("dbo.StripeSettingsModels");
             DropTable("dbo.ServiceSettingModels");
             DropTable("dbo.ProductModels");
             DropTable("dbo.UserDataModels");

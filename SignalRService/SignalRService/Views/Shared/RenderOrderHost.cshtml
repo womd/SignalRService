@@ -11,7 +11,7 @@
                 "<li></li></ul></div>";
             return element;
         },
-        createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
+        createItem: function create_productitem_entry(itemId, caption, description, price) {
             var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" >";
 
            
@@ -34,14 +34,11 @@
                 "<label for=\"editorcaption\"> Titel </label>" +
                 "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"Titel / Name\" />" +
                 "</div>" +
-                "<div data-role=\"fieldcontain\">" +
-                "<label for=\"editorimgurl\">Bild</label>" +
-                "<input type=\"text\" id=\"editorimgurl\" name=\"imgurl\" placeholder=\"ImageUrl\" />" +
-                "</div>" +
-                "<div data-role=\"fieldcontain\">" +
+
                 "<label for=\"editordescription\">Beschreibung</label>" +
-                "<input type=\"text\" id=\"editordescription\" name=\"description\" placeholder=\"Beschreibung\" />" +
-                "</div>" +
+                "<textarea name=\"description\" id=\"editordescription\" placeholder=\"Beschreibung\">" +
+                "</textarea>" +
+
                 "<div data-role=\"fieldcontain\">" +
                 "<label for=\"editorprice\">Preis</label>" +
                 "<input type=\"number\" id=\"editorprice\" name=\"price\"  placeholder=\"Preis\"  />" +
@@ -67,7 +64,7 @@
         refresh: function refresh_listItems() {
             $("#hostitemlist").children().remove();
             $(itemOrderHost._data_ProductList).each(function (idx) {
-                var newitem = hostProducList.createItem(this.Id, "", this.Name, this.Description, this.Price);
+                var newitem = hostProducList.createItem(this.ProductIdentifier, this.Name, this.Description, this.Price);
                 $("#hostitemlist").append(newitem);
             });
             $("#hostitemlist").listview();
@@ -161,6 +158,8 @@
             return element;
         },
         refresh : function redraw_items() {
+
+            $('#hostorderitemlist').children().remove();
 
             itemOrderHost._data_OrderList.sort(function (a, b) {
                 var x = new Date(b.CreationDate).getTime() - new Date(a.CreationDate).getTime();
@@ -331,7 +330,7 @@
                         console.log("product successfuly staged..");
                     }
                     else {
-                        showMessageDailog(data.ErrorMessage, "#edititemwrapper");
+                        showMessageDailog(data.ErrorMessage, "body");
                     }
                 })
                 .fail(function (data) {
@@ -344,13 +343,11 @@
        
         },
         getProductFromInput: function get_product_from_input() {
-            var inputelements = $('.producteditwrapper').find("input");
-
+            
             var product = {
                 Id: 0,
                 Name: $('.producteditwrapper').find("input[name=caption]").val(),
-                ImgUrl: $('.producteditwrapper').find("input[name=imgurl]").val(),
-                Description: $('.producteditwrapper').find("input[name=description]").val(),
+                Description: $('.producteditwrapper').find("textarea[name=description]").val(),
                 Price: $('.producteditwrapper').find("input[name=price]").val(),
             }
             return product;

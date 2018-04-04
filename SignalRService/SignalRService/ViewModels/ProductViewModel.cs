@@ -8,6 +8,7 @@ namespace SignalRService.ViewModels
     public class ProductViewModel
     {
         public int Id { get; set; }
+        public string Identifier { get; set; }
         public string PartNumber { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

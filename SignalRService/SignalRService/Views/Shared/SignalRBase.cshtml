@@ -37,7 +37,7 @@
                                 //all ok - no messages
                             }
                             else {
-                                showMessageDailog(data.toString(), '#edititemwrapper');
+                                showMessageDailog(data.toString(), 'body');
                             }
                         })
                         .fail(function () {
@@ -49,11 +49,11 @@
 
             servicehub.client.productStaged = function (data) {
                 //add to available products on host
-                if (itemOrderHost) {
-
+                if (typeof itemOrderHost !== 'undefined') {
+                
                     var existingitem = $('#hostitemlist').children().find("*[data-itemid='" + data.Id + "']");
                     if (existingitem.length == 0) {
-                        $('#hostitemlist').append(hostProducList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+                        $('#hostitemlist').append(hostProducList.createItem(data.Id, data.Name, data.Description, data.Price));
                         $('#hostitemlist').listview();
                         $('#hostitemlist').listview("refresh");
                     }
@@ -62,8 +62,8 @@
                     //}    
                 }
 
-                if (itemOrderClient) {
-
+                if (typeof itemOrderClient !== 'undefined') {
+                
                     var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
                     if (existingitem.length == 0) {
                         $('#customeritemlist').append(productItemList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));

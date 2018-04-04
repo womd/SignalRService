@@ -173,15 +173,16 @@ namespace SignalRService.Hubs
                     Name = data.Name,
                     Description = data.Description,
                     Owner = userRepository.GetUserFromSignalR(connectionId),
-                    Price = data.Price
+                    Price = data.Price,
                 });
                 
                 GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(newProduct.ToProductViewModel());
-                resVm.Id = newProduct.ID;
+                resVm.Identifier = newProduct.ProductIdentifier;
                 resVm.Name = newProduct.Name;
                 resVm.Owner = newProduct.Owner.ToUserDataViewModel();
                 resVm.Price = newProduct.Price;
             }
+            resVm.ErrorMessage = vmessages.FirstOrDefault();;
             return resVm;
         }
 
@@ -202,7 +203,24 @@ namespace SignalRService.Hubs
     //    [Authorize]
         public void RemoveProduct(string id, string group)
         {
-            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+
+            if (Context.User.IsInRole("Admin"))
+            {
+                var prod = db.Products.FirstOrDefault(ln => ln.ProductIdentifier == id);
+                db.Products.Remove(prod);
+                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+            }
+            else
+            {
+                var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+                var prod = db.Products.FirstOrDefault(ln => ln.ProductIdentifier == id && ln.Owner.ID == user.Id);
+                if (prod != null)
+                {
+                    db.Products.Remove(prod);
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+                }
+            }
+            db.SaveChanges();
         }
 
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
@@ -307,7 +325,6 @@ namespace SignalRService.Hubs
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ImgUrl { get; set; }
         public decimal Price { get; set; }
     }
 

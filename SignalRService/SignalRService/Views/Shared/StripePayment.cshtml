@@ -1,0 +1,57 @@
+﻿<script>
+
+    function paybtnclick(e) {
+
+        var orderelement = $(e).closest('.clientorderitem');
+
+        var totalelement = $(orderelement).find('.ordertotal');
+
+        var amount = parseInt(totalelement.html());
+
+            handler.open({
+                name: 'Test',
+                description: $(orderelement).data('orderid'),
+                currency: 'eur',
+                amount: amount * 100
+            });
+    }
+    
+
+</script>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+
+<script>
+    var handler = StripeCheckout.configure({
+        key: 'pk_test_1jhKqLdYyuNkjvJ7ZzfHQMgG',
+        image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+        locale: 'auto',
+        token: function (token) {
+
+            var i = 1;
+            i = i++;
+            // You can access the token ID with `token.id`.
+            // Get the token ID to your server-side code for use.
+            @*$.ajax({
+                type: "POST",
+                url: @Html.Action("StripePay", "Payment", null),
+                data: token.id,
+                success: function () {
+                    console.log("paymentinfo sent to server...");
+                }*@
+               // dataType: dataType
+           // });
+        }
+    });
+
+
+
+    // Close Checkout on page navigation:
+    window.addEventListener('popstate', function () {
+        handler.close();
+    });
+
+
+
+</script>

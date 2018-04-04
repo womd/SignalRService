@@ -62,6 +62,12 @@ namespace SignalRService.Controllers
                 ServiceType = (Enums.EnumServiceType)model.ServiceType,
              });
 
+            if(model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+            {
+                dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
+                dbobj.StripeSettings.Add( new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
+            }
+            
             db.SaveChanges();
 
             return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
@@ -74,16 +80,38 @@ namespace SignalRService.Controllers
 
             try
             {
-                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == model.Id);
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.Id == model.Id);
                 if(dbObj == null)
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidSettingsId") });
 
-                if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
+                if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl && ln.Id != model.Id))
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
 
                 dbObj.ServiceName = model.ServiceName;
                 dbObj.ServiceType = (Enums.EnumServiceType)model.ServiceType;
                 dbObj.ServiceUrl = model.ServiceUrl;
+
+                if(dbObj.StripeSettings.Count == 0)
+                {
+                    if( model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                    {
+                        db.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey, Service = dbObj });
+                    }
+                        
+                }
+                else
+                {
+                    if (model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                    {
+                        dbObj.StripeSettings.First().PublishableKey = model.StripePublishableKey;
+                        dbObj.StripeSettings.First().SecretKey = model.StripeSecretKey;
+                    }
+                    else
+                    {
+                        db.StripeSettings.Remove(dbObj.StripeSettings.FirstOrDefault());
+                    }
+                }
+
                 db.SaveChanges();
 
                 return Json(new { Result = "OK", Message = "data saved.." });
@@ -98,7 +126,10 @@ namespace SignalRService.Controllers
         {
             try
             {
-                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == Id);
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.Id == Id);
+
+                db.StripeSettings.RemoveRange(dbObj.StripeSettings);
+
                 db.ServiceSettings.Remove(dbObj);
                 db.SaveChanges();
                 return Json(new { Result = "OK" });

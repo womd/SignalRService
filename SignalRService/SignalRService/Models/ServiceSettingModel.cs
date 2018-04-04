@@ -11,7 +11,7 @@ namespace SignalRService.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        public int Id { get; set; }
         public virtual UserDataModel Owner { get; set; }
 
         public string ServiceName { get; set; }
@@ -20,7 +20,8 @@ namespace SignalRService.Models
         public string ServiceUrl { get; set; }
         public Enums.EnumServiceType ServiceType { get; set; }
 
-     
+
+        public virtual ICollection<StripeSettingsModel> StripeSettings { get; set; }
     }
 
    

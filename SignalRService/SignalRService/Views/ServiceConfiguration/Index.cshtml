@@ -52,6 +52,16 @@
                         create: false,
                         edit: false,
                         display: function (data) { return data.record.User.Name }
+                    },
+                    StripeSecretKey: {
+                        title: 'StripeSecretKey',
+                        create: true,
+                        edit: true
+                    },
+                    StripePublishableKey: {
+                        title: 'StripePublishableKey',
+                        create: true,
+                        edit: true
                     }
                 }
             });

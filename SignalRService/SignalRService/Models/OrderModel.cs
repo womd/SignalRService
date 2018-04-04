@@ -18,5 +18,7 @@ namespace SignalRService.Models
         public Enums.EnumOrderState OrderState { get; set; }
         public Enums.EnumOrderType OrderType { get; set; }
         public virtual ICollection<OrderItemModel>Items { get; set; }
+        public Enums.EnumPaymentState PaymentState { get; set; }
+        public Enums.EnumShippingState ShippingState { get; set; }
     }
 }

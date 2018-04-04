@@ -121,11 +121,18 @@
                 ordertotal = ordertotal + this.Amount * this.Price;
             })
 
-            element += placedOrderList.createStatusElement(statusData)
+            element += placedOrderList.createStatusElement(statusData);
+            element += placedOrderList.createShippingStatusElement(statusData);
             element += placedOrderList.createOrderProcessElements(statusData);
-            element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
-            element += "</li>";
 
+            var pelement = placedOrderList.createPayButton(statusData);
+            if (pelement != "") {
+                element += pelement;
+            }
+
+            element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
+
+           
             return element;
 
         },
@@ -160,7 +167,28 @@
             element += "</div>";
             return element;
         },
-        createOrderProcessElements: function create_orderProcessElements(order) {
+        createShippingStatusElement: function (orderdata) {
+
+            var element = "<div class=\"clientshippingstate\">"; 
+
+            switch (orderdata.ShippingState) {
+                case 0:
+                    break;
+                case 1:
+                    element += "@BaseResource.Get("ShippingState1")";
+                    break;
+                case 2:
+                    element += "@BaseResource.Get("ShippingState2")";
+                    break;
+                default:
+                    break;
+            }
+
+            element += "</div>";
+            return element;
+
+        },
+            createOrderProcessElements: function create_orderProcessElements(order) {
             var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">";
 
               switch (order.OrderState) {
@@ -168,17 +196,38 @@
                     break;
                   case 1:
                      element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForHostConfirm")</div>";
-                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderClient.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("ClientBtnOrderCancel")</a></div>";
+                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderClient.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-btn-inline ui-corner-all\">@BaseResource.Get("ClientBtnOrderCancel")</a></div>";
                     break;
                 case 2:
                        element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForDelivery")</div>";
-                       element += "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("ClientBtnOrderReceiveAck")</a></div>";
+                       element += "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-btn-inline ui-corner-all\">@BaseResource.Get("ClientBtnOrderReceiveAck")</a></div>";
                     break;
                 case 3:
-                    break;
-            }
+                      break;
+
+                }
 
             element += "</div>";
+            return element;
+        },
+        createPayButton: function (orderdata) {
+            var element = "<div class=\"paybuttonwrapper\">";
+            switch (orderdata.OrderState) {
+                case 0:
+                    break;
+                  case 1:
+                     break;
+                case 2:
+                    element += "<a href=\"#\" onclick=\"paybtnclick(this)\" class=\"paybutton ui-btn ui-btn-inline ui-corner-all\">@BaseResource.Get("btnPayText")</a>";
+                    //element += "<button class=\"paybutton\" onclick=\"paybtnclick(this)\" >@BaseResource.Get("btnPayText")</div>";
+                    break;
+                case 3:
+                    element += "<a href=\"#\" onclick=\"paybtnclick(this)\" class=\"paybutton ui-btn ui-btn-inline\">@BaseResource.Get("btnPayText")</a>";
+                      // element += "<button class=\"paybutton\">@BaseResource.Get("btnPayText")</div>";
+                    break;
+            }
+            element += "</div>";
+
             return element;
         },
         initialize: function build_oderItemsElement() {
@@ -189,10 +238,12 @@
         },
         refresh: function redraw_items() {
 
+            $('#clientorderitemlist').children().remove();
 
             $(itemOrderClient._data_OrderList).each(function () {
-                        $('#clientorderitemlist').append( placedOrderList.createItem(this) );
-                    })
+                $('#clientorderitemlist').append(placedOrderList.createItem(this));
+            });
+
                     $('#clientorderitemlist').listview();
                     $('#clientorderitemlist').listview("refresh");
 
@@ -556,6 +607,11 @@
     .orderproduct .itemtotal::after{
         content: "€";
     }
+
+    .clientorderitem {
+        margin-bottom:2px;
+    }
+
     .clientorderitem .ordertotal {
         font-size: 1.2em;
         float: right;
@@ -579,4 +635,13 @@
         .clientorderstate.state3 {
             background-color: darkgrey;
         }
+
+    .orderprocesswrapper {
+        display:inline-block;
+    }
+
+    .paybuttonwrapper {
+        display: inline-block;
+    }
+
 </style>

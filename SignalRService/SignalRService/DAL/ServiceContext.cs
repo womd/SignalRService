@@ -27,8 +27,17 @@ namespace SignalRService.DAL
         public DbSet<OrderItemModel>OrderItems { get; set; }
         public DbSet<LocalizationModel> Localization { get; set; }
 
+        public DbSet<StripeSettingsModel> StripeSettings { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
+            //modelBuilder.Entity<ServiceSettingModel>()
+            //    .HasOptional(x => x.StripeSettings)
+            //    .WithRequired(y => y.Service);
+
+          //  modelBuilder.Entity<ServiceSettingModel>().Property(m => m.StripeSettings).IsOptional();
+
             base.OnModelCreating(modelBuilder);
         }
 

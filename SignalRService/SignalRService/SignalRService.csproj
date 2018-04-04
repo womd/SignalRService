@@ -69,9 +69,16 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Stripe.net, Version=15.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stripe.net.15.2.1\lib\net45\Stripe.net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -136,9 +143,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -210,6 +214,7 @@
     <Compile Include="Controllers\LocalizationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
@@ -221,8 +226,10 @@
     <Compile Include="Enums\EnumGuiType.cs" />
     <Compile Include="Enums\EnumOrderType.cs" />
     <Compile Include="Enums\EnumOrderState.cs" />
+    <Compile Include="Enums\EnumPaymentState.cs" />
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
+    <Compile Include="Enums\EnumShippingState.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
@@ -237,9 +244,9 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201803280808190_InitializeDB.cs" />
-    <Compile Include="Migrations\201803280808190_InitializeDB.Designer.cs">
-      <DependentUpon>201803280808190_InitializeDB.cs</DependentUpon>
+    <Compile Include="Migrations\201804041248261_InitDb.cs" />
+    <Compile Include="Migrations\201804041248261_InitDb.Designer.cs">
+      <DependentUpon>201804041248261_InitDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -250,6 +257,7 @@
     <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Models\StripeSettingsModel.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
@@ -571,6 +579,7 @@
     <Content Include="Views\Shared\RenderDroneHost.cshtml" />
     <Content Include="Views\Shared\RenderDroneClient.cshtml" />
     <Content Include="Views\Shared\DeliveryMap.cshtml" />
+    <Content Include="Views\Shared\StripePayment.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -605,8 +614,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803280808190_InitializeDB.resx">
-      <DependentUpon>201803280808190_InitializeDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804041248261_InitDb.resx">
+      <DependentUpon>201804041248261_InitDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

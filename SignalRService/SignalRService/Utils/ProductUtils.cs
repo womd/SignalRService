@@ -63,18 +63,6 @@ namespace SignalRService.Utils
                 return false;
             }
 
-            if (data.ImgUrl.Length < 3 && data.ImgUrl.Length > 500)
-            {
-                messages.Add("Bild soll 3 - 500 Zeichen haben.");
-                return false;
-            }
-
-            if (Utils.ValidationUtils.IsDangerousString(data.ImgUrl, out idanger))
-            {
-                messages.Add("Bild darf keine gefährlichen Zeichen enthalten.");
-                return false;
-            }
-
             return true;
         }
     }

@@ -16,6 +16,9 @@ namespace SignalRService.ViewModels
         public Enums.EnumOrderProcessingMethods NextMethod { get; set; }
         public List<ViewModels.OrderItemViewModel> Items { get; set; }
         public DateTime CreationDate { get; set; }
+        public Enums.EnumPaymentState PaymentState { get; set; }
+        public Enums.EnumShippingState ShippingState { get; set; }
+
     }
 
     
