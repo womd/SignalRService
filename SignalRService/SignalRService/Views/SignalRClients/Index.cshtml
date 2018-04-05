@@ -3,8 +3,11 @@
     ViewBag.Title = "SignalRClients-Index";
 }
 
-<h2>ClientsList</h2>
-
-
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    }
+}
 
 @Html.Partial("ConnectedClientsJTable")

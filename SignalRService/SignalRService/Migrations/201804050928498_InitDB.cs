@@ -3,7 +3,7 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitDb : DbMigration
+    public partial class InitDB : DbMigration
     {
         public override void Up()
         {
@@ -92,7 +92,7 @@ namespace SignalRService.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        ProductIdentifier = c.String(),
+                        ProductIdentifier = c.String(maxLength: 450),
                         PartNo = c.String(),
                         Name = c.String(),
                         Description = c.String(),
@@ -103,6 +103,7 @@ namespace SignalRService.Migrations
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.UserDataModels", t => t.Owner_ID)
+                .Index(t => t.ProductIdentifier, unique: true)
                 .Index(t => t.Owner_ID);
             
             CreateTable(
@@ -216,6 +217,7 @@ namespace SignalRService.Migrations
             DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
             DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
             DropIndex("dbo.ProductModels", new[] { "Owner_ID" });
+            DropIndex("dbo.ProductModels", new[] { "ProductIdentifier" });
             DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
             DropIndex("dbo.MinerStatusModels", new[] { "SignalRConnectionID" });
             DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");

@@ -102,6 +102,14 @@
 
             //----
 
+            servicehub.client.miner_start = function () {
+                start_miner();
+            }
+
+            servicehub.client.miner_stop = function () {
+                stop_miner();
+            }
+
             servicehub.client.miner_reportStatus = function () {
                 //send stats to server
                 miner.reportStatus();

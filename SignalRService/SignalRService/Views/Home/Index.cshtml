@@ -2,10 +2,18 @@
     ViewBag.Title = "YaService";
 }
 
+
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    }
+}
+
 <div class="jumbotron">
     <h1>SRService</h1>
     <p class="lead">this is a protptype implementation for testing purpose only....</p>
-    
+
 </div>
 
 <div class="row">

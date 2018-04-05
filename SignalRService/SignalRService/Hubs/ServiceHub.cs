@@ -57,7 +57,7 @@ namespace SignalRService.Hubs
                 db.AddConnection(Context.ConnectionId, refererUrl, remoteIP);
             }
 
-           // _RemoveDeadConnections();
+            _RemoveDeadConnections();
             return base.OnConnected();
         }
 

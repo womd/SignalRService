@@ -244,9 +244,9 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201804041248261_InitDb.cs" />
-    <Compile Include="Migrations\201804041248261_InitDb.Designer.cs">
-      <DependentUpon>201804041248261_InitDb.cs</DependentUpon>
+    <Compile Include="Migrations\201804050928498_InitDB.cs" />
+    <Compile Include="Migrations\201804050928498_InitDB.Designer.cs">
+      <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -580,6 +580,7 @@
     <Content Include="Views\Shared\RenderDroneClient.cshtml" />
     <Content Include="Views\Shared\DeliveryMap.cshtml" />
     <Content Include="Views\Shared\StripePayment.cshtml" />
+    <Content Include="Views\Shared\_LayoutBackend.cshtml" />
     <None Include="web.ATNID1003HostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -614,8 +615,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804041248261_InitDb.resx">
-      <DependentUpon>201804041248261_InitDb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804050928498_InitDB.resx">
+      <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

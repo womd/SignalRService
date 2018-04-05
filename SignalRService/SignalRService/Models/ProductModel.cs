@@ -12,6 +12,8 @@ namespace SignalRService.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
+        [Index(IsUnique = true)]
+        [StringLength(450)]
         public string ProductIdentifier { get; set; }
         public string PartNo { get; set; }
         public string Name { get; set; }

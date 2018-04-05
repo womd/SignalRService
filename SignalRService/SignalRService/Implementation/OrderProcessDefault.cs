@@ -60,6 +60,7 @@ namespace SignalRService.Implementation
                     else
                     {
                         //the item has been receive-ack by client
+                        orderViewModel.ShippingState = Enums.EnumShippingState.Delivered;
                         orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
                         orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
                     }

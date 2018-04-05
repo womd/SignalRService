@@ -3,6 +3,14 @@
     ViewBag.Title = "Index";
 }
 
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    }
+}
+
+
 <h2>ServiceConfiguration</h2>
 
 <div id="ServiceConfigurationTable"></div>

@@ -19,7 +19,7 @@ namespace SignalRService.HubPipelineModules
                     {
                         case Enums.EnumServiceHubMethods.JoinGroup:
                             if (!dbCon.Groups.Contains(context.Args[0].ToString()))
-                                dbCon.Groups.Add(context.Args.ToString());
+                                dbCon.Groups.Add(context.Args[0].ToString());
 
                             break;
                         case Enums.EnumServiceHubMethods.LeaveGroup:
@@ -28,6 +28,7 @@ namespace SignalRService.HubPipelineModules
                         default:
                             break;
                     }
+                db.SaveChanges();
                 
             }
             return true;

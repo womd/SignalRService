@@ -148,7 +148,7 @@
             return elememt;
         },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"clientorderstate state" + order.OrderState + "\">";
+            var element = "<div class=\"clientorderstate state" + order.OrderState + "\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText")</div>";
             switch (order.OrderState) {
                 case 0:
                     element += "<div class=\"OrderState0\">@BaseResource.Get("OrderStateUndef")</div>";
@@ -169,7 +169,7 @@
         },
         createShippingStatusElement: function (orderdata) {
 
-            var element = "<div class=\"clientshippingstate\">"; 
+            var element = "<div class=\"clientshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
 
             switch (orderdata.ShippingState) {
                 case 0:
@@ -642,6 +642,11 @@
 
     .paybuttonwrapper {
         display: inline-block;
+    }
+
+    .orderstatecaption {
+        float: left;
+        margin-right: 3px;
     }
 
 </style>

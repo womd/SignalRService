@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Styles.Render("~/Content/css")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jtable")
+
+    <link href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+</head>
+<body>
+    <div class="menuwrap">
+        @Html.Partial("_LoginPartial")
+        @AdminMenu()
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+    @*@Scripts.Render("~/bundles/signalr")*@
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+@helper AdminMenu()
+    {
+
+<ul id="adminmenu">
+    <li>@Html.ActionLink("Seeding", "Seeding", "Home", null, null)</li>
+    <li>@Html.ActionLink("Localization", "Index", "Localization", null, null)</li>
+    <li>@Html.ActionLink("Users/Roles", "Index", "UserRoles", null, null)</li>
+    <li>@Html.ActionLink("SignalRClients", "Index", "SignalRClients", null, null)</li>
+    <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration", null, null)</li>
+    <li>@Html.ActionLink("CS", "Index", "Service", null, null)</li>
+</ul>
+
+        <script>
+            $(function () {
+                $("#adminmenu").menu();
+            });
+        </script>
+
+        <style>
+
+            .ui-menu {
+                overflow: hidden;
+            }
+
+                .ui-menu .ui-menu {
+                    overflow: visible !important;
+                }
+
+                .ui-menu > li {
+                    float: left;
+                    display: block;
+                    width: auto !important;
+                }
+
+                .ui-menu ul li {
+                    display: block;
+                    float: none;
+                }
+
+                    .ui-menu ul li ul {
+                        left: 120px !important;
+                        width: 100%;
+                    }
+
+                        .ui-menu ul li ul li {
+                            width: auto;
+                        }
+
+                            .ui-menu ul li ul li a {
+                                float: left;
+                            }
+
+                .ui-menu > li {
+                    margin: 5px 5px !important;
+                    padding: 0 0 !important;
+                }
+
+                    .ui-menu > li > a {
+                        float: left;
+                        display: block;
+                        clear: both;
+                        overflow: hidden;
+                    }
+
+                .ui-menu .ui-menu-icon {
+                    margin-top: 0.3em !important;
+                }
+
+                .ui-menu .ui-menu .ui-menu li {
+                    float: left;
+                    display: block;
+                }
+        </style>
+
+}
+
+

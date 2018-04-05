@@ -23,10 +23,11 @@
                     IdentityName: {
                         title: '@BaseResource.Get("IdentityName")',
                         create: true,
-                        edit: true
+                        edit: false
                     },
                     Roles: {
-                        title: '@BaseResource.Get("Roles")',
+                        edit: false,
+                        title: '@BaseResource.Get("InputRoleName")',
                         display: function (data) {
                             if (data.record.Roles.length > 0) {
 
@@ -38,6 +39,18 @@
                                 return res;
                             }
                             return "";
+                        },
+                        input: function (data) {
+                            var element = "";
+                            if (data.record && data.record.Roles.length > 0) {
+                                $(data.record.Roles).each(function () {
+                                    element += '<input type="text" name="Roles" style="width:200px" value="' + data.record.Roles.Name + '" />';
+                                });
+
+                            } else {
+                                element += '<input type="text" name="Roles" style="width:200px" value="" />';
+                            }
+                            return element;
                         }
                     }
                 }

@@ -93,7 +93,8 @@ namespace SignalRService.Utils
                  Name = model.Name,
                  Owner = model.Owner.ToUserDataViewModel(),
                  PartNumber = model.PartNo,
-                 Price = model.Price
+                 Price = model.Price,
+                 Identifier = model.ProductIdentifier
             };
         }
 

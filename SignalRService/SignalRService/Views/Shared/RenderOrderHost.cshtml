@@ -64,7 +64,7 @@
         refresh: function refresh_listItems() {
             $("#hostitemlist").children().remove();
             $(itemOrderHost._data_ProductList).each(function (idx) {
-                var newitem = hostProducList.createItem(this.ProductIdentifier, this.Name, this.Description, this.Price);
+                var newitem = hostProducList.createItem(this.Identifier, this.Name, this.Description, this.Price);
                 $("#hostitemlist").append(newitem);
             });
             $("#hostitemlist").listview();
@@ -77,26 +77,43 @@
     var hostOrderList = {
 
         createItem: function create_orderitem_entry(orderData) {
+
+            var cdate = new Date(orderData.CreationDate);
+
             var element = "<li data-icon=\"false\" class=\"hostorderitem\" data-orderid=\"" + orderData.OrderIdentifier + "\" data-state=\"" + orderData.OrderState + "\" >" +
                 "<div class=\"orderid\">" + orderData.OrderIdentifier + "</div>" +
-                "<div class=\"orderid\">" + orderData.CreationDate + "</div>" +
+                "<div class=\"orderCdate\">" + cdate.toLocaleString() + "</div>" +
                 "<div class=\"clientid\">" + orderData.CustomerUser.Name + "</div>";
 
-            var ordertotal = 0;
-            $(orderData.Items).each(function (idx) {
-                element += hostOrderList.createOrderProduct(this.Id, this.Name, this.Amount, this.Price);
-                ordertotal = ordertotal + this.Amount * this.Price;
-            })
-
+            
             element += hostOrderList.createStatusElement(orderData);
             element += hostOrderList.createShippingStatusElement(orderData);
+
+            element += hostOrderList.createOrderItemsElement(orderData);
             element += hostOrderList.createOrderProcessElements(orderData);
+
+            var ordertotal = hostOrderList.getOrderTotalFromOrderData(orderData)
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
+
             element += "</li>";
             return element;
         },
+        createOrderItemsElement: function (orderData) {
+            var element = "";
+            $(orderData.Items).each(function (idx) {
+                element += hostOrderList.createOrderProduct(this.Id, this.Name, this.Amount, this.Price);
+            })
+            return element;
+        },
+        getOrderTotalFromOrderData: function (orderData) {
+            var ordertotal = 0;
+            $(orderData.Items).each(function (idx) {
+                ordertotal = ordertotal + this.Amount * this.Price;
+            })
+            return ordertotal;
+        },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"hostorderstate state" + order.OrderState + "\">";
+            var element = "<div class=\"hostorderstate state" + order.OrderState + "\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText"):</div>";
 
                 switch (order.OrderState) {
                 case 0:
@@ -119,7 +136,7 @@
         },
                 createShippingStatusElement: function (orderdata) {
 
-            var element = "<div class=\"hostshippingstate\">"; 
+            var element = "<div class=\"hostshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
 
             switch (orderdata.ShippingState) {
                 case 0:
@@ -560,6 +577,16 @@
     }
 
 
+    .hostorderitem .orderCdate {
+       
+        display:inline-block;
+    }
+
+    .hostorderitem .orderid {
+        float: right;
+        overflow: hidden;
+        width: 60px;
+    }
 
     .hostorderitem .ordertotal {
         font-size: 1.2em;
@@ -597,6 +624,11 @@
 
     .hostorderstate.state2 {
         background-color:aqua;
+    }
+
+    .orderstatecaption {
+        float:left;
+        margin-right: 3px;
     }
 
 </style>

@@ -34,6 +34,13 @@
 
 
         },
+        stop: function () {
+            this.client().stop();
+            setTimeout(function () {
+                miner.reportStatus();
+            }, 3000);
+
+        },
         reportStatus: function miner_reportStatus() {
 
             var minerstats = {
@@ -69,8 +76,13 @@
 
     }
 
+    function stop_miner() {
+        miner.stop();
+    }
+
+
     $(function () {
-        start_miner();
+   //     start_miner();
     });
 
 </script>

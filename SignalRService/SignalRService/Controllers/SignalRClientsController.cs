@@ -78,8 +78,45 @@ namespace SignalRService.Controllers
         {
             try
             {
-                Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
-                return Json(new { Result = "OK", Message = "throttle update sent" });
+
+                var dbConn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == model.ConnectionId);
+                var minerstat = dbConn.MinerStatus.FirstOrDefault();
+                if(minerstat != null)
+                {
+                    if (minerstat.Running && model.MinerIsRunning)
+                    {
+                        Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
+                        return Json(new { Result = "OK", Message = "throttle update sent.." });
+                    }
+                    else
+                    {
+                        if (!minerstat.Running && model.MinerIsRunning)
+                        {
+                            Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_start();
+                            return Json(new { Result = "OK", Message = "miner started..." });
+                        }
+                        else
+                        {
+                            Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_stop();
+                            return Json(new { Result = "OK", Message = "miner stopped.." });
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (model.MinerIsRunning)
+                    {
+                        Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_start();
+                        return Json(new { Result = "OK", Message = "miner started..." });
+                    }
+                    else
+                    {
+                        Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_stop();
+                        return Json(new { Result = "OK", Message = "miner stopped..." });
+                    }
+                }
+
             }
             catch(Exception ex)
             {
