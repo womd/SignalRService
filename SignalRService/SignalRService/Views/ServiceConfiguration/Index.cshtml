@@ -20,12 +20,12 @@
 
     function init_ServiceTalbe() {
          $('#ServiceConfigurationTable').jtable({
-                title: 'Table of Services',
+                title: '@BaseResource.Get("TableTitleServices")',
                 actions: {
                     listAction: '@Url.Action("List", "ServiceConfiguration", new { anticachetoken = Guid.NewGuid().ToString() })',
-                    createAction: '@Url.Action("Create", "ServiceConfiguration", null)',
-                    updateAction: '@Url.Action("Update", "ServiceConfiguration", null)',
-                    deleteAction: '@Url.Action("Delete", "ServiceConfiguration", null)'
+                    createAction: '@Url.Action("Create", "ServiceConfiguration", new { anticachetoken = Guid.NewGuid().ToString() })',
+                    updateAction: '@Url.Action("Update", "ServiceConfiguration", new { anticachetoken = Guid.NewGuid().ToString() })',
+                    deleteAction: '@Url.Action("Delete", "ServiceConfiguration", new { anticachetoken = Guid.NewGuid().ToString() })'
                 },
                 fields: {
                     Id: {
