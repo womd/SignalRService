@@ -1,9 +1,5 @@
 ﻿
-@{
-    ViewBag.Title = "ConnectedClientsJTable";
-}
 
-<h2>ConnectedClientsJTable</h2>
 <div id="ConnectedSignalRClientsTable"></div>
 
 
@@ -12,7 +8,7 @@
         function init_ClientsJTable() {
 
              $('#ConnectedSignalRClientsTable').jtable({
-                title: 'Table of connected SignalRClients',
+                title: '@BaseResource.Get("TitleTableSignalClients")',
                 actions: {
                     listAction: '@Url.Action("ClientList", "SignalRClients", null)',
                    // createAction: '/GettingStarted/CreatePerson',

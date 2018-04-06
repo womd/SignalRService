@@ -36,12 +36,26 @@
     {
 
 <ul id="adminmenu">
-    <li>@Html.ActionLink("Seeding", "Seeding", "Home", null, null)</li>
-    <li>@Html.ActionLink("Localization", "Index", "Localization", null, null)</li>
-    <li>@Html.ActionLink("Users/Roles", "Index", "UserRoles", null, null)</li>
-    <li>@Html.ActionLink("SignalRClients", "Index", "SignalRClients", null, null)</li>
-    <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration", null, null)</li>
-    <li>@Html.ActionLink("CS", "Index", "Service", null, null)</li>
+    <li>
+        @BaseResource.Get("MenuBaseSettings")
+        <ul>
+            <li>@Html.ActionLink(@BaseResource.Get("MenuSeeding"), "Seeding", "Home", null, null)</li>
+            <li>@Html.ActionLink(@BaseResource.Get("MenuLocalization"), "Index", "Localization", new { id = 1 }, null)</li>
+        </ul>
+    </li>
+
+    <li>
+        @BaseResource.Get("MenOrderProcess")
+        <ul>
+            <li>@Html.ActionLink(@BaseResource.Get("MenuProducts"), "Index", "Product", null, null)</li>
+            <li>@Html.ActionLink(@BaseResource.Get("MenuOrders"), "Index", "Order", null, null)</li>
+        </ul>
+    </li>
+
+    <li>@Html.ActionLink(@BaseResource.Get("MenuUserRoles"), "Index", "UserRoles", null, null )</li>
+    <li>@Html.ActionLink(@BaseResource.Get("MenuSignalRClients"), "Index", "SignalRClients", null, null)</li>
+    <li>@Html.ActionLink(@BaseResource.Get("MenuServices"), "Index", "ServiceConfiguration", null, null)</li>
+
 </ul>
 
         <script>
@@ -54,6 +68,7 @@
 
             .ui-menu {
                 overflow: hidden;
+                z-index: 1000;
             }
 
                 .ui-menu .ui-menu {

@@ -45,7 +45,7 @@ namespace SignalRService.Controllers
 
             try
             {
-                db.Localization.Add(new Models.LocalizationModel() {
+                var dbobj = db.Localization.Add(new Models.LocalizationModel() {
                     Key = model.Key,
                     Value = model.Value,
                     Culture = model.Culture,
@@ -55,7 +55,7 @@ namespace SignalRService.Controllers
                     WasHit = false
                 });
                 db.SaveChanges();
-                return Json(new { Result = "OK", Message = "data saved.." });
+                return Json(new { Result = "OK", Record = dbobj.ToLocalizationViewModel() });
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace SignalRService.Controllers
                 dbObj.TranslationStatus = Enums.EnumTranslationStatus.Approved;
                 dbObj.WasHit = false;
                 db.SaveChanges();
-                return Json(new { Result = "OK", Message = "data saved.." });
+                return Json(new { Result = "OK", Record = dbObj.ToLocalizationViewModel() });
 
             }
             catch (Exception ex)

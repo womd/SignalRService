@@ -1,4 +1,6 @@
-﻿using SignalRService.Localization;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using SignalRService.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,13 @@ namespace SignalRService.Controllers
     public class UserRolesController : BaseController
     {
         private Models.ApplicationDbContext appDbContext = new Models.ApplicationDbContext();
-
+        private UserManager<Models.ApplicationUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
 
         public UserRolesController()
         {
-           
+            _userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
+            _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
         }
 
         public ActionResult Index()
@@ -27,9 +31,9 @@ namespace SignalRService.Controllers
 
         public JsonResult RolesList()
         {
-            var dbRoles = appDbContext.Roles.ToList();
+            
             List<ViewModels.RoleViewModel> resList = new List<ViewModels.RoleViewModel>();
-            foreach(var role in dbRoles)
+            foreach(var role in _roleManager.Roles)
             {
                 resList.Add(new ViewModels.RoleViewModel() { Id = role.Id, Name = role.Name });
             }
@@ -43,13 +47,16 @@ namespace SignalRService.Controllers
 
             try
             {
-                appDbContext.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole()
+                var rcreateres = _roleManager.Create(new IdentityRole() { Name = model.Name });
+                if (rcreateres.Succeeded)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = model.Name
-                });
-                appDbContext.SaveChanges();
-                return Json(new { Result = "OK", Message = "data saved.." });
+                    var newrole = _roleManager.FindByName(model.Name);
+                    return Json(new { Result = "OK", Record = new ViewModels.RoleViewModel() { Id = newrole.Id, Name = newrole.Name }   });
+                }
+                else
+                {
+                    return Json(new { Result = "ERROR", Message = rcreateres.Errors.First().ToString() });
+                }
             }
             catch (Exception ex)
             {
@@ -64,9 +71,10 @@ namespace SignalRService.Controllers
 
             try
             {
-                var dbObj = appDbContext.Roles.FirstOrDefault(ln => ln.Id == model.Id);
-                dbObj.Name = model.Name;
-                appDbContext.SaveChanges();
+                var role = _roleManager.FindById(model.Id);
+                role.Name = model.Name;
+                _roleManager.Update(role);
+
                 return Json(new { Result = "OK", Message = "data saved.." });
             }
             catch (Exception ex)
@@ -79,9 +87,8 @@ namespace SignalRService.Controllers
         {
             try
             {
-                var dbObj = appDbContext.Roles.FirstOrDefault(ln => ln.Id == Id);
-                appDbContext.Roles.Remove(dbObj);
-                appDbContext.SaveChanges();
+                var role = _roleManager.FindById(Id);
+                _roleManager.Delete(role);
                 return Json(new { Result = "OK" });
             }
             catch (Exception ex)
@@ -99,12 +106,16 @@ namespace SignalRService.Controllers
             try
             {
                 List<ViewModels.UserRolesViewModel> resList = new List<ViewModels.UserRolesViewModel>();
-                foreach (var user in appDbContext.Users)
+
+
+                foreach (var dbuser in appDbContext.Users)
                 {
+                    var user = _userManager.FindById(dbuser.Id);
+
                     List<ViewModels.RoleViewModel> uroles = new List<ViewModels.RoleViewModel>();
                     foreach(var role in user.Roles)
                     {
-                        var xrole = appDbContext.Roles.FirstOrDefault(ln => ln.Id == role.RoleId);
+                        var xrole = _roleManager.FindById(role.RoleId);
                         uroles.Add(new ViewModels.RoleViewModel() { Id = xrole.Id, Name = xrole.Name });
                     }
 
@@ -131,37 +142,52 @@ namespace SignalRService.Controllers
 
             try
             {
-                var user = appDbContext.Users.FirstOrDefault(ln => ln.UserName == IdentityName);
-                if(user == null)
-                    return Json(new { Result = "ERROR", Message = BaseResource.Get("UserNotFound") });
+                if (!_roleManager.RoleExists(Roles))
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("Invalid Role...") });
 
-                var role = appDbContext.Roles.FirstOrDefault(ln => ln.Name == Roles);
-                if(role == null)
-                    return Json(new { Result = "ERROR", Message = BaseResource.Get("RoleNotFound") });
+                var role = _roleManager.Roles.FirstOrDefault(ln => ln.Name == Roles);
+                var user = _userManager.FindByName(IdentityName);
+                List<ViewModels.RoleViewModel> retlist = new List<ViewModels.RoleViewModel>();
+                var addRes = _userManager.AddToRole(user.Id, role.Name);
+                if (addRes.Succeeded)
+                {
+                    retlist.Add(new ViewModels.RoleViewModel() { Id = role.Id, Name = role.Name });
+                    ViewModels.UserRolesViewModel ret = new ViewModels.UserRolesViewModel() { IdentityId = user.Id, IdentityName = user.UserName, Roles = retlist };
+                    return Json(new { Result = "OK", Record = ret });
+                }
+                else
+                {
+                    return Json(new { Result = "ERROR", Message =  addRes.Errors.First().ToString() });
+                }
 
-                user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole() { RoleId = role.Id, UserId = user.Id });
-                appDbContext.SaveChanges();
-
-                return Json(new { Result = "OK" });
+               
+                
+                
             }
             catch (Exception ex)
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
-
         }
 
         public JsonResult User2RolesDelete(string IdentityId)
         {
             try
             {
-                var user = appDbContext.Users.FirstOrDefault(ln => ln.Id == IdentityId);
-                var uroles = user.Roles.ToList();
-                foreach(var item in uroles)
+                var user = _userManager.FindById(IdentityId);
+                List<IdentityUserRole> toremove = new List<IdentityUserRole>();
+                foreach(var item in user.Roles)
                 {
-                    user.Roles.Remove(item);
+                    toremove.Add(item);
                 }
-                appDbContext.SaveChanges();
+
+                foreach(var ritem in toremove)
+                {
+                    user.Roles.Remove(ritem);
+
+                }
+                _userManager.Update(user);
+
                 return Json(new { Result = "OK", Message = "removed all roles..." });
             }
             catch (Exception ex)

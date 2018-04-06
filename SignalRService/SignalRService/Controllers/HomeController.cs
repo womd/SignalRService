@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -93,18 +95,29 @@ namespace SignalRService.Controllers
 
         public ActionResult AddChkAdminUser()
         {
-            Models.ApplicationDbContext appContext = new Models.ApplicationDbContext();
-            var usr = appContext.Users.FirstOrDefault(ln => ln.Email == "chk.mailbox@gmail.com");
-            if (usr == null)
-                return Json(new { Success = false, Message = "chk user not found.." }, JsonRequestBehavior.AllowGet);
+            var appDbContext = new Models.ApplicationDbContext();
+            var _userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
+            var _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
 
-            var role = appContext.Roles.FirstOrDefault(ln => ln.Name == "Admin");
-            if (role == null)
-                return Json(new { Success = false, Message = "Admin role not found" }, JsonRequestBehavior.AllowGet);
+            var user = _userManager.FindByEmail("chk.mailbox@gmail.com");
 
-            usr.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole() { RoleId = role.Id, UserId = usr.Id });
-            appContext.SaveChanges();
-            return Json(new { Success = true, Message = "added user chk for admin-role" }, JsonRequestBehavior.AllowGet);
+            if (!_roleManager.RoleExists("Admin"))
+            {
+                _roleManager.Create(new IdentityRole() { Name = "Admin" });
+
+            }
+            var admrole = _roleManager.FindByName("Admin");
+
+            var a2res = _userManager.AddToRole(user.Id, admrole.Name);
+            if (a2res.Succeeded)
+            {
+                return Json(new { Success = true, Message = "added user chk for admin-role" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { Success = true, Message = a2res.Errors.First().ToString() }, JsonRequestBehavior.AllowGet);
+            }
+           
         }
 
         private void _seed_testdata()

@@ -26,7 +26,7 @@ namespace SignalRService.Models
         protected override void Seed(ApplicationDbContext context)
         {
             //add default roles
-            var role = context.Roles.Add(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "Admin" });
+           // var role = context.Roles.Add(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = "Admin" });
            
             base.Seed(context);
         }

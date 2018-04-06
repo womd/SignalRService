@@ -76,7 +76,7 @@ namespace SignalRService.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = "OK", Record = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

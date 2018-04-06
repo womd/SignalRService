@@ -1,6 +1,13 @@
 ﻿
 @{
-    ViewBag.Title = " Index";
+    ViewBag.Title = BaseResource.Get("PageTitleOrderList");
+}
+
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    }
 }
 
 @Html.Partial("OrderList")
