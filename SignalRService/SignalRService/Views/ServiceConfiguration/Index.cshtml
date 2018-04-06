@@ -17,11 +17,12 @@
 
 <script>
 
+
     function init_ServiceTalbe() {
          $('#ServiceConfigurationTable').jtable({
                 title: 'Table of Services',
                 actions: {
-                    listAction: '@Url.Action("List", "ServiceConfiguration", null)',
+                    listAction: '@Url.Action("List", "ServiceConfiguration", new { anticachetoken = Guid.NewGuid().ToString() })',
                     createAction: '@Url.Action("Create", "ServiceConfiguration", null)',
                     updateAction: '@Url.Action("Update", "ServiceConfiguration", null)',
                     deleteAction: '@Url.Action("Delete", "ServiceConfiguration", null)'
