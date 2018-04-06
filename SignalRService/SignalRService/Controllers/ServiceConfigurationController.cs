@@ -4,6 +4,7 @@ using SignalRService.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -13,7 +14,9 @@ namespace SignalRService.Controllers
     public class ServiceConfigurationController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
+       
 
+     
         public ActionResult Index()
         {
             return View();
@@ -27,7 +30,8 @@ namespace SignalRService.Controllers
             List<Models.ServiceSettingModel> dblist = new List<Models.ServiceSettingModel>();
             List<ServiceSettingViewModel> data = new List<ServiceSettingViewModel>();
 
-            if (User.IsInRole("Admin"))
+            var userClaimPrincipal = User as ClaimsPrincipal;
+            if(userClaimPrincipal.IsInRole("Admin"))
                 dblist = db.ServiceSettings.ToList();
             else
                 dblist = db.ServiceSettings.Where(ln => ln.Owner.IdentityName == User.Identity.Name).ToList();
@@ -42,35 +46,44 @@ namespace SignalRService.Controllers
 
         public JsonResult Create(ServiceSettingViewModel model)
         {
-            if (db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
-                return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
-
-            var userdata = db.UserData.FirstOrDefault(ln => ln.IdentityName == User.Identity.Name);
-            if(userdata == null)
+            try
             {
-                userdata = db.UserData.Add(new Models.UserDataModel()
+                if (db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
+
+                var userdata = db.UserData.FirstOrDefault(ln => ln.IdentityName == User.Identity.Name);
+                if (userdata == null)
                 {
-                    IdentityName = User.Identity.Name
+                    userdata = db.UserData.Add(new Models.UserDataModel()
+                    {
+                        IdentityName = User.Identity.Name
+                    });
+                }
+
+                var dbobj = db.ServiceSettings.Add(new Models.ServiceSettingModel()
+                {
+                    Owner = userdata,
+                    ServiceName = model.ServiceName,
+                    ServiceUrl = model.ServiceUrl,
+                    ServiceType = (Enums.EnumServiceType)model.ServiceType,
                 });
-            }    
-            
-            var dbobj = db.ServiceSettings.Add(new Models.ServiceSettingModel()
-            {
-                Owner = userdata,
-                ServiceName = model.ServiceName,
-                ServiceUrl = model.ServiceUrl,
-                ServiceType = (Enums.EnumServiceType)model.ServiceType,
-             });
 
-            if(model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
-            {
-                dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
-                dbobj.StripeSettings.Add( new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
+                if (model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                {
+                    dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
+                    dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
+                }
+
+                db.SaveChanges();
+
+                return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
             }
-            
-            db.SaveChanges();
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
 
-            return Json(new { Result = "OK", Records = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
+          
         }
 
         public JsonResult Update(ServiceSettingViewModel model)
