@@ -11,6 +11,15 @@
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/jtable")
 
+    <script type="text/javascript">
+        //extend jtable ajax-options to force no-cache
+        $.extend(true, $.hik.jtable.prototype.options, {
+            ajaxSettings: {
+                cache: false
+            }
+        });
+    </script>
+
     <link href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
 
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>

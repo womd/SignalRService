@@ -14,6 +14,10 @@
         function init_ClientsJTable() {
 
             $('#LocalizationTable').jtable({
+                ajaxSettings: {
+                    cache: false,
+                    headers: { "cache-control": "no-cache" }
+                },
                 title: '@BaseResource.Get("TitleLocalizationTable")',
                 //sorting: true,
                 actions: {
@@ -74,16 +78,13 @@
     $(function () {
 
         init_ClientsJTable();
+     
+
         $('#LocalizationTable').jtable('load');
 
     });
 
-    //extend jtable ajax-options to force no-cache
-    $.extend(true, $.hik.jtable.prototype.options, {
-        ajaxSettings: {
-            cache: false
-        }
-    });
+   
 
 </script>
 
