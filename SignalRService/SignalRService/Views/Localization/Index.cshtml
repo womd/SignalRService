@@ -17,9 +17,9 @@
                 title: '@BaseResource.Get("TitleLocalizationTable")',
                 //sorting: true,
                 actions: {
-                    listAction: '@Url.Action("List", "Localization", null)',
-                    createAction: '@Url.Action("Create", "Localization", null)',
-                    updateAction: '@Url.Action("Update", "Localization", null)',
+                    listAction: '@Url.Action("List", "Localization", null )',
+                    createAction: '@Url.Action("Create", "Localization", null )',
+                    updateAction: '@Url.Action("Update", "Localization", null )',
                     deleteAction: '@Url.Action("Delete", "Localization", null)'
                 },
                 fields: {
@@ -78,6 +78,12 @@
 
     });
 
+    //extend jtable ajax-options to force no-cache
+    $.extend(true, $.hik.jtable.prototype.options, {
+        ajaxSettings: {
+            cache: false
+        }
+    });
 
 </script>
 

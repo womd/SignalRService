@@ -9,6 +9,7 @@ using SignalRService.Utils;
 
 namespace SignalRService.Controllers
 {
+
     [Authorize(Roles = "Admin")]
     public class LocalizationController : BaseController
     {
