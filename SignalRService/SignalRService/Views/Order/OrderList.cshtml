@@ -8,15 +8,15 @@
 
     <script>
 
-        function init_ClientsJTable() {
+        function init_OrdersJTable() {
 
             $('#OrderListJTable').jtable({
                 title: '@BaseResource.Get("TitleOrderList")',
                 actions: {
-                    listAction: '@Url.Action("List", "Order", null)',
-                    createAction: '@Url.Action("Create", "Order", null)',
-                    updateAction: '@Url.Action("Update", "Order", null)',
-                    deleteAction: '@Url.Action("Delete", "Order", null)'
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Order", "List") },
+                    createAction: function (postData, jtParams) { return jtable_datasource.create(postData, "Order", "Create") },
+                    updateAction: function (postData, jtParams) { return jtable_datasource.update(postData, "Order", "Update") },
+                    deleteAction: function (postData, jtParams) { return jtable_datasource.delete(postData, "Localization", "Delete") }
                 },
                 fields: {
                     CustomerUser: {
@@ -50,7 +50,7 @@
 
     $(function () {
 
-        init_ClientsJTable();
+        init_OrdersJTable();
         $('#OrderListJTable').jtable('load');
 
     });

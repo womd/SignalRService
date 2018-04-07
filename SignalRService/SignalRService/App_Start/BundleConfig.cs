@@ -27,7 +27,8 @@ namespace SignalRService
                 "~/Scripts/jquery-ui-1.9.2.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jtable").Include(
-                "~/Scripts/jtable/jquery.jtable.min.js"));
+                "~/Scripts/jtable/jquery.jtable.min.js",
+                "~/Scripts/jtable/NoCacheDataSource.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
                 "~/Scripts/jquery.signalR-2.2.2.min.js",

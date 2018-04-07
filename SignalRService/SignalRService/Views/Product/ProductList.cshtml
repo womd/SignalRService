@@ -10,10 +10,10 @@
             $('#ProductListJTable').jtable({
                 title: 'BaseResource.Get("TitleProductList")',
                 actions: {
-                    listAction: '@Url.Action("List", "Product", null)',
-                    createAction: '@Url.Action("Create", "Product", null)',
-                    updateAction: '@Url.Action("Update", "Product", null)',
-                    deleteAction: '@Url.Action("Delete", "Product", null)'
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Product", "List") },
+                    createAction: function (postData) { return jtable_datasource.create(postData, "Product", "Create") },
+                    updateAction: function (postData) { return jtable_datasource.update(postData, "Product", "Update") },
+                    deleteAction: function (postData) { return jtable_datasource.delete(postData, "Product", "Delete") }
                 },
                 fields: {
                     Id: {

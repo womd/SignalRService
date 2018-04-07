@@ -11,20 +11,18 @@
 <div id="LocalizationTable"></div>
 
 <script>
-        function init_ClientsJTable() {
+
+        function init_LocalizationJTable() {
 
             $('#LocalizationTable').jtable({
-                ajaxSettings: {
-                    cache: false,
-                    headers: { "cache-control": "no-cache" }
-                },
+                
                 title: '@BaseResource.Get("TitleLocalizationTable")',
                 //sorting: true,
                 actions: {
-                    listAction: '@Url.Action("List", "Localization", null )',
-                    createAction: '@Url.Action("Create", "Localization", null )',
-                    updateAction: '@Url.Action("Update", "Localization", null )',
-                    deleteAction: '@Url.Action("Delete", "Localization", null)'
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Localization", "List") },
+                    createAction: function (postData) { return jtable_datasource.create(postData, "Localization", "Create") },
+                    updateAction: function (postData) { return jtable_datasource.update(postData, "Localization", "Update") },
+                    deleteAction: function (postData) { return jtable_datasource.delete(postData, "Localization", "Delete") }
                 },
                 fields: {
                     Id: {
@@ -77,7 +75,7 @@
 
     $(function () {
 
-        init_ClientsJTable();
+        init_LocalizationJTable();
      
 
         $('#LocalizationTable').jtable('load');

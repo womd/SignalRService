@@ -10,9 +10,9 @@
              $('#ConnectedSignalRClientsTable').jtable({
                 title: '@BaseResource.Get("TitleTableSignalClients")',
                 actions: {
-                    listAction: '@Url.Action("ClientList", "SignalRClients", null)',
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "SignalRClients", "ClientList") },
                    // createAction: '/GettingStarted/CreatePerson',
-                      updateAction: '@Url.Action("ClientUpdate", "SignalRClients", null)',
+                    updateAction: function (postData) { return jtable_datasource.update(postData, "SignalRClients", "ClientUpdate") },
                    // deleteAction: '/GettingStarted/DeletePerson'
                 },
                 fields: {

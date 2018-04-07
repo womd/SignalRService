@@ -417,6 +417,7 @@
     <Content Include="Scripts\jtable\localization\jquery.jtable.tr.js" />
     <Content Include="Scripts\jtable\localization\jquery.jtable.vi.js" />
     <Content Include="Scripts\jtable\localization\jquery.jtable.zh-CN.js" />
+    <Content Include="Scripts\jtable\NoCacheDataSource.js" />
     <Content Include="Scripts\jtable\themes\basic\close.png" />
     <Content Include="Scripts\jtable\themes\basic\column-asc.png" />
     <Content Include="Scripts\jtable\themes\basic\column-desc.png" />

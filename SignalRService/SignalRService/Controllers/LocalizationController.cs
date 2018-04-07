@@ -10,6 +10,7 @@ using SignalRService.Utils;
 namespace SignalRService.Controllers
 {
 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     [Authorize(Roles = "Admin")]
     public class LocalizationController : BaseController
     {
