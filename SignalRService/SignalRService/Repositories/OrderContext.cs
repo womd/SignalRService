@@ -78,6 +78,55 @@ namespace SignalRService.Repositories
         }
 
         /// <summary>
+        /// get Orders for paged / sorted jTable
+        /// </summary>
+        /// <param name="StartIndex"></param>
+        /// <param name="PageSize"></param>
+        /// <param name="sorting"></param>
+        /// <returns></returns>
+        public List<Models.OrderModel>GetOrders(int StartIndex, int PageSize, string sorting)
+        {
+            var orders = new List<Models.OrderModel>();
+            bool executed = false;
+            if (sorting.IndexOf("StoreUser") != -1)
+            {
+                if(sorting.IndexOf("ASC") != -1)
+                {
+                    orders = _db.Orders.OrderBy(ln => ln.StoreUser.IdentityName).Skip(StartIndex).Take(PageSize).ToList();
+                }
+                else
+                {
+                    orders = _db.Orders.OrderByDescending(ln => ln.StoreUser.IdentityName).Skip(StartIndex).Take(PageSize).ToList();
+                }
+                
+                executed = true;
+            }
+            if (sorting.IndexOf("CustomerUser") != -1)
+            {
+                if (sorting.IndexOf("ASC") != -1)
+                {
+                    orders = _db.Orders.OrderBy(ln => ln.CustomerUser.IdentityName).Skip(StartIndex).Take(PageSize).ToList();
+                }
+                else
+                {
+                    orders = _db.Orders.OrderByDescending(ln => ln.CustomerUser.IdentityName).Skip(StartIndex).Take(PageSize).ToList();
+                }
+                executed = true;
+            }
+
+            if (!executed)
+            {
+                string query = @"select * from OrderModels o order by " + sorting + @"
+                            offset " + StartIndex + @" rows 
+                            FETCH NEXT " + PageSize + " rows only";
+
+                orders = _db.Orders.SqlQuery(query).ToList();
+            }
+            return orders;
+           // var baseq = _db.Orders.Skip(StartIndex).Take(PageSize).OrderBy(ln => ln.CreationDate);
+        }
+
+        /// <summary>
         /// removes an order and its items
         /// </summary>
         /// <param name="orderIdentifier"></param>

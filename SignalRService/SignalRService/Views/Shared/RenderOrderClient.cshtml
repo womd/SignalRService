@@ -164,6 +164,10 @@
                     break;
                 case 3:
                     element += "<div class=\"OrderState3\">@BaseResource.Get("OrderStateClientOrderFinished")</div>";
+                    break;
+                case 4:
+                    element += "<div class=\"OrderState4\">@BaseResource.Get("OrderStateServerOrderFinished")</div>";
+                    break;
                 default:
                     break;
             }
@@ -172,7 +176,7 @@
         },
         createShippingStatusElement: function (orderdata) {
 
-            if (orderdata.OrderState == 3)
+            if (orderdata.OrderState == 3 || orderdata.ShippingState == 0)
                 return "";
 
             var element = "<div class=\"clientshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
@@ -186,6 +190,8 @@
                 case 2:
                     element += "@BaseResource.Get("ShippingState2")";
                     break;
+                case 3:
+                    element += "@BaseResource.Get("ShippingState3")";
                 default:
                     break;
             }
@@ -208,7 +214,7 @@
                        element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForDelivery")</div>";
                        element += "<div class=\"okbtn\"><a onclick=\"itemOrderClient.processOrder(this)\" href=\"#\" class=\"ui-btn ui-btn-inline ui-corner-all\">@BaseResource.Get("ClientBtnOrderReceiveAck")</a></div>";
                     break;
-                case 3:
+                  case 3:
                       break;
 
                 }
@@ -454,7 +460,6 @@
                 });
             }
         }
-
 
     };
 

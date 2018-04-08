@@ -12,6 +12,10 @@
 
             $('#OrderListJTable').jtable({
                 title: '@BaseResource.Get("TitleOrderList")',
+                paging: true, //Enable paging
+                pageSize: 10, //Set page size (default: 10)
+                sorting: true, //Enable sorting
+                defaultSorting: 'CreationDate ASC', //Set default sorting
                 actions: {
                     listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Order", "List") },
                     createAction: function (postData, jtParams) { return jtable_datasource.create(postData, "Order", "Create") },
@@ -41,8 +45,8 @@
                     OrderType: {
                         title: '@BaseResource.Get("OrderType")'
                     },
-                    NextMethod: {
-                        title: '@BaseResource.Get("NextMethod")'
+                    CreationDate: {
+                        title: '@BaseResource.Get("CreationDate")'
                     }
                 }
             });

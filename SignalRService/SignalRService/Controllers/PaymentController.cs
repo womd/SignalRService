@@ -32,6 +32,7 @@ namespace SignalRService.Controllers
                 SourceTokenOrExistingSourceId = stripeToken,
             };
             var service = new StripeChargeService();
+           
             StripeCharge charge = service.Create(options);
             if (charge.Captured == true)
                 return true;
@@ -48,8 +49,22 @@ namespace SignalRService.Controllers
             var service = db.ServiceSettings.FirstOrDefault(ln => ln.Owner.ID == order.StoreUser.Id);
             var stripesettings = service.StripeSettings.FirstOrDefault();
 
-            var res = StripeCharge(order.CustomerUser.Name, tokenid, amount, "eur", order.OrderIdentifier, stripesettings.SecretKey);
+            var orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(service.ServiceType);
+            if (StripeCharge(order.CustomerUser.Name, tokenid, amount, "eur", order.OrderIdentifier, stripesettings.SecretKey))
+            {
+                order.PaymentState = Enums.EnumPaymentState.IsPaid;
+                order.OrderState = Enums.EnumOrderState.ServerOrderFinished;
+
+            }
+            else
+            {
+                order.PaymentState = Enums.EnumPaymentState.FailedPaiment;
+            }
             
+            orderRepository.UpdateOrderState(order.OrderIdentifier, order.OrderState);
+            orderRepository.UpdatePaymentState(order.OrderIdentifier, order.PaymentState);
+            orderProcessFactory.ProcessOrder(order, true);
+
             //get process implementation - set paystate ...
 
             return Json("tadaaa...", JsonRequestBehavior.AllowGet);

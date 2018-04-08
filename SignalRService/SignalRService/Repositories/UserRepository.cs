@@ -25,6 +25,11 @@ namespace SignalRService.Repositories
         {
             return userContext.GetUser(Id).ToUserDataViewModel() ;
         }
+
+        public ViewModels.UserDataViewModel GetUser(string IdentityName)
+        {
+            return userContext.GetUser(IdentityName).ToUserDataViewModel();
+        }
     }
 
    

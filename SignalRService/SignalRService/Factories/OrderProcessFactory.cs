@@ -9,13 +9,13 @@ namespace SignalRService.Factories
     public class OrderProcessFactory
     {
 
-        public static IOrderProcess GetOrderProcessImplementation(Enums.EnumOrderType type)
+        public static IOrderProcess GetOrderProcessImplementation(Enums.EnumServiceType serviceType)
         {
-            switch(type)
+            switch(serviceType)
             {
-                case Enums.EnumOrderType.Default:
+                case Enums.EnumServiceType.OrderService:
                     return new Implementation.OrderProcessDefault();
-                case Enums.EnumOrderType.Drone:
+                case Enums.EnumServiceType.OrderServiceDrone:
                     return new Implementation.OrderProcessDrone();
                 default:
                     return null;

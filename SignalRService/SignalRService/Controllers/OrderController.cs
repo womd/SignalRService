@@ -27,11 +27,11 @@ namespace SignalRService.Controllers
 
         #region jtable-orderlist
 
-        public JsonResult List()
+        public JsonResult List(int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
         {
             try
             {
-                var dbOrders = orderContext.GetOrders();
+                var dbOrders = orderContext.GetOrders(jtStartIndex, jtPageSize, jtSorting);
                 return Json(new { Result = "OK", Records = dbOrders.ToOrderViewModels() });
             }
             catch (Exception ex)

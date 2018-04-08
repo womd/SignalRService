@@ -10,5 +10,6 @@ namespace SignalRService.Enums
         Undef = 0,
         IsDue = 1,
         IsPaid = 2,
+        FailedPaiment = 3,
     }
 }

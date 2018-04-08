@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using SignalRService.Models;
 using SignalRService.ViewModels;
+using SignalRService.Utils;
 
 namespace SignalRService.Repositories
 {
@@ -32,10 +33,21 @@ namespace SignalRService.Repositories
             return productContext.AddOrUpdateProduct(pr);
         }
 
-        public List<ProductModel>GetProducts()
+        public List<ProductViewModel>GetProducts()
         {
-            var user = userContext.GetUser(1);
-            return user.Products.ToList();
+            return  productContext.GetProducts().ToProductViewModels();
+        }
+
+        public List<ProductViewModel>GetProducts(int startIndex, int pageSize, string sorting)
+        {
+            var products = productContext.GetProducts(startIndex, pageSize, sorting);
+            return products.ToProductViewModels();
+        }
+
+        public List<ViewModels.ProductViewModel> GetProducts(int userId, int startIndex, int pageSize, string sorting)
+        {
+            var products = productContext.GetProducts(userId, startIndex, pageSize, sorting);
+            return products.ToProductViewModels();
         }
 
     }

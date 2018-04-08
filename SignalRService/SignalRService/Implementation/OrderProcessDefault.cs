@@ -86,6 +86,12 @@ namespace SignalRService.Implementation
 
                     break;
                 case Enums.EnumOrderState.ServerOrderFinished:
+                    //payment has been processed in paymentcontroller,
+                    //send update to clients and hosts
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
+                       Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                       ).updateOrder(orderViewModel);
+                 
                     break;
                 case Enums.EnumOrderState.Cancel:
                     break;

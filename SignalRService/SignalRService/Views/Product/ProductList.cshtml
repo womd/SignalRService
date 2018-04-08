@@ -8,7 +8,11 @@
         function init_ClientsJTable() {
 
             $('#ProductListJTable').jtable({
-                title: 'BaseResource.Get("TitleProductList")',
+                title: '@BaseResource.Get("TitleProductList")',
+                paging: true, //Enable paging
+                pageSize: 10, //Set page size (default: 10)
+                sorting: true, //Enable sorting
+                defaultSorting: 'Name ASC', //Set default sorting
                 actions: {
                     listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Product", "List") },
                     createAction: function (postData) { return jtable_datasource.create(postData, "Product", "Create") },

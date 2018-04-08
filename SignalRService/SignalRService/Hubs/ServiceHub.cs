@@ -223,6 +223,7 @@ namespace SignalRService.Hubs
             db.SaveChanges();
         }
 
+       
         private ViewModels.OrderViewModel _processOrderRequest(OrderDataDTO orderDTO, string group)
         {
             IOrderProcess orderProcessFactory = null;
@@ -235,26 +236,9 @@ namespace SignalRService.Hubs
             if(service == null)
                 return new ViewModels.OrderViewModel() { ErrorMessage = "could not get service..." };
 
+
+            orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(service.ServiceType);
             
-
-            switch (service.ServiceType)
-            {
-                case Enums.EnumServiceType.OrderService:
-                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
-                    break;
-                case Enums.EnumServiceType.TaxiService:
-                    break;
-                case Enums.EnumServiceType.SecurityService:
-                    break;
-                case Enums.EnumServiceType.OrderServiceDrone:
-                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Drone);
-                    break;
-                default:
-                    orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
-                    break;
-            }
-
-
             if (orderViewModel == null)
             {
                 if(orderDTO.Items.Count == 0)
@@ -288,12 +272,13 @@ namespace SignalRService.Hubs
             if (Context.User.Identity.Name == orderViewModel.StoreUser.Name)
                 isStoreUser = true;
 
-                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumOrderType.Default);
+                orderProcessFactory = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumServiceType.OrderService);
                 var orderVMResult = orderProcessFactory.ProcessOrder(orderViewModel, isStoreUser);
                 orderViewModel = orderVMResult;
            
             return orderViewModel;
         }
+
 
     //    [Authorize]
         public async Task<ViewModels.OrderViewModel> ProcessOrder(OrderDataDTO data, string group)
