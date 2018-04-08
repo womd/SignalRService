@@ -41,14 +41,20 @@ namespace SignalRService.Implementation
                     break;
                 case Enums.EnumOrderState.ClientPlacedOrder:
                     //the item has been acknowledged from Server
+                    if (SentFromStoreUser)
+                    {
+                        orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
+                        orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
 
-                    orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
-                    orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
-
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
-                        Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
-                        ).updateOrder(orderViewModel);
-
+                    
+                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
+                            Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
+                            ).updateOrder(orderViewModel);
+                    }
+                    else
+                    {
+                        orderViewModel.ErrorMessage = "Wrong state .... should not happen...";
+                    }
                     break;
                 case Enums.EnumOrderState.HostConfirmedOrder:
                     if (SentFromStoreUser)
@@ -56,11 +62,18 @@ namespace SignalRService.Implementation
                         //store user launched shipping
                         orderViewModel.ShippingState = Enums.EnumShippingState.Launched;
                         orderRepository.UpdateShippingState(orderViewModel.OrderIdentifier, Enums.EnumShippingState.Launched);
+
+                        //set payment to due
+                        orderViewModel.PaymentState = Enums.EnumPaymentState.IsDue;
+                        orderRepository.UpdatePaymentState(orderViewModel.OrderIdentifier, Enums.EnumPaymentState.IsDue);
+
                     }
                     else
                     {
                         //the item has been receive-ack by client
                         orderViewModel.ShippingState = Enums.EnumShippingState.Delivered;
+                        orderRepository.UpdateShippingState(orderViewModel.OrderIdentifier, Enums.EnumShippingState.Delivered);
+
                         orderViewModel.OrderState = Enums.EnumOrderState.ClientOrderFinished;
                         orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.ClientOrderFinished);
                     }

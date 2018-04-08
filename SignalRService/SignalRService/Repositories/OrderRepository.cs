@@ -131,5 +131,10 @@ namespace SignalRService.Repositories
             orderContext.UpdateShippingState(orderIdentifier, shippingstate);
         }
 
+        public void UpdatePaymentState(string orderIdentifier, Enums.EnumPaymentState paymentstate)
+        {
+            orderContext.UpdatePaymentState(orderIdentifier, paymentstate);
+        }
+
     }
 }

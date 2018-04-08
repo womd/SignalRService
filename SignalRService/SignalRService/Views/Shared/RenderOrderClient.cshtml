@@ -107,9 +107,12 @@
     var placedOrderList = {
 
         createItem: function create_orderitem_entry(statusData) {
+
+            var cdate = new Date(statusData.CreationDate);
+
             var element = "<li data-icon=\"false\" class=\"clientorderitem\" data-orderid=\"" + statusData.OrderIdentifier + "\" data-state=\"" + statusData.OrderState + "\" >" +
                 "<div class=\"orderid\">" + statusData.OrderIdentifier + "</div>" +
-                "<div class=\"createdate\">" + statusData.CreationDate + "</div>" +
+                "<div class=\"orderCdate\">" + cdate.toLocaleString() + "</div>" +
                 "<div class=\"username\">" + statusData.StoreUser.Name + "</div>";
 
             var ordertotal = 0;
@@ -168,6 +171,9 @@
             return element;
         },
         createShippingStatusElement: function (orderdata) {
+
+            if (orderdata.OrderState == 3)
+                return "";
 
             var element = "<div class=\"clientshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
 
@@ -611,6 +617,16 @@
     .clientorderitem {
         margin-bottom:2px;
     }
+
+    .clientorderitem .orderid {
+        float: right;
+        overflow: hidden;
+        width: 60px;
+    }
+
+        .clientorderitem .orderCdate {
+            display: inline-block;
+        }
 
     .clientorderitem .ordertotal {
         font-size: 1.2em;

@@ -88,6 +88,7 @@
             
             element += hostOrderList.createStatusElement(orderData);
             element += hostOrderList.createShippingStatusElement(orderData);
+            element += hostOrderList.createPaymentStatusElement(orderData);
 
             element += hostOrderList.createOrderItemsElement(orderData);
             element += hostOrderList.createOrderProcessElements(orderData);
@@ -136,10 +137,14 @@
         },
                 createShippingStatusElement: function (orderdata) {
 
+                    if (orderdata.ShippingState == 0)
+                        return "";
+
             var element = "<div class=\"hostshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
 
             switch (orderdata.ShippingState) {
                 case 0:
+                      element += "@BaseResource.Get("ShippingState0")";
                     break;
                 case 1:
                     element += "@BaseResource.Get("ShippingState1")";
@@ -154,6 +159,30 @@
             element += "</div>";
             return element;
 
+        },
+        createPaymentStatusElement: function (orderdata) {
+
+            if (orderdata.PaymentState == 0)
+                return "";
+
+            var element = "<div class=\"hostpaymentstate\">@BaseResource.Get("LabelPaymentStateText"): "; 
+
+            switch (orderdata.PaymentState) {
+                case 0:
+                      element += "@BaseResource.Get("PaymentState0")";
+                    break;
+                case 1:
+                    element += "@BaseResource.Get("PaymentState1")";
+                    break;
+                case 2:
+                    element += "@BaseResource.Get("PaymentState2")";
+                    break;
+                default:
+                    break;
+            }
+
+            element += "</div>";
+            return element;
         },
         initialize: function build_oderItemsElement() {
             var element = "<div id=\"hostorderswrapper\">" +
@@ -189,7 +218,10 @@
                     if (order.ShippingState == 0) {
                         element += "<div class=\"okbtn\"><a onclick=\"itemOrderHost.processOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnShippingLaunch")</a></div>";
                     }
-                    element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForClientReceiveAck")</div>";
+                    if (order.ShippingState == 1) {
+                        element += "<div class=\"pemessage\">@BaseResource.Get("WaitingForClientReceiveAck")</div>";
+                    }
+
                     element += "<div class=\"nokbtn\"><a onclick=\"itemOrderHost.cancelOrder(this)\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("HostBtnOrderCancel")</a></div>";
                     break;
                 case 3:
