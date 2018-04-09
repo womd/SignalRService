@@ -159,6 +159,28 @@ namespace SignalRService.Utils
             };
         }
 
+        public static ViewModels.ProductImportConfigurationViewModel ToProductImportConfigurationViewModel(this Models.ProductImportConfigurationModel model)
+        {
+            return new ProductImportConfigurationViewModel()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Owner = model.Owner.ToUserDataViewModel(),
+                Source = model.Source,
+                Type = model.Type
+            };
+        }
+
+        public static List<ViewModels.ProductImportConfigurationViewModel>ToProductImportConfigurationViewModels(this List<Models.ProductImportConfigurationModel> models)
+        {
+            List<ViewModels.ProductImportConfigurationViewModel> list = new List<ProductImportConfigurationViewModel>();
+            foreach(var item in models)
+            {
+                list.Add(item.ToProductImportConfigurationViewModel());
+            }
+            return list;
+        }
+
 
     }
 }

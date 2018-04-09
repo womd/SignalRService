@@ -23,7 +23,7 @@
                 "</div>" +
                 "<div class=\"description\">" + description + "</div></a>" +
                 "<div class=\"pcommandwrapper\">" +
-                "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">l&ouml;schen</a></div>" +
+                "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("BtnDelete")</a></div>" +
                 "</div > " +
                 "</li>";
             return element;
@@ -31,19 +31,22 @@
         createEditItem: function create_productEditItem() {
             var element = "<div class=\"producteditwrapper\">" +
                 "<div data-role=\"fieldcontain\">" +
-                "<label for=\"editorcaption\"> Titel </label>" +
-                "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"Titel / Name\" />" +
+                "<label for=\"editorcaption\">@BaseResource.Get("ProductTitle")</label>" +
+                "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"@BaseResource.Get("ProductTitlePlaceholder")\" />" +
                 "</div>" +
 
-                "<label for=\"editordescription\">Beschreibung</label>" +
-                "<textarea name=\"description\" id=\"editordescription\" placeholder=\"Beschreibung\">" +
+                "<label for=\"editorpartnumber\">@BaseResource.Get("PartNumber")</lable>" +
+                "<input type=\"text\" id=\"editorpartnumber\" name=\"partnumber\" placeholder=\"@BaseResource.Get("PartnumberPlaceholder")\" />" +
+          
+                "<label for=\"editordescription\">@BaseResource.Get("ProductDescription")</label>" +
+                "<textarea name=\"description\" id=\"editordescription\" placeholder=\"@BaseResource.Get("ProductDescription")\" >" +
                 "</textarea>" +
 
                 "<div data-role=\"fieldcontain\">" +
-                "<label for=\"editorprice\">Preis</label>" +
-                "<input type=\"number\" id=\"editorprice\" name=\"price\"  placeholder=\"Preis\"  />" +
+                "<label for=\"editorprice\">@BaseResource.Get("ProductPrice")</label>" +
+                "<input type=\"number\" id=\"editorprice\" name=\"price\"  placeholder=\"@BaseResource.Get("ProductPricePlaceholder") \"  />" +
                 "</div>" +
-                "<div class=\"savebtn\"><a onclick=\"itemOrderHost.productEditSave('" + hostProducList.signalRGroup + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">speichern</a></div>" +
+                "<div class=\"savebtn\"><a onclick=\"itemOrderHost.productEditSave('" + hostProducList.signalRGroup + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("BtnSave")</a></div>" +
                 "</div>";
             return element;
         },
@@ -423,6 +426,7 @@
                 Name: $('.producteditwrapper').find("input[name=caption]").val(),
                 Description: $('.producteditwrapper').find("textarea[name=description]").val(),
                 Price: $('.producteditwrapper').find("input[name=price]").val(),
+                PartNumber: $('.producteditwrapper').find("input[name=partnumber]").val()
             }
             return product;
         },

@@ -18,6 +18,10 @@ namespace SignalRService.Utils
         public static bool IsDangerousString(string s, out int matchIndex)
         {
             matchIndex = 0;
+
+            if (string.IsNullOrEmpty(s))
+                return false;
+
             int startIndex = 0;
             while (true)
             {

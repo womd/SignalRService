@@ -26,8 +26,9 @@ namespace SignalRService.DAL
         public DbSet<ProductModel>Products { get; set; }
         public DbSet<OrderItemModel>OrderItems { get; set; }
         public DbSet<LocalizationModel> Localization { get; set; }
-
         public DbSet<StripeSettingsModel> StripeSettings { get; set; }
+        public DbSet<ProductImportConfigurationModel> ProductImportConfigurations { get; set; }
+        public DbSet<ProductImportModel> ProductTmpImport { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

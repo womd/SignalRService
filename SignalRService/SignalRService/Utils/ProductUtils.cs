@@ -63,6 +63,15 @@ namespace SignalRService.Utils
                 return false;
             }
 
+            if (data.PartNumber != string.Empty)
+            {
+                if (Utils.ValidationUtils.IsDangerousString(data.PartNumber, out idanger))
+                {
+                    messages.Add("Teilenummer darf keine gefährlichen Zeichen enthalten.");
+                    return false;
+                }
+            }
+
             return true;
         }
     }

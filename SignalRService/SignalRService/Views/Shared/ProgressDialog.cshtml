@@ -1,0 +1,49 @@
+﻿<script>
+
+    progressDialog = {
+
+        elementId : "defaultProgerssBarId",
+
+        createElement: function (id, title, message) {
+            progressDialog.elementId = id;
+            $('#' + id).remove();
+            var element = "<div id=\"" + id + "\" title=\"" + title + "\">" +
+                "<div id=\"" + id + "_pgbar\"></div>" +
+                "<div id=\"" + id + "_messages\">" + message + "</div>" +
+            "</div>";
+            return element;
+        },
+        show: function (id, title, message, value) {
+
+            $(document.body).append(progressDialog.createElement(id, title, message));
+
+            $("#" + id).dialog();
+
+            $("#" + id + "_pgbar").progressbar({
+                value: value
+            });
+        },
+        update: function (id, message, value) {
+
+            var dialog = $("#" + id);
+            var pgbar = $("#" + id + "_pgbar");
+
+            pgbar.progressbar("option", {
+                value: value
+            });
+
+            $("#" + id + "_messages").html(message);
+
+        },
+        close: function (id) {
+            $("#" + id).remove();
+        }
+
+
+    }
+
+
+
+
+
+</script>

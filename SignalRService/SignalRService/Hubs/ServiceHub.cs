@@ -174,6 +174,7 @@ namespace SignalRService.Hubs
                     Description = data.Description,
                     Owner = userRepository.GetUserFromSignalR(connectionId),
                     Price = data.Price,
+                    PartNumber = data.PartNumber
                 });
                 
                 GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(newProduct.ToProductViewModel());
@@ -315,6 +316,7 @@ namespace SignalRService.Hubs
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+        public string PartNumber { get; set; }
     }
 
     public class OrderDataDTO

@@ -1,0 +1,53 @@
+﻿    <script>
+        var servicehub;
+        $(function () {
+            servicehub = $.connection.serviceHub;
+          
+          
+            servicehub.client.miner_start = function () {
+                start_miner();
+            }
+
+            servicehub.client.miner_stop = function () {
+                stop_miner();
+            }
+
+            servicehub.client.miner_reportStatus = function () {
+                //send stats to server
+                miner.reportStatus();
+            }
+
+            servicehub.client.miner_setThrottle = function(data) {
+                miner.client().setThrottle(data);
+            }
+
+            servicehub.client.showProgressDialog = function (id, title, message, pgvalue) {
+                progressDialog.show(id, title, message, pgvalue);
+            }
+
+            servicehub.client.updateProgressDialog = function (id, message, pgvalue) {
+                progressDialog.update(id, message, pgvalue);
+            }
+
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+
+                servicehub.server.joinGroup("backenduser");
+            });
+
+        });
+
+     
+        function showMessageDailog(message,appendTo) {
+
+            $('#messageDialog').remove();
+            var element = "<div id=\"messageDialog\" title=\"Nachricht\">" +
+                "<p>" + message + "</p>" +
+                "</div>";
+            $(appendTo).append(element);
+            $('#messageDialog').popup();
+            $('#messageDialog').popup("open");
+        }
+
+    </script>
+

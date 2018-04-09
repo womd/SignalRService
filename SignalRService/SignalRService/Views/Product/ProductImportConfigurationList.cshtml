@@ -1,0 +1,112 @@
+﻿
+
+<div id="ProductImportConfigurationListJTable"></div>
+
+
+    <script>
+
+        function init_ProductImportConfigurationsJTable() {
+
+            $('#ProductImportConfigurationListJTable').jtable({
+                title: '@BaseResource.Get("TitleProductImportConfigList")',
+                paging: true, //Enable paging
+                pageSize: 10, //Set page size (default: 10)
+                sorting: true, //Enable sorting
+                defaultSorting: 'Name ASC', //Set default sorting
+                actions: {
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Product", "ListImportConfig") },
+                    createAction: function (postData) { return jtable_datasource.create(postData, "Product", "CreateImportConfig") },
+                    updateAction: function (postData) { return jtable_datasource.update(postData, "Product", "UpdateImportConfig") },
+                    deleteAction: function (postData) { return jtable_datasource.delete(postData, "Product", "DeleteImportConfig") }
+                },
+                fields: {
+                    Id: {
+                        title: '@BaseResource.Get("Id")',
+                        key: true,
+                        list: false
+                      
+                    },
+                    Owner: {
+                        title: '@BaseResource.Get("Owner")',
+                        display: function (data) {
+                            return data.record.Owner.Name;
+                        },
+                        options: {
+
+                            @{
+                                if (User.IsInRole("Admin"))
+                                {
+                                    var ulist = SignalRService.Utils.UserHelper.getUsersList();
+                                    int cntr = 0;
+
+                                    foreach (var item in ulist)
+                                    {
+                                        cntr++;
+                                    <text>
+                            '@item.Id' : '@item.Name'
+                                    </text>
+                                        if (cntr < ulist.Count)
+                                        {
+                                        <text>,</text>
+                                            }
+                                        }
+                                    }
+                                }
+
+                        }
+
+                    },
+                    Type: {
+                        title: '@BaseResource.Get("ProductImportType")',
+                        options: {
+                            '0': '@BaseResource.Get("ProductImportType0")',
+                            '1': '@BaseResource.Get("ProductImportType1")',
+                            '2': '@BaseResource.Get("ProductImportType2")'
+                        }
+                    },
+                    Source: {
+                        title: '@BaseResource.Get("ImportSource")'
+                    },
+                    Name: {
+                        title: '@BaseResource.Get("ImportConfigName")'
+                        
+                    },
+                    BtnImport: {
+                        title: '@BaseResource.Get("BtnImportColumnTitle")',
+                        display: function (data) {
+                            return "<button type=\"button\" onclick=\"btnImportClicked(" + data.record.Id + ")\">@BaseResource.Get("BtnImportText")</button>";
+                        },
+                        create: false
+                    }
+                }
+            });
+        }
+
+    $(function () {
+
+        init_ProductImportConfigurationsJTable();
+        $('#ProductImportConfigurationListJTable').jtable('load');
+
+    });
+
+        function btnImportClicked(importConfigId) {
+
+            $.ajax({
+                url: "/Product/ProductImportStart?" + makeid(),
+                data: { importConfigId: importConfigId },
+                type: "post",
+                context: document.body
+            }).done(function (data) {
+
+                console.log(data.Message);
+
+                }).fail(function () {
+                    console.log("failed request import...");
+                });
+
+            console.log("importing...");
+        }
+
+
+    </script>
+

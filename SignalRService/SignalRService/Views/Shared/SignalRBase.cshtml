@@ -123,6 +123,11 @@
                 dmap.updateItem(data);
             }
 
+
+            servicehub.client.showProgressDialog = function (id, title, message) {
+                progressDialog.show(id, title, message)
+            }
+
             // Start the connection.
             $.connection.hub.start().done(function () {
 

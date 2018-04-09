@@ -221,6 +221,7 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
+    <Compile Include="Enums\EnumImportType.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
     <Compile Include="Enums\EnumOrderProcessingMethods.cs" />
     <Compile Include="Enums\EnumGuiType.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Enums\EnumTranslationState.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
+    <Compile Include="Factories\ProductImportFactory.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -241,12 +243,26 @@
     <Compile Include="Hubs\ServiceHub.cs" />
     <Compile Include="Implementation\OrderProcessDrone.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
+    <Compile Include="Implementation\ProductImportGoogleMerchantXML.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
+    <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
     <Compile Include="Migrations\201804050928498_InitDB.cs" />
     <Compile Include="Migrations\201804050928498_InitDB.Designer.cs">
       <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804090851216_AddProductImportConfigurations.cs" />
+    <Compile Include="Migrations\201804090851216_AddProductImportConfigurations.Designer.cs">
+      <DependentUpon>201804090851216_AddProductImportConfigurations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804091100553_AddProductTMPImport.cs" />
+    <Compile Include="Migrations\201804091100553_AddProductTMPImport.Designer.cs">
+      <DependentUpon>201804091100553_AddProductTMPImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.cs" />
+    <Compile Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.Designer.cs">
+      <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -256,6 +272,8 @@
     <Compile Include="Models\OrderItemModel.cs" />
     <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
+    <Compile Include="Models\ProductImportConfiguration.cs" />
+    <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
@@ -268,11 +286,14 @@
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
+    <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
+    <Compile Include="Utils\UserHelper.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="ViewModels\ProductImportConfigurationViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
     <Compile Include="ViewModels\RoleViewModel.cs" />
     <Compile Include="ViewModels\SignalRClientsBaseViewModel.cs" />
@@ -596,6 +617,9 @@
     <Content Include="web.SomeeHostConfiguration.config">
       <DependentUpon>web.config</DependentUpon>
     </Content>
+    <Content Include="Views\Product\ProductImportConfigurationList.cshtml" />
+    <Content Include="Views\Shared\ProgressDialog.cshtml" />
+    <Content Include="Views\Shared\SignalRBaseBackend.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -622,6 +646,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201804050928498_InitDB.resx">
       <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804090851216_AddProductImportConfigurations.resx">
+      <DependentUpon>201804090851216_AddProductImportConfigurations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804091100553_AddProductTMPImport.resx">
+      <DependentUpon>201804091100553_AddProductTMPImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.resx">
+      <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -4,11 +4,25 @@
 }
 
 @{
-    if (User.IsInRole("Admin"))
-    {
-        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
-    }
+    Layout = "~/Views/Shared/_LayoutBackend.cshtml";
 }
 
-@Html.Partial("ProductList")
 
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">@BaseResource.Get("TabProducts")</a></li>
+        <li><a href="#tabs-2">@BaseResource.Get("TabProductImprotConfigurations")</a></li>
+    </ul>
+    <div id="tabs-1">
+        @Html.Partial("ProductList")
+    </div>
+    <div id="tabs-2">
+        @Html.Partial("ProductImportConfigurationList")
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#tabs").tabs();
+    });
+</script>
