@@ -156,7 +156,22 @@ namespace SignalRService.Controllers
 
             if (importer.LoadSourceToTmpStore(config.Source, user.Id))
             {
-                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportCompleted"), 100, user.SignalRConnections);
+                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductTMPImportCompleted"), 80, user.SignalRConnections);
+
+                foreach(var item in db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList())
+                {
+                    string[] strprice = item.PriceString.Split(' ');
+
+                    ProductViewModel pr = new ProductViewModel();
+                    pr.Name = item.Title;
+                    pr.ImageUrl = item.ImageLink;
+                    pr.Owner = user;
+                    pr.PartNumber = item.Mpn;
+                    pr.Price = decimal.Parse( strprice[0] );
+
+                    var res = productRepository.CreateProduct(pr);
+                }
+
                 return Json(new { Success = true, Message = "import completed.." });
             }
             else

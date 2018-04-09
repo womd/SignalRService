@@ -94,7 +94,8 @@ namespace SignalRService.Utils
                  Owner = model.Owner.ToUserDataViewModel(),
                  PartNumber = model.PartNo,
                  Price = model.Price,
-                 Identifier = model.ProductIdentifier
+                 Identifier = model.ProductIdentifier,
+                 ImageUrl = model.ImageUrl
             };
         }
 

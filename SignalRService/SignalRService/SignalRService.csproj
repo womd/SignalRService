@@ -264,6 +264,10 @@
     <Compile Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.Designer.cs">
       <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804091641327_ProductImportAddFields.cs" />
+    <Compile Include="Migrations\201804091641327_ProductImportAddFields.Designer.cs">
+      <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
@@ -655,6 +659,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.resx">
       <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804091641327_ProductImportAddFields.resx">
+      <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

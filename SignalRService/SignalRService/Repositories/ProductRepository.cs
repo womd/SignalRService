@@ -29,7 +29,8 @@ namespace SignalRService.Repositories
                 Owner = userContext.GetUser(product.Owner.Id),
                 PartNo = product.PartNumber,
                 Price = product.Price,
-                ProductIdentifier = Guid.NewGuid().ToString()
+                ProductIdentifier = Guid.NewGuid().ToString(),
+                ImageUrl = product.ImageUrl
             };
             return productContext.AddOrUpdateProduct(pr);
         }
