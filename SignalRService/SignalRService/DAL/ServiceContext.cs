@@ -30,6 +30,7 @@ namespace SignalRService.DAL
         public DbSet<ProductImportConfigurationModel> ProductImportConfigurations { get; set; }
         public DbSet<ProductImportModel> ProductTmpImport { get; set; }
 
+      
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

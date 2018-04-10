@@ -155,10 +155,43 @@ namespace SignalRService.Repositories
         public List<ProductImportConfigurationModel>GetProductImportConfigurations(int startIndex, int pageSize, string sorting)
         {
             var reslist = new List<ProductImportConfigurationModel>();
-            string query = @"select * from ProductImportConfigurationModels order by " + sorting + @"
-                        offset " + startIndex + @" rows
-                        FETCH NEXT " + pageSize + " rows only";
-            reslist = _db.ProductImportConfigurations.SqlQuery(query).ToList();
+
+            switch (sorting)
+            {
+                case "Type ASC":
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Type).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "TYPE DESC":
+                    reslist =_db.ProductImportConfigurations.OrderByDescending(ln => ln.Type).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "Owner ASC":
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Owner.IdentityName).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "Owner DESC":
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Owner.IdentityName).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "Source ASC":
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Source).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "Source DESC":
+                    reslist = _db.ProductImportConfigurations.OrderByDescending(ln => ln.Source).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "Name ASC":
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Name).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                case "NAME DESC":
+                    reslist = _db.ProductImportConfigurations.OrderByDescending(ln => ln.Name).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+                default:
+                    reslist = _db.ProductImportConfigurations.OrderBy(ln => ln.Id).Skip(startIndex).Take(pageSize).ToList();
+                    break;
+            }
+
+          
+            //string query = @"select * from ProductImportConfigurationModels order by " + sorting + @"
+            //            offset " + startIndex + @" rows
+            //            FETCH NEXT " + pageSize + " rows only";
+            //reslist = _db.ProductImportConfigurations.SqlQuery(query).ToList();
             return reslist;
         }
 
