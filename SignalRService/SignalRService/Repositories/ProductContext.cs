@@ -119,33 +119,8 @@ namespace SignalRService.Repositories
         {
             var products = new List<ProductModel>();
 
-            bool executed = false;
-            if (sorting.IndexOf("Identifier") != -1)
-            {
-                if (sorting.IndexOf("ASC") != -1)
-                    products = _db.Products.OrderBy(ln => ln.ProductIdentifier).Skip(StartIndex).Take(PageSize).ToList();
-                else
-                    products = _db.Products.OrderByDescending(ln => ln.ProductIdentifier).Skip(StartIndex).Take(PageSize).ToList();
-
-                executed = true;
-            }
-
-            if (sorting.IndexOf("PartNumber") != -1)
-            {
-                if (sorting.IndexOf("ASC") != -1)
-                    products = _db.Products.OrderBy(ln => ln.PartNo).Skip(StartIndex).Take(PageSize).ToList();
-                else
-                    products = _db.Products.OrderByDescending(ln => ln.PartNo).Skip(StartIndex).Take(PageSize).ToList();
-
-                executed = true;
-            }
-            if (!executed)
-            {
-                string query = @"select * from ProductModels p order by " + sorting + @"
-                        offset " + StartIndex + @" rows
-                        FETCH NEXT " + PageSize + " rows only";
-                products = _db.Products.SqlQuery(query).ToList();
-            }
+            products = _db.Products.OrderBy(ln => ln.ID).Skip(StartIndex).Take(PageSize).ToList();
+        
             return products;
         }
 
