@@ -16,8 +16,11 @@
 </head>
 <body>
     
-    <div class="container body-content">
-        @RenderBody()
+    <div data-role="page" class="mainpage">
+        <div data-role="panel" id="pagepannel1"></div>
+        <div data-role="content">
+            @RenderBody()
+        </div>
     </div>
 
     @*@Scripts.Render("~/bundles/bootstrap")*@

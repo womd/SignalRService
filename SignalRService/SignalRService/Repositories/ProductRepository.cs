@@ -19,7 +19,7 @@ namespace SignalRService.Repositories
         }
 
         #region products
-        public ProductModel CreateProduct(ProductViewModel product)
+        public ProductModel ProductAddOrUpdate(ProductViewModel product)
         {
             Models.ProductModel pr = new ProductModel()
             {
@@ -30,7 +30,8 @@ namespace SignalRService.Repositories
                 PartNo = product.PartNumber,
                 Price = product.Price,
                 ProductIdentifier = Guid.NewGuid().ToString(),
-                ImageUrl = product.ImageUrl
+                ImageUrl = product.ImageUrl,
+                SrcIdentifier = product.SrcIdentifier
             };
             return productContext.AddOrUpdateProduct(pr);
         }

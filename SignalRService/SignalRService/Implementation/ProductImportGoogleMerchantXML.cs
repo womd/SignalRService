@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using SignalRService.Interfaces;
 using SignalRService.Localization;
+using SignalRService.ViewModels;
 
 namespace SignalRService.Implementation 
 {
@@ -49,11 +51,11 @@ namespace SignalRService.Implementation
                 foreach (var item in items)
                 {
                     cntr++;
+                    totalcntr++;
                     if(cntr == xlimit)
                     {
-                        totalcntr = totalcntr + cntr;
                         Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProcessingItems") + " (" + totalcntr + " / " + total + ")", 45, user.SignalRConnections);
-                        cntr = 1;
+                        cntr = 0;
                     }
 
                     var pmodel = new Models.ProductImportModel();
@@ -167,5 +169,53 @@ namespace SignalRService.Implementation
            
         }
 
+        public bool CreateProductsFromTmpStore(UserDataViewModel user)
+        {
+
+            try
+            {
+                
+
+
+                var tmplist = _db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList();
+                int total = tmplist.Count;
+                int ctr = 0;
+                int totalcnt = 0;
+                int xlimit = total > 50 ? 50 : 10;
+                foreach (var item in tmplist)
+                {
+                    ctr++;
+                    totalcnt++;
+                    if (ctr == xlimit)
+                    {
+                        Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProcessingItems") + " (" + totalcnt + " / " + total + ")", 80, user.SignalRConnections);
+                        ctr = 0;
+                    }
+                    string[] prstring = item.PriceString.Split(' ');
+                    string pricestring = prstring[0].Replace(",", "").Replace(".", ",");
+
+                  
+                    ProductViewModel pr = new ProductViewModel();
+                    pr.Name = item.Title;
+                    pr.ImageUrl = item.ImageLink;
+                    pr.Owner = user;
+                    pr.PartNumber = item.Mpn;
+                    pr.Price = decimal.Parse(pricestring);
+
+                    pr.SrcIdentifier = item.SrcId;
+                    var res = productRepository.ProductAddOrUpdate(pr);
+
+                    Utils.LuceneUtils.AddUpdateLuceneIndex(item);
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
+          
+        }
     }
 }

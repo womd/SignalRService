@@ -96,17 +96,21 @@ namespace SignalRService.Hubs
         /// clientrequest for loading products
         /// </summary>
         /// <returns></returns>
-        public List<ViewModels.ProductViewModel> getProducts(string group)
+        public List<ViewModels.ProductViewModel> getProducts(string group, SearchConfig config)
         {
+
+            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms);
+
             List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
+
             var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
             if (dbService == null)
                 return reslist;
 
-            var oproducts = dbService.Owner.Products.ToList();
-            foreach(var item in oproducts)
+            foreach (var item in searchResItems)
             {
-                reslist.Add(item.ToProductViewModel());
+                if(item.Owner.ID == dbService.Owner.ID)
+                    reslist.Add(item.ToProductViewModel());
             }
 
             return reslist;
@@ -168,7 +172,7 @@ namespace SignalRService.Hubs
             List<string> vmessages = new List<string>();
             if (Utils.ProductUtils.IsValidProductData(data, out vmessages))
             {
-                var newProduct = productRepository.CreateProduct(new ViewModels.ProductViewModel()
+                var newProduct = productRepository.ProductAddOrUpdate(new ViewModels.ProductViewModel()
                 {
                     Name = data.Name,
                     Description = data.Description,
@@ -342,6 +346,14 @@ namespace SignalRService.Hubs
         public float throttle { get; set; }
         public int hashes { get; set; }
 
+    }
+
+    public class SearchConfig
+    {
+        public string SearchTerms { get; set; }
+        public int StartIndex { get; set; }
+        public int PageSize { get; set; }
+        public string Sorting { get; set; }
     }
 
 }

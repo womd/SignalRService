@@ -11,25 +11,30 @@
                 "<li></li></ul></div>";
             return element;
         },
-        createItem: function create_productitem_entry(itemId, caption, description, price) {
-            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\" >";
+        createItem: function create_productitem_entry(productData) {
+            var element = "<li class=\"productitem\" data-caption=\"" + productData.Name + "\" data-price=\"" + productData.Price + "\" data-itemcnt=\"1\" data-itemid=\"" + productData.Identifier + "\" >";
 
-           
-           //     element += "<img src=\"" + thumbnailSrc + "\">";
+            if (productData.ImageUrl) {
+                element += "<div class=\"primg\"><img src=\"" + productData.ImageUrl + "\"></div>";
+            }
 
             element += "<div class=\"cpwrapper\">" +
-                "<div class=\"caption\">" + caption + "</div>" +
-                "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
-                "</div>" +
-                "<div class=\"description\">" + description + "</div></a>" +
-                "<div class=\"pcommandwrapper\">" +
-                "<div class=\"removebtn\"><a onclick=\"removeProduct('" + itemId + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("BtnDelete")</a></div>" +
+                "<div class=\"caption\">" + productData.Name + "</div>" +
+                "<div class=\"price\">" + parseFloat(productData.Price).toFixed(2) + "</div>" +
+                "</div>";
+
+            if (productData.Description) {
+                element += "<div class=\"description\">" + productData.Description + "</div></a>";
+            }
+
+            element += "<div class=\"pcommandwrapper\">" +
+                "<div class=\"removebtn\"><a onclick=\"removeProduct('" + productData.Identifier + "')\" href=\"#\" class=\"ui-btn ui-corner-all\">@BaseResource.Get("BtnDelete")</a></div>" +
                 "</div > " +
                 "</li>";
             return element;
         },
         createEditItem: function create_productEditItem() {
-            var element = "<div class=\"producteditwrapper\">" +
+            var element = "<div id=\"producteditelement\" data-role=\"popup\" class=\"producteditwrapper\">" +
                 "<div data-role=\"fieldcontain\">" +
                 "<label for=\"editorcaption\">@BaseResource.Get("ProductTitle")</label>" +
                 "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"@BaseResource.Get("ProductTitlePlaceholder")\" />" +
@@ -67,7 +72,7 @@
         refresh: function refresh_listItems() {
             $("#hostitemlist").children().remove();
             $(itemOrderHost._data_ProductList).each(function (idx) {
-                var newitem = hostProducList.createItem(this.Identifier, this.Name, this.Description, this.Price);
+                var newitem = hostProducList.createItem(this);
                 $("#hostitemlist").append(newitem);
             });
             $("#hostitemlist").listview();
@@ -261,7 +266,15 @@
 
         loadProducts: function load_products() {
 
-            servicehub.server.getProducts("@Model.SinalRGroup")
+            
+            var searchconfig = {
+                SearchTerms: $("input[name=searchterms]").val(),
+                StartIndex: 0,
+                PageSize: 10,
+                Sorting: ""
+            };
+
+            servicehub.server.getProducts("@Model.SinalRGroup", searchconfig)
                 .done(function (productList) {
 
                     itemOrderHost._data_ProductList = productList;
@@ -290,11 +303,13 @@
         run: function run(appendTo) {
 
            
-                var plistelement = hostProducList.initialize("true", "true", "true");
+                var plistelement = hostProducList.initialize("false", "false", "false");
                 $(itemOrderHost.productListTargetSelector).append(plistelement);
 
                 var productEdit = hostProducList.createEditItem();
-                $(itemOrderHost.productListTargetSelector).append(productEdit);
+            $(itemOrderHost.productListTargetSelector).append(productEdit);
+
+            $("#producteditelement").popup();
 
                 itemOrderHost.loadProducts();
 
@@ -474,6 +489,7 @@
    
    
 
+  
 
 </script>
 
@@ -485,7 +501,12 @@
             <li><a href="#hostDeliveryMap" data-ajax="false">@BaseResource.Get("HostDeliveryMapTab")</a></li>
         </ul>
     </div>
-    <div id="hostProductsTab" class="ui-body-d ui-content"></div>
+    <div id="hostProductsTab" class="ui-body-d ui-content">
+        <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderHost.loadProducts()"/></div>
+        <div class="cntrls" data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <a href="#producteditelement" data-rel="popup" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">@BaseResource.Get("BtnProductAdd")</a>
+        </div>
+    </div>
     <div id="hostTabOrders"></div>
     <div id="hostDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
@@ -665,6 +686,29 @@
     .orderstatecaption {
         float:left;
         margin-right: 3px;
+    }
+
+    .primg img{
+        width: 100%;
+    }
+
+    .search {
+        position: fixed;
+        top: -6px;
+        right: 2px;
+        z-index:100;
+    }
+
+    h4 {
+        margin-top: 45px;
+        margin-bottom: 12px;
+        margin-left: 2px;
+    }
+
+    .cntrls {
+        position: absolute;
+        top:-40px;
+        right: -3px;
     }
 
 </style>

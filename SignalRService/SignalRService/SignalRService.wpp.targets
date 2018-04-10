@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+
+  <Target Name="SetupCustomAcls" AfterTargets="AddIisSettingAndFileContentsToSourceManifest">
+    <ItemGroup>
+      <MsDeploySourceManifest Include="setAcl">
+        <Path>$(_MSDeployDirPath_FullPath)\logs</Path>
+        <setAclAccess> Write,Delete,ReadAndExecute,Modify,CreateFiles</setAclAccess>
+        <setAclResourceType>Directory</setAclResourceType>
+        <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
+      </MsDeploySourceManifest>
+    </ItemGroup>
+    
+    <ItemGroup>
+     <MsDeploySourceManifest Include="setAcl">
+      <Path>$(_MSDeployDirPath_FullPath)\Localization</Path>
+      <setAclAccess> Write,Delete,ReadAndExecute,Modify,CreateFiles</setAclAccess>
+      <setAclResourceType>Directory</setAclResourceType>
+      <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
+     </MsDeploySourceManifest>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MsDeploySourceManifest Include="setAcl">
+        <Path>$(_MSDeployDirPath_FullPath)\lucine_index</Path>
+        <setAclAccess> Write,Delete,ReadAndExecute,Modify,CreateFiles</setAclAccess>
+        <setAclResourceType>Directory</setAclResourceType>
+        <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
+      </MsDeploySourceManifest>
+    </ItemGroup>
+   
+    <!--<ItemGroup>
+      <MsDeploySourceManifest Include="setAcl">
+        <Path>$(_MSDeployDirPath_FullPath)\NLog.config</Path>
+        <setAclAccess>Modify</setAclAccess>
+        <setAclResourceType>File</setAclResourceType>
+        <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
+      </MsDeploySourceManifest>
+    </ItemGroup>-->
+
+  </Target>
+ 
+  <Target Name="DeclareCustomParameters" AfterTargets="AddIisAndContentDeclareParametersItems">
+    <ItemGroup>
+      <MsDeployDeclareParameters Include="logsSetAclParam">
+        <Kind>ProviderPath</Kind>
+        <Scope>setAcl</Scope>
+        <Match>^$(_EscapeRegEx_MSDeployDirPath)\\logs$</Match>
+        <Description>Add write permission to the logs folder.</Description>
+        <DefaultValue>{$(_MsDeployParameterNameForContentPath)}/logs</DefaultValue>
+        <Value>$(_DestinationContentPath)/logs</Value>
+        <Tags>Hidden</Tags>
+        <Priority>$(VsSetAclPriority)</Priority>
+        <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
+      </MsDeployDeclareParameters>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MsDeployDeclareParameters Include="localizationSrcSetAclParam">
+        <Kind>ProviderPath</Kind>
+        <Scope>setAcl</Scope>
+        <Match>^$(_EscapeRegEx_MSDeployDirPath)\\Localization</Match>
+        <Description>Add write permission to the Src folder.</Description>
+        <DefaultValue>{$(_MsDeployParameterNameForContentPath)}/Src</DefaultValue>
+        <Value>$(_DestinationContentPath)/Src</Value>
+        <Tags>Hidden</Tags>
+        <Priority>$(VsSetAclPriority)</Priority>
+        <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
+      </MsDeployDeclareParameters>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MsDeployDeclareParameters Include="luceneSrcSetAclParam">
+        <Kind>ProviderPath</Kind>
+        <Scope>setAcl</Scope>
+        <Match>^$(_EscapeRegEx_MSDeployDirPath)\\lucene_index</Match>
+        <Description>Add write permission to the Lucene-Index folder.</Description>
+        <DefaultValue>{$(_MsDeployParameterNameForContentPath)}/lucene_index</DefaultValue>
+        <Value>$(_DestinationContentPath)/Src</Value>
+        <Tags>Hidden</Tags>
+        <Priority>$(VsSetAclPriority)</Priority>
+        <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
+      </MsDeployDeclareParameters>
+    </ItemGroup>
+    
+   
+    <!--<ItemGroup>
+      <MsDeployDeclareParameters Include="nlogconfSetAclParam">
+        <Kind>ProviderPath</Kind>
+        <Scope>setAcl</Scope>
+        <Match>^$(_EscapeRegEx_MSDeployDirPath)\\NLog.config</Match>
+        <Description>Add write permission to the NLog.config file.</Description>
+        <DefaultValue>{$(_MsDeployParameterNameForContentPath)}/NLog.config</DefaultValue>
+        <Value>$(_DestinationContentPath)/NLog.config</Value>
+        <Tags>Hidden</Tags>
+        <Priority>$(VsSetAclPriority)</Priority>
+        <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
+      </MsDeployDeclareParameters>
+    </ItemGroup>-->
+
+    
+  </Target>
+
+</Project>

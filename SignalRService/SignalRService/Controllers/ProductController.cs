@@ -149,30 +149,18 @@ namespace SignalRService.Controllers
             db.ProductTmpImport.RemoveRange(prodsToRemove);
             db.SaveChanges();
 
-            Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageLoadingXML"), 10, user.SignalRConnections);
-
-
-
-
             if (importer.LoadSourceToTmpStore(config.Source, user.Id))
             {
-                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductTMPImportCompleted"), 80, user.SignalRConnections);
-
-                foreach(var item in db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList())
+               if(importer.CreateProductsFromTmpStore(user))
                 {
-                    string[] strprice = item.PriceString.Split(' ');
-
-                    ProductViewModel pr = new ProductViewModel();
-                    pr.Name = item.Title;
-                    pr.ImageUrl = item.ImageLink;
-                    pr.Owner = user;
-                    pr.PartNumber = item.Mpn;
-                    pr.Price = decimal.Parse( strprice[0] );
-
-                    var res = productRepository.CreateProduct(pr);
+                    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportFinished"), 100, user.SignalRConnections);
+                    return Json(new { Success = true, Message = "import completed.." });
                 }
-
-                return Json(new { Success = true, Message = "import completed.." });
+                else
+                {
+                    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportError"), 0, user.SignalRConnections);
+                    return Json(new { Success = false, Message = "import failed.." });
+                }
             }
             else
             {

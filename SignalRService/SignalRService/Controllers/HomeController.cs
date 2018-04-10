@@ -120,6 +120,45 @@ namespace SignalRService.Controllers
            
         }
 
+        public ActionResult CreateLuceneIndex()
+        {
+            try
+            {
+                Utils.LuceneUtils.AddUpdateLuceneIndex(db.ProductTmpImport.ToList());
+                return Json(new { Success = true, Message = "LuceneIndex created" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult ClearLuceneIndex()
+        {
+            try
+            {
+                Utils.LuceneUtils.ClearLuceneIndex();
+                return Json(new { Success = true, Message = "LuceneIndex cleared" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult OptimizeLuceneIndex()
+        {
+            try
+            {
+                Utils.LuceneUtils.Optimize();
+                return Json(new { Success = true, Message = "LuceneIndex optimized" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         private void _seed_testdata()
         {
             var defAccountProp = new Models.UserDataModel() { IdentityName = "anonymous" };

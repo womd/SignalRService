@@ -23,16 +23,24 @@ namespace SignalRService.Repositories
         public ProductModel AddOrUpdateProduct(ProductModel model)
         {
             ProductModel dbmodel;
-            if(model.ID == 0)
-                dbmodel = _db.Products.Add(model);
+            if (model.ID == 0)
+            {
+                //try finding it
+                dbmodel = _db.Products.FirstOrDefault(x => x.SrcIdentifier == model.SrcIdentifier && x.Owner.ID == model.Owner.ID);
+                if(dbmodel == null)
+                    dbmodel = _db.Products.Add(model);
+            }
             else
             {
-                dbmodel =_db.Products.FirstOrDefault(ln => ln.ID == model.ID);
+                dbmodel = _db.Products.FirstOrDefault(ln => ln.ID == model.ID);
                 dbmodel.Description = model.Description;
                 dbmodel.Name = model.Name;
                 dbmodel.Owner = model.Owner;
                 dbmodel.PartNo = model.PartNo;
                 dbmodel.Price = model.Price;
+                dbmodel.SrcIdentifier = model.SrcIdentifier;
+                dbmodel.ImageUrl = model.ImageUrl;
+
             }
             _db.SaveChanges();
             return dbmodel;

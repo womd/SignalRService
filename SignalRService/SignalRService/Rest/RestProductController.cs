@@ -30,7 +30,7 @@ namespace SignalRService.Rest
         {
             // http://localhost:64000/api/p/create?Id=0&PartNumber=xxx11xx&Name=testname&serialnumber=E5L0372977&partnumber=16911639
 
-            var product = productRepository.CreateProduct(model);
+            var product = productRepository.ProductAddOrUpdate(model);
             return Request.CreateResponse(product.ToProductViewModel());
         }
 

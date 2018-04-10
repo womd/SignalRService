@@ -38,27 +38,36 @@
         initialize: function build_productItemsElement(dataInset, dataAutoDividers, dataFilter) {
             var element = "<div id=\"customeritemswrapper\">" +
                 "<ul data-role=\"listview\" data-inset=\"" + dataInset + "\" data-autodividers=\"" + dataAutoDividers + "\" data-filter=\"" + dataFilter + "\" id=\"customeritemlist\">" +
-                "<li></li></ul></div>";
+                "</ul></div>";
 
             return element;
         },
-        createItem: function create_productitem_entry(itemId, thumbnailSrc, caption, description, price) {
-            var element = "<li class=\"productitem\" data-caption=\"" + caption + "\" data-price=\"" + price + "\" data-itemcnt=\"1\" data-itemid=\"" + itemId + "\">" +
-                "<a href=\"#\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
-                "<img src=\"" + thumbnailSrc + "\">" +
-                "<div class=\"cpwrapper\">" +
-                    "<div class=\"caption\">" + caption + "</div>" +
-                    "<div class=\"price\">" + parseFloat(price).toFixed(2) + "</div>" +
-                "</div>" +
-                "<div class=\"description\">" + description + "</div>" +
-                "</a>" +
-                "</li>";
+        createItem: function create_productitem_entry(productData) {
+            var element = "<li class=\"productitem\" data-caption=\"" + productData.Name + "\" data-price=\"" + productData.Price + "\" data-itemcnt=\"1\" data-itemid=\"" + productData.Identifier + "\">" +
+                "<div class=\"ui-input-btn ui-btn ui-btn-inline\">@BaseResource.Get("BtnAdd2Cart")" +
+                "<input type=\"button\" data-inline=\"true\" value=\"@BaseResource.Get("BtnAdd2Cart")\" onclick=\"itemOrderClient.orderListAdd(this)\">" +
+                "</div>";
+
+            if (productData.ImageUrl) {
+                element += "<div class=\"primg\"><img src=\"" + productData.ImageUrl + "\"></div>";
+            }
+
+            element += "<div class=\"cpwrapper\">" +
+                "<div class=\"caption\">" + productData.Name + "</div>" +
+                "<div class=\"price\">" + parseFloat(productData.Price).toFixed(2) + "</div>" +
+                "</div>";
+
+            if (productData.Description) {
+                element += "<div class=\"description\">" + productData.Description + "</div></a>";
+            }
+
+             element += "</li>";
             return element;
         },
         refresh: function redraw_items() {
-
+            $("#customeritemlist").children().remove();
             $(itemOrderClient._data_ProductList).each(function (idx) {
-                var newitem = productItemList.createItem(this.Id, "", this.Name, this.Description, this.Price);
+                var newitem = productItemList.createItem(this);
                 $("#customeritemlist").append(newitem);
             });
             $("#customeritemlist").listview();
@@ -273,7 +282,14 @@
 
         loadProducts: function load_products() {
 
-             servicehub.server.getProducts("@Model.SinalRGroup")
+            var searchconfig = {
+                SearchTerms: $("input[name=searchterms]").val(),
+                StartIndex: 0,
+                PageSize: 10,
+                Sorting: ""
+            };
+
+             servicehub.server.getProducts("@Model.SinalRGroup", searchconfig)
                  .done(function (productList) {
 
                      itemOrderClient._data_ProductList = productList;
@@ -306,9 +322,10 @@
 
             
             var orderlistElement = orderItemList.initialize("true", "false", "false");
-            $(itemOrderClient.productListTargetSelector).append(orderlistElement);
+            $('#pagepannel1').append(orderlistElement);
             $('#orderitemlist').listview();
             $('#orderitemlist').listview("refresh");
+
 
             var totalsElement = totalsBox.initialize();
             $(itemOrderClient.productListTargetSelector).append(totalsElement);
@@ -353,7 +370,7 @@
             console.log("updating orderdata");
         },
         orderListAdd: function add_item_to_orderlist(e) {
-            var li_item = $(e).parent();
+            var li_item = $(e).closest('.productitem');
             var itemid = $(li_item).data("itemid");
             var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
 
@@ -372,11 +389,18 @@
                 var cntelement = $(itemInOrderlist).find(".unitcount");
                 cntelement.html(countcurr);
 
+                $("#pagepannel1").trigger("updatelayout");
+                $("#pagepannel1").panel("open");
+
             }
             else {
 
                 var oitem = orderItemList.createOrderItem($(li_item).data("itemid"), $(li_item).data("caption"), 1, $(li_item).data("price"));
                 $("#orderitemlist").append(oitem).listview('refresh');
+
+
+                $("#pagepannel1").trigger("updatelayout");
+                $("#pagepannel1").panel("open");
             }
 
             totalsBox.calcTotals();
@@ -479,7 +503,9 @@
             <li><a href="#clientDeliveryMap" data-ajax="false">@BaseResource.Get("ClientDeliveryMapTab")</a></li>
         </ul>
     </div>
-    <div id="clientProductsTab" class="ui-body-d ui-content"></div>
+    <div id="clientProductsTab" class="ui-body-d ui-content">
+        <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderClient.loadProducts()" /></div>
+    </div>
     <div id="clientTabOrders"></div>
     <div id="clientDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
@@ -668,6 +694,29 @@
     .orderstatecaption {
         float: left;
         margin-right: 3px;
+    }
+
+    .primg img {
+        width: 100%;
+    }
+
+    .search {
+        position: fixed;
+        top: -6px;
+        right: 2px;
+        z-index: 100;
+    }
+
+    h4 {
+        margin-top: 45px;
+        margin-bottom: 12px;
+        margin-left: 2px;
+    }
+
+    .cntrls {
+        position: absolute;
+        top: -40px;
+        right: -3px;
     }
 
 </style>

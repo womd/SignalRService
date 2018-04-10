@@ -17,5 +17,6 @@ namespace SignalRService.ViewModels
         public string ErrorMessage { get; set; }
         public decimal Price { get; set; }
         public string ImageUrl { get; set; }
+        public string SrcIdentifier { get; set; }
     }
 }
