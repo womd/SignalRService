@@ -135,6 +135,7 @@
 
             element += placedOrderList.createStatusElement(statusData);
             element += placedOrderList.createShippingStatusElement(statusData);
+            element += placedOrderList.createPaymentStatusElement(statusData);
             element += placedOrderList.createOrderProcessElements(statusData);
 
             var pelement = placedOrderList.createPayButton(statusData);
@@ -208,6 +209,30 @@
             element += "</div>";
             return element;
 
+        },
+         createPaymentStatusElement: function (orderdata) {
+
+            if (orderdata.PaymentState == 0)
+                return "";
+
+            var element = "<div class=\"paymentstate\">@BaseResource.Get("LabelPaymentStateText"): "; 
+
+            switch (orderdata.PaymentState) {
+                case 0:
+                      element += "@BaseResource.Get("PaymentState0")";
+                    break;
+                case 1:
+                    element += "@BaseResource.Get("PaymentState1")";
+                    break;
+                case 2:
+                    element += "@BaseResource.Get("PaymentState2")";
+                    break;
+                default:
+                    break;
+            }
+
+            element += "</div>";
+            return element;
         },
             createOrderProcessElements: function create_orderProcessElements(order) {
             var element = "<div class=\"orderprocesswrapper\" id=\"clientorderprocesswrapper\" \">";

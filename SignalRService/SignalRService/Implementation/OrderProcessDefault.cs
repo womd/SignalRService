@@ -46,7 +46,10 @@ namespace SignalRService.Implementation
                         orderViewModel.OrderState = Enums.EnumOrderState.HostConfirmedOrder;
                         orderRepository.UpdateOrderState(orderViewModel.OrderIdentifier, Enums.EnumOrderState.HostConfirmedOrder);
 
-                    
+                        //set payment to due
+                        orderViewModel.PaymentState = Enums.EnumPaymentState.IsDue;
+                        orderRepository.UpdatePaymentState(orderViewModel.OrderIdentifier, Enums.EnumPaymentState.IsDue);
+
                         GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(
                             Utils.SignalRServiceUtils.JoinClientLists(orderViewModel.CustomerUser.SignalRConnections, orderViewModel.StoreUser.SignalRConnections)
                             ).updateOrder(orderViewModel);
@@ -62,10 +65,6 @@ namespace SignalRService.Implementation
                         //store user launched shipping
                         orderViewModel.ShippingState = Enums.EnumShippingState.Launched;
                         orderRepository.UpdateShippingState(orderViewModel.OrderIdentifier, Enums.EnumShippingState.Launched);
-
-                        //set payment to due
-                        orderViewModel.PaymentState = Enums.EnumPaymentState.IsDue;
-                        orderRepository.UpdatePaymentState(orderViewModel.OrderIdentifier, Enums.EnumPaymentState.IsDue);
 
                     }
                     else

@@ -122,7 +122,7 @@
             return ordertotal;
         },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"hostorderstate state" + order.OrderState + "\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText"):</div>";
+            var element = "<div class=\"hostorderstate\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText"):</div>";
 
                 switch (order.OrderState) {
                 case 0:
@@ -671,17 +671,6 @@
          width: 80px;
     }
 
-
-    .hostorderstate.state0 {
-        background-color: cadetblue;
-    }
-    .hostorderstate.state1 {
-        background-color: chocolate;
-    }
-
-    .hostorderstate.state2 {
-        background-color:aqua;
-    }
 
     .orderstatecaption {
         float:left;

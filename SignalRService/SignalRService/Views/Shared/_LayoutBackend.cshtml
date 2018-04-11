@@ -38,6 +38,8 @@
 @helper AdminMenu()
     {
 
+     <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+
 <ul id="adminmenu">
     <li>
         @BaseResource.Get("MenuBaseSettings")

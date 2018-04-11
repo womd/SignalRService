@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace SignalRService.Controllers
 {
     [Authorize]
-    public class ProductController : Controller
+    public class ProductController : BaseController
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
         private Repositories.ProductContext productContext;
