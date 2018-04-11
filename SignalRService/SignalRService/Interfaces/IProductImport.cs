@@ -9,7 +9,6 @@ namespace SignalRService.Interfaces
 {
     public interface IProductImport
     {
-        bool LoadSourceToTmpStore(string src, int ownerId);
-        bool CreateProductsFromTmpStore(UserDataViewModel user);
+        bool ImportSource(string src, int ownerId);
     }
 }

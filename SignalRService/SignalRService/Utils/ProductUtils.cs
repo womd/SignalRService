@@ -8,7 +8,11 @@ namespace SignalRService.Utils
 {
     public static class ProductUtils
     {
-      
+        public static int calc_percent(int count, int total)
+        {
+            var perc = count * 100 / total;
+            return perc;
+        }
 
         public static bool IsValidProductData(Hubs.ProductData data, out List<string>messages)
         {

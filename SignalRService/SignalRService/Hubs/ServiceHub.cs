@@ -109,7 +109,7 @@ namespace SignalRService.Hubs
 
             foreach (var item in searchResItems)
             {
-                if(item.Owner.ID == dbService.Owner.ID)
+                //if(item.Owner.ID == dbService.Owner.ID)
                     reslist.Add(item.ToProductViewModel());
             }
 

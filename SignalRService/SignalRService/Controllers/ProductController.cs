@@ -131,36 +131,34 @@ namespace SignalRService.Controllers
 
         public JsonResult ProductImportStart(int importConfigId)
         {
+            var user = userRepository.GetUser(User.Identity.Name);
+            Utils.ProgressDialogUtils.Show("productImport", BaseResource.Get("ProductImportDialogTitle"), BaseResource.Get("ProductImportStarted"), 1, user.SignalRConnections);
+
 
             var config = db.ProductImportConfigurations.FirstOrDefault(ln => ln.Id == importConfigId);
-
             if (config == null)
                 return Json(new { Success = false, Message = "config not found.." });
 
-            var user = userRepository.GetUser(User.Identity.Name);
             if(config.Owner.ID != user.Id)
                 return Json(new { Success = false, Message = "no permission to load this config..." });
 
             var importer = Factories.ProductImportFactory.GetProductImportImplementation(Enums.EnumImportType.GoogleProductXML);
 
-            Utils.ProgressDialogUtils.Show("productImport", BaseResource.Get("ProductImportDialogTitle"), BaseResource.Get("CleaningTmpCache"),1, user.SignalRConnections);
-
+            var toCleanCount = db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).Count();
             var prodsToRemove = db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList();
-            db.ProductTmpImport.RemoveRange(prodsToRemove);
+            int rctr = 0;
+            foreach(var ritem in prodsToRemove)
+            {
+                rctr++;
+                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("CleaningItem") + " (" + rctr + " / " + toCleanCount + ")", Utils.ProductUtils.calc_percent(rctr, toCleanCount), user.SignalRConnections);
+                db.ProductTmpImport.Remove(ritem);
+            }
             db.SaveChanges();
 
-            if (importer.LoadSourceToTmpStore(config.Source, user.Id))
+            if (importer.ImportSource(config.Source, user.Id))
             {
-               if(importer.CreateProductsFromTmpStore(user))
-                {
                     Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportFinished"), 100, user.SignalRConnections);
                     return Json(new { Success = true, Message = "import completed.." });
-                }
-                else
-                {
-                    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportError"), 0, user.SignalRConnections);
-                    return Json(new { Success = false, Message = "import failed.." });
-                }
             }
             else
             {
