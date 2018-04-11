@@ -632,6 +632,7 @@
     <Content Include="Views\Shared\ProgressDialog.cshtml" />
     <Content Include="Views\Shared\SignalRBaseBackend.cshtml" />
     <Content Include="SignalRService.wpp.targets" />
+    <Content Include="Views\Shared\GeneralHelpers.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

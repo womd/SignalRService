@@ -117,38 +117,18 @@ namespace SignalRService.Hubs
         }
 
      //   [Authorize]
-        public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType, string group)
+        public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType, string group, FilterSortConfig config)
         {
-            List<ViewModels.OrderViewModel> reslist = new List<ViewModels.OrderViewModel>();
             var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
             if (dbService == null)
-                return reslist;
+                return new List<ViewModels.OrderViewModel>();
 
-            List<Models.OrderModel> dbres = new List<Models.OrderModel>();
             var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
 
-            switch (guiType)
-            {
-                case Enums.EnumGuiType.Undef:
-                    break;
-                case Enums.EnumGuiType.Client:
-                    dbres = db.Orders.Where(ln => ln.CustomerUser.IdentityName == user.Name && ln.StoreUser.ID == dbService.Owner.ID).ToList();
-                    break;
-                case Enums.EnumGuiType.Host:
-                    dbres = db.Orders.Where(ln => ln.StoreUser.ID == user.Id).ToList();
-                    break;
-                case Enums.EnumGuiType.Admin:
-                    break;
-                default:
-                    break;
-            }
+            var allorders = orderRepository.GetOrders(user.Id, guiType);
+            var sortedorders = Utils.OrderUtils.SortByConfig(allorders, config.Sorters); 
 
-           foreach(var item in dbres)
-            {
-                reslist.Add(item.ToOrderViewModel());
-            }
-
-            return reslist;
+            return sortedorders;
         }
 
         private ViewModels.ProductViewModel _stageProduct(ProductData data, string group, string connectionId)
@@ -354,6 +334,22 @@ namespace SignalRService.Hubs
         public int StartIndex { get; set; }
         public int PageSize { get; set; }
         public string Sorting { get; set; }
+    }
+
+    public class FilterSortConfig
+    {
+        public List<UiFilter> Filters { get;  set; }
+        public List<UiSorter> Sorters { get; set; }
+    }
+
+    public class UiFilter
+    {
+        public string Expression { get; set; }
+    }
+
+    public class UiSorter
+    {
+        public string Expression { get; set; }
     }
 
 }

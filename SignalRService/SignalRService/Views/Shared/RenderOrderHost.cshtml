@@ -42,7 +42,7 @@
 
                 "<label for=\"editorpartnumber\">@BaseResource.Get("PartNumber")</lable>" +
                 "<input type=\"text\" id=\"editorpartnumber\" name=\"partnumber\" placeholder=\"@BaseResource.Get("PartnumberPlaceholder")\" />" +
-          
+
                 "<label for=\"editordescription\">@BaseResource.Get("ProductDescription")</label>" +
                 "<textarea name=\"description\" id=\"editordescription\" placeholder=\"@BaseResource.Get("ProductDescription")\" >" +
                 "</textarea>" +
@@ -78,7 +78,7 @@
             $("#hostitemlist").listview();
             $("#hostitemlist").listview('refresh');
 
-            
+
         }
     }
 
@@ -93,7 +93,7 @@
                 "<div class=\"orderCdate\">" + cdate.toLocaleString() + "</div>" +
                 "<div class=\"clientid\">" + orderData.CustomerUser.Name + "</div>";
 
-            
+
             element += hostOrderList.createStatusElement(orderData);
             element += hostOrderList.createShippingStatusElement(orderData);
             element += hostOrderList.createPaymentStatusElement(orderData);
@@ -148,7 +148,7 @@
                     if (orderdata.ShippingState == 0)
                         return "";
 
-            var element = "<div class=\"hostshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
+            var element = "<div class=\"hostshippingstate\">@BaseResource.Get("LabelShippingStateText"): ";
 
             switch (orderdata.ShippingState) {
                 case 0:
@@ -173,7 +173,7 @@
             if (orderdata.PaymentState == 0)
                 return "";
 
-            var element = "<div class=\"hostpaymentstate\">@BaseResource.Get("LabelPaymentStateText"): "; 
+            var element = "<div class=\"hostpaymentstate\">@BaseResource.Get("LabelPaymentStateText"): ";
 
             switch (orderdata.PaymentState) {
                 case 0:
@@ -194,7 +194,7 @@
         },
         initialize: function build_oderItemsElement() {
             var element = "<div id=\"hostorderswrapper\">" +
-                "<ul data-role=\"listview\" data-inset=\"true\" id=\"hostorderitemlist\">"; +
+                "<ul data-role=\"listview\" data-filter=\"true\" data-inset=\"true\" id=\"hostorderitemlist\">"; +
                 "</ul></div>";
             return element;
 
@@ -203,7 +203,7 @@
         {
             var elememt = "<div class=\"orderproduct\">" +
                  "<div class=\"caption\">" + caption + "</div>" +
-                
+
                  "<div class=\"itemtotal\">" + parseFloat((amount * unitPrice)).toFixed(2) + "</div>" +
                 "<div class=\"unitprice\">" + unitPrice + "</div>" +
 
@@ -243,20 +243,30 @@
 
             $('#hostorderitemlist').children().remove();
 
-            itemOrderHost._data_OrderList.sort(function (a, b) {
-                var x = new Date(b.CreationDate).getTime() - new Date(a.CreationDate).getTime();
-                return x;
-            });
-
             $(itemOrderHost._data_OrderList).each(function () {
                 $('#hostorderitemlist').append(hostOrderList.createItem(this));
             });
             $('#hostorderitemlist').listview();
             $('#hostorderitemlist').listview("refresh");
         }
+        ,
+        get_selected_filters: function () {
+            var Filters = [];
+            return Filters;
+        },
+        get_selected_sorters: function () {
+            var Sorters = [];
+            $("#sort-select-orders option:selected").each(function (idx) {
+                var asorter = { Expression: $(this).val() };
+                Sorters.push(asorter);
+            })
+
+            return Sorters;
+        }
+        
     }
 
-    var itemOrderHost = {
+    itemOrderHost = {
 
         productListTargetSelector: "#hostProductsTab",
         orderListTargetSelector: "#hostTabOrders",
@@ -266,7 +276,7 @@
 
         loadProducts: function load_products() {
 
-            
+
             var searchconfig = {
                 SearchTerms: $("input[name=searchterms]").val(),
                 StartIndex: 0,
@@ -279,21 +289,27 @@
 
                     itemOrderHost._data_ProductList = productList;
                     hostProducList.refresh();
-                    
+
                 })
                 .fail(function () {
                 console.log("load_products failed..");
                 });
 
-           
+
         },
         loadOrders: function load_orders(type) {
-            servicehub.server.getOrders(type,"@Model.SinalRGroup")
+
+            var config = {
+                Filters: hostOrderList.get_selected_filters(),
+                Sorters: hostOrderList.get_selected_sorters()
+            }
+
+            servicehub.server.getOrders(type,"@Model.SinalRGroup",config)
                 .done(function (data) {
 
                     itemOrderHost._data_OrderList = data;
                     hostOrderList.refresh();
-                    
+
                 })
                 .fail(function () {
                     console.log("load_orders failed...");
@@ -302,7 +318,7 @@
 
         run: function run(appendTo) {
 
-           
+
                 var plistelement = hostProducList.initialize("false", "false", "false");
                 $(itemOrderHost.productListTargetSelector).append(plistelement);
 
@@ -321,14 +337,14 @@
                 $(itemOrderHost.orderListTargetSelector).append(hostorderlist);
 
                 itemOrderHost.loadOrders(2);
-          
+
         },
         stop: function stop() {
             $('#hostitemswrapper').remove();
             $('#hostorderswrapper').remove();
             $('#hosttotalswrapper').remove();
             $('.producteditwrapper').remove();
-            
+
         },
         loadJqueryMobile: function load_jqueryMobile() {
             var script = document.createElement("script");
@@ -371,7 +387,7 @@
             }
 
             itemOrderClient.calcTotals();
-   
+
             servicehub.server.addToCart(itemid, '@Model.SinalRGroup.ToLower()');
 
         },
@@ -413,7 +429,7 @@
         },
         productEditSave: function save_prodct(group) {
             var product = itemOrderHost.getProductFromInput();
-           
+
 
             var stageRes = servicehub.server.stageProduct(product, group)
                 .done(function (data) {
@@ -432,10 +448,10 @@
         },
         productRemove: function remove_product(id) {
             $("*[data-itemid='" + id + "']").parent().remove();
-       
+
         },
         getProductFromInput: function get_product_from_input() {
-            
+
             var product = {
                 Id: 0,
                 Name: $('.producteditwrapper').find("input[name=caption]").val(),
@@ -476,7 +492,7 @@
             }
             else {
                 itemOrderHost._data_OrderList[dataIndex] = orderData;
-              
+
             }
             hostOrderList.refresh();
             console.log("updating orderdata");
@@ -486,10 +502,12 @@
     function removeProduct(id) {
         servicehub.server.removeProduct(id,"@Model.SinalRGroup");
     }
-   
-   
 
-  
+    function OrdersSortSelectionChanged(event, ui) {
+        itemOrderHost.loadOrders(2);
+    }
+
+
 
 </script>
 
@@ -502,14 +520,20 @@
         </ul>
     </div>
     <div id="hostProductsTab" class="ui-body-d ui-content">
-        <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderHost.loadProducts()"/></div>
+        <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderHost.loadProducts()" /></div>
         <div class="cntrls" data-role="controlgroup" data-type="horizontal" data-mini="true">
             <a href="#producteditelement" data-rel="popup" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">@BaseResource.Get("BtnProductAdd")</a>
         </div>
     </div>
-    <div id="hostTabOrders"></div>
+    <div id="hostTabOrders">
+
+        <div class="filterconfwrapper">
+            @Html.Raw(SignalRService.Utils.OrderUtils.Get_SortSelector_Orders())
+        </div>
+    </div>
     <div id="hostDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
+
 
 
 <style>
@@ -604,39 +628,41 @@
 
     /*orderproduct*/
     .orderproduct {
-        display:table;
-        width:100%;
+        display: table;
+        width: 100%;
     }
 
-    .orderproduct .caption {
-        float: left;
-    }
-    .orderproduct .amount {
-        float: right;
-        font-size:smaller;
-    }
-    .orderproduct .amount::after {
-        content: " x";
-    }
-    .orderproduct .unitprice {
-        float: right;
-        font-size: smaller;
-        margin-left: 3px;
-    }
+        .orderproduct .caption {
+            float: left;
+        }
 
-    .orderproduct .itemtotal {
-        float:right;
-        margin-left: 5px;
-    }
+        .orderproduct .amount {
+            float: right;
+            font-size: smaller;
+        }
 
-    .orderproduct .itemtotal::after {
-        content: "€";
-    }
+            .orderproduct .amount::after {
+                content: " x";
+            }
+
+        .orderproduct .unitprice {
+            float: right;
+            font-size: smaller;
+            margin-left: 3px;
+        }
+
+        .orderproduct .itemtotal {
+            float: right;
+            margin-left: 5px;
+        }
+
+            .orderproduct .itemtotal::after {
+                content: "€";
+            }
 
 
     .hostorderitem .orderCdate {
-       
-        display:inline-block;
+        display: inline-block;
     }
 
     .hostorderitem .orderid {
@@ -647,37 +673,37 @@
 
     .hostorderitem .ordertotal {
         font-size: 1.2em;
-        float:right;
+        float: right;
     }
 
-    .hostorderitem .ordertotal::after {
-        content: "€";
+        .hostorderitem .ordertotal::after {
+            content: "€";
+        }
+
+    .hostorderitem .status {
+        display: inline-block;
     }
 
-    .hostorderitem  .status {
-        display:inline-block;
-    }
-
-    .hostorderitem .status::after {
-        content: " >>";
-    }
+        .hostorderitem .status::after {
+            content: " >>";
+        }
 
     .hostorderitem .nextstatus {
-        float:right;
+        float: right;
     }
 
     .hostorderstate {
-         height: 20px;
-         width: 80px;
+        height: 20px;
+        width: 80px;
     }
 
 
     .orderstatecaption {
-        float:left;
+        float: left;
         margin-right: 3px;
     }
 
-    .primg img{
+    .primg img {
         width: 100%;
     }
 
@@ -685,7 +711,7 @@
         position: fixed;
         top: -6px;
         right: 2px;
-        z-index:100;
+        z-index: 100;
     }
 
     h4 {
@@ -696,8 +722,7 @@
 
     .cntrls {
         position: absolute;
-        top:-40px;
+        top: -40px;
         right: -3px;
     }
-
 </style>

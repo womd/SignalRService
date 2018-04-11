@@ -88,6 +88,8 @@ namespace SignalRService.Repositories
             return newObj.ToOrderViewModel();
         }
 
+
+
         public List<ViewModels.OrderViewModel>GetOrders(int userId, Enums.EnumGuiType guiType)
         {
             List<Models.OrderModel> dbOrders = new List<Models.OrderModel>();
@@ -99,7 +101,7 @@ namespace SignalRService.Repositories
                     dbOrders = orderContext.GetClientOrders(userId);
                     break;
                 case Enums.EnumGuiType.Host:
-                    dbOrders = orderContext.GetClientOrders(userId);
+                    dbOrders = orderContext.GetHostOrders(userId);
                     break;
                 case Enums.EnumGuiType.Admin:
                     break;
@@ -135,6 +137,7 @@ namespace SignalRService.Repositories
         {
             orderContext.UpdatePaymentState(orderIdentifier, paymentstate);
         }
+
 
     }
 }

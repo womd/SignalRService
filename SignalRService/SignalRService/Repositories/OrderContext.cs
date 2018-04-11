@@ -51,6 +51,11 @@ namespace SignalRService.Repositories
             return _db.Orders.Where(ln => ln.CustomerUser.ID == UserId).ToList();
         }
 
+        public List<Models.OrderModel> GetHostOrders(int UserId)
+        {
+            return _db.Orders.Where(ln => ln.StoreUser.ID == UserId).ToList();
+        }
+
         public void UpdateOrderState(string orderIdentifier, Enums.EnumOrderState state)
         {
             var dbOrder =_db.Orders.FirstOrDefault(ln => ln.OrderIdentifier == orderIdentifier);
