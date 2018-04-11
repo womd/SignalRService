@@ -135,7 +135,7 @@ namespace SignalRService.Controllers
             }
         }
 
-        public JsonResult Delete(int Id)
+        public ActionResult Delete(int Id)
         {
             try
             {
