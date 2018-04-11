@@ -144,7 +144,7 @@
 
             element += "<div class=\"ordertotal\">" + parseFloat(ordertotal).toFixed(2) + "</div>";
 
-           
+
             return element;
 
         },
@@ -160,7 +160,7 @@
             return elememt;
         },
         createStatusElement: function create_statusElement(order) {
-            var element = "<div class=\"clientorderstate state" + order.OrderState + "\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText")</div>";
+            var element = "<div class=\"clientorderstate\"><div class=\"orderstatecaption\">@BaseResource.Get("LabelOrderStateText")</div>";
             switch (order.OrderState) {
                 case 0:
                     element += "<div class=\"OrderState0\">@BaseResource.Get("OrderStateUndef")</div>";
@@ -188,7 +188,7 @@
             if (orderdata.OrderState == 3 || orderdata.ShippingState == 0)
                 return "";
 
-            var element = "<div class=\"clientshippingstate\">@BaseResource.Get("LabelShippingStateText"): "; 
+            var element = "<div class=\"clientshippingstate\">@BaseResource.Get("LabelShippingStateText"): ";
 
             switch (orderdata.ShippingState) {
                 case 0:
@@ -295,7 +295,7 @@
                      itemOrderClient._data_ProductList = productList;
                      productItemList.refresh();
 
-                
+
                 })
                 .fail(function () {
                 console.log("load_products failed..");
@@ -320,7 +320,7 @@
             $(itemOrderClient.productListTargetSelector).append(itemlistElement);
             itemOrderClient.loadProducts();
 
-            
+
             var orderlistElement = orderItemList.initialize("true", "false", "false");
             $('#pagepannel1').append(orderlistElement);
             $('#orderitemlist').listview();
@@ -328,13 +328,13 @@
 
 
             var totalsElement = totalsBox.initialize();
-            $(itemOrderClient.productListTargetSelector).append(totalsElement);
+            $('#pagepannel1').append(totalsElement);
 
 
             var placedOrderElement = placedOrderList.initialize();
             $(itemOrderClient.orderListTargetSelector).append(placedOrderElement);
 
-           
+
             itemOrderClient.loadOrders(1);
         },
         stop: function stop() {
@@ -410,7 +410,7 @@
         },
         orderListRemove: function remove_item_from_orderlist(e) {
 
-       
+
             var itemid = $(e).closest('.orderitem').data("itemid");
             var itemInOrderlist = $("#orderitemlist").find("*[data-itemid=" + itemid + "]");
             if (itemInOrderlist.length > 0) {
@@ -494,7 +494,7 @@
 
 </script>
 
-
+<a class="ui-btn ui-btn-inline" href="#pagepannel1">@BaseResource.Get("BtnShowCartText")</a>
 <div data-role="tabs" id="clienttabs">
     <div data-role="navbar">
         <ul>
@@ -622,69 +622,62 @@
         display: table;
         width: 100%;
     }
-    .orderproduct .caption {
-        float: left;
-    }
-    .orderproduct .amount {
-        float: right;
-        font-size: smaller;
-    }
-    .orderproduct .amount::after {
-        content: " x";
-    }
-    .orderproduct .unitprice {
-        float: right;
-        font-size: smaller;
-        margin-left: 3px;
-    }
-    .orderproduct .itemtotal {
-        float: right;
-        margin-left: 5px;
-    }
-    .orderproduct .itemtotal::after{
-        content: "€";
-    }
+
+        .orderproduct .caption {
+            float: left;
+        }
+
+        .orderproduct .amount {
+            float: right;
+            font-size: smaller;
+        }
+
+            .orderproduct .amount::after {
+                content: " x";
+            }
+
+        .orderproduct .unitprice {
+            float: right;
+            font-size: smaller;
+            margin-left: 3px;
+        }
+
+        .orderproduct .itemtotal {
+            float: right;
+            margin-left: 5px;
+        }
+
+            .orderproduct .itemtotal::after {
+                content: "€";
+            }
 
     .clientorderitem {
-        margin-bottom:2px;
+        margin-bottom: 2px;
     }
 
-    .clientorderitem .orderid {
-        float: right;
-        overflow: hidden;
-        width: 60px;
-    }
+        .clientorderitem .orderid {
+            float: right;
+            overflow: hidden;
+            width: 60px;
+        }
 
         .clientorderitem .orderCdate {
             display: inline-block;
         }
 
-    .clientorderitem .ordertotal {
-        font-size: 1.2em;
-        float: right;
-    }
-        .clientorderitem .ordertotal::after {
-            content: "€";
-    }
-
-        .clientorderstate.state0 {
-            background-color: cadetblue;
+        .clientorderitem .ordertotal {
+            font-size: 1.2em;
+            float: right;
         }
 
-        .clientorderstate.state1 {
-            background-color: chocolate;
-        }
+            .clientorderitem .ordertotal::after {
+                content: "€";
+            }
 
-        .clientorderstate.state2 {
-            background-color: aqua;
-        }
-
-        .clientorderstate.state3 {
-            background-color: darkgrey;
-        }
+   
 
     .orderprocesswrapper {
-        display:inline-block;
+        display: inline-block;
     }
 
     .paybuttonwrapper {
@@ -718,5 +711,4 @@
         top: -40px;
         right: -3px;
     }
-
 </style>

@@ -8,13 +8,13 @@
         var clientId = $(orderelement).find('.username').html();
         currentPymentOrderId = $(orderelement).data('orderid');
 
-        var amount = parseInt(totalelement.html());
+        var amount = parseFloat(totalelement.html());
 
             handler.open({
                 name: 'TestName',
                 description: $(orderelement).data('orderid'),
                 currency: 'eur',
-                amount: amount * 100,
+                amount: parseInt( amount * 100 ),
                 email: clientId
             });
     }

@@ -22,6 +22,12 @@
             @RenderBody()
         </div>
     </div>
+    <script>
+        $(document).on("panelbeforeopen", "div[data-role='panel']", function (e, ui) {
+            $.mobile.activeClickedLink = null;
+        });
+
+    </script>
 
     @*@Scripts.Render("~/bundles/bootstrap")*@
     @*@Scripts.Render("~/bundles/signalr")*@

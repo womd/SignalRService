@@ -20,6 +20,11 @@ namespace SignalRService.Repositories
             return _db.Products.FirstOrDefault(ln => ln.ID == Id);
         }
 
+        public ProductModel GetProduct(string identifier)
+        {
+            return _db.Products.FirstOrDefault(ln => ln.ProductIdentifier == identifier);
+        }
+
         public ProductModel AddOrUpdateProduct(ProductModel model)
         {
             ProductModel dbmodel;
