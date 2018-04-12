@@ -293,6 +293,18 @@
                     $('#clientorderitemlist').listview();
                     $('#clientorderitemlist').listview("refresh");
 
+        },
+        get_selected_filters: function () {
+            var Filters = [];
+            return Filters;
+        },
+        get_selected_sorters: function () {
+            var Sorters = [];
+            $("#sort-select-orders option:selected").each(function (idx) {
+                var asorter = { Expression: $(this).val() };
+                Sorters.push(asorter);
+            });
+            return Sorters;
         }
 
     }
@@ -327,7 +339,13 @@
                 });
         },
         loadOrders: function load_orders(type) {
-            servicehub.server.getOrders(type,"@Model.SinalRGroup")
+
+            var config = {
+                Filters: placedOrderList.get_selected_filters(),
+                Sorters: placedOrderList.get_selected_sorters()
+            }
+
+            servicehub.server.getOrders(type,"@Model.SinalRGroup", config)
                 .done(function (data) {
 
                     itemOrderClient._data_OrderList = data;
@@ -517,6 +535,10 @@
         itemOrderClient.placeOrder("@Model.SinalRGroup");
     }
 
+    function OrdersSortSelectionChanged(event, ui) {
+        itemOrderClient.loadOrders(1);
+    }
+
 </script>
 
 <a class="ui-btn ui-btn-inline" href="#pagepannel1">@BaseResource.Get("BtnShowCartText")</a>
@@ -531,7 +553,11 @@
     <div id="clientProductsTab" class="ui-body-d ui-content">
         <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderClient.loadProducts()" /></div>
     </div>
-    <div id="clientTabOrders"></div>
+    <div id="clientTabOrders">
+        <div class="filterconfwrapper">
+            @Html.Raw(SignalRService.Utils.JTableHelper.Get_SortSelector_Orders())
+        </div>
+    </div>
     <div id="clientDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
 </div>
 

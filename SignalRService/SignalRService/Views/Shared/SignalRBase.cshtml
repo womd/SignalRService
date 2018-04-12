@@ -53,7 +53,7 @@
                 
                     var existingitem = $('#hostitemlist').children().find("*[data-itemid='" + data.Id + "']");
                     if (existingitem.length == 0) {
-                        $('#hostitemlist').append(hostProducList.createItem(data.Id, data.Name, data.Description, data.Price));
+                        $('#hostitemlist').append(hostProducList.createItem(data));
                         $('#hostitemlist').listview();
                         $('#hostitemlist').listview("refresh");
                     }

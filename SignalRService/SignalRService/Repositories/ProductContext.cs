@@ -32,24 +32,34 @@ namespace SignalRService.Repositories
             if (model.ID == 0)
             {
                 //try finding it
-                dbmodel = _db.Products.FirstOrDefault(x => x.SrcIdentifier == model.SrcIdentifier && x.Owner.ID == model.Owner.ID);
+                if (model.SrcIdentifier != null) {
+                    //comes from import
+                    dbmodel = _db.Products.FirstOrDefault(x => x.SrcIdentifier == model.SrcIdentifier && x.Owner.ID == model.Owner.ID);
+                } else {
+                    //comes from service-url gui
+                    dbmodel = _db.Products.FirstOrDefault(x => x.Owner.ID == model.Owner.ID && x.PartNo == model.PartNo);
+                }
+
                 if (dbmodel == null)
                 {
-                    //add product -
-                    dbmodel = _db.Products.Add(model);
                     //add import-product for lucene
                     dbimportmodel = _db.ProductTmpImport.Add(new ProductImportModel()
                     {
+                        Title = model.Name,
                         Description = model.Description,
                         Mpn = model.PartNo,
                         ImageLink = model.ImageUrl,
                         Owner = model.Owner,
                         OwnerIdString = model.Owner.ToString(),
                         SrcId = Guid.NewGuid().ToString(),
+                        Brand = "",
+                        Gtin = ""
                         //PriceString = model.Price.ToString(),
                     });
 
-          
+                    // add product -
+                    model.SrcIdentifier = dbimportmodel.SrcId;
+                    dbmodel = _db.Products.Add(model);
                 }
             }
             else
