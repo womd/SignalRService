@@ -32,6 +32,7 @@ namespace SignalRService.Implementation
         {
             var pmodel = new Models.ProductImportModel();
             pmodel.Owner = owner;
+            pmodel.OwnerIdString = owner.ID.ToString();
             foreach (var element in xelement.Elements())
             {
                 switch (element.Name.LocalName)
@@ -181,7 +182,8 @@ namespace SignalRService.Implementation
                         existing.PartNo = pmodel.Mpn;
                         existing.Price = getPrice(pmodel.PriceString);
                     }
-                    
+
+         
                 }
 
                 _db.SaveChanges();

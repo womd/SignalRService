@@ -28,12 +28,29 @@ namespace SignalRService.Repositories
         public ProductModel AddOrUpdateProduct(ProductModel model)
         {
             ProductModel dbmodel;
+            ProductImportModel dbimportmodel = new ProductImportModel();
             if (model.ID == 0)
             {
                 //try finding it
                 dbmodel = _db.Products.FirstOrDefault(x => x.SrcIdentifier == model.SrcIdentifier && x.Owner.ID == model.Owner.ID);
-                if(dbmodel == null)
+                if (dbmodel == null)
+                {
+                    //add product -
                     dbmodel = _db.Products.Add(model);
+                    //add import-product for lucene
+                    dbimportmodel = _db.ProductTmpImport.Add(new ProductImportModel()
+                    {
+                        Description = model.Description,
+                        Mpn = model.PartNo,
+                        ImageLink = model.ImageUrl,
+                        Owner = model.Owner,
+                        OwnerIdString = model.Owner.ToString(),
+                        SrcId = Guid.NewGuid().ToString(),
+                        //PriceString = model.Price.ToString(),
+                    });
+
+          
+                }
             }
             else
             {
@@ -46,8 +63,17 @@ namespace SignalRService.Repositories
                 dbmodel.SrcIdentifier = model.SrcIdentifier;
                 dbmodel.ImageUrl = model.ImageUrl;
 
+                dbimportmodel = _db.ProductTmpImport.FirstOrDefault(ln => ln.SrcId == model.SrcIdentifier && ln.Owner.ID == model.Owner.ID);
+                dbimportmodel.Description = model.Description;
+                dbimportmodel.Title = model.Name;
+                dbimportmodel.Mpn = model.PartNo;
+                dbimportmodel.ImageLink = model.ImageUrl;
+
             }
             _db.SaveChanges();
+            if(dbimportmodel.Id != 0)
+                Utils.LuceneUtils.AddUpdateLuceneIndex(dbimportmodel);
+
             return dbmodel;
         }
 
@@ -66,53 +92,100 @@ namespace SignalRService.Repositories
             return _db.Products.Where(ln => ln.Owner.ID == user.ID).ToList();
         }
 
-        public List<ProductModel>GetProducts(int userId, int startIndex, int pageSize, string sorting)
+
+        private IQueryable<ProductModel>Filter(IQueryable<ProductModel>baseq, Hubs.UiFilter filter)
         {
-            List<ProductModel> reslist = new List<ProductModel>();
-            if(sorting.IndexOf("Identifier") != -1)
+            switch (filter.Field)
             {
-                if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.ProductIdentifier).Skip(startIndex).Take(pageSize).ToList();
-                else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.ProductIdentifier).Skip(startIndex).Take(pageSize).ToList();
+                case "PartNumber":
+                    baseq = baseq.Where(ln => ln.PartNo.Contains(filter.Expression));
+                    break;
+                case "ProductName":
+                    baseq = baseq.Where(ln => ln.Name.Contains(filter.Expression));
+                    break;
+                case "Description":
+                    baseq = baseq.Where(ln => ln.Description.Contains(filter.Expression));
+                    break;
+                case "Owner":
+                    baseq = baseq.Where(ln => ln.Owner.IdentityName.Contains(filter.Expression));
+                    break;
+                case "Price":
+                    decimal dprice = decimal.Parse(filter.Expression);
+                    baseq = baseq.Where(ln => ln.Price == dprice);
+                    break;
+                default:
+                    break;
             }
-            if(sorting.IndexOf("PartNumber") != -1)
+            return baseq;
+        }
+
+        private IQueryable<ProductModel>Sort(IQueryable<ProductModel>prodq, string sorting)
+        {
+            if (sorting.IndexOf("Identifier") != -1)
             {
                 if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.PartNo).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderBy(ln => ln.ProductIdentifier);
                 else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.PartNo).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderByDescending(ln => ln.ProductIdentifier);
+            }
+            if (sorting.IndexOf("PartNumber") != -1)
+            {
+                if (sorting.IndexOf("ASC") != -1)
+                    prodq = prodq.OrderBy(ln => ln.PartNo);
+                else
+                    prodq = prodq.OrderByDescending(ln => ln.PartNo);
             }
             if (sorting.IndexOf("Name") != -1)
             {
                 if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.Name).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderBy(ln => ln.Name);
                 else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.Name).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderByDescending(ln => ln.Name);
             }
             if (sorting.IndexOf("Description") != -1)
             {
                 if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.Description).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderBy(ln => ln.Description);
                 else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.Description).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderByDescending(ln => ln.Description);
             }
             if (sorting.IndexOf("Owner") != -1)
             {
                 if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.Owner.IdentityName).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderBy(ln => ln.Owner.IdentityName);
                 else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.Owner.IdentityName).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderByDescending(ln => ln.Owner.IdentityName);
             }
             if (sorting.IndexOf("Price") != -1)
             {
                 if (sorting.IndexOf("ASC") != -1)
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderBy(ln => ln.Price).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderBy(ln => ln.Price);
                 else
-                    reslist = _db.Products.Where(ln => ln.Owner.ID == userId).OrderByDescending(ln => ln.Price).Skip(startIndex).Take(pageSize).ToList();
+                    prodq = prodq.OrderByDescending(ln => ln.Price);
             }
-            return reslist;
+            return prodq;
 
+        }
+
+        public List<ProductModel>GetProducts(int userId, int startIndex, int pageSize, string sorting, Hubs.FilterSortConfig config)
+        {
+            var prodq = _db.Products.Where(ln => ln.Owner.ID == userId);
+            if (config.Filters != null)
+            {
+                foreach (var filter in config.Filters)
+                {
+                    prodq = Filter(prodq, filter);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(sorting))
+                prodq = Sort(prodq, sorting);
+            else
+                prodq.OrderBy(ln => ln.ID);
+
+            prodq.Skip(startIndex).Take(pageSize);
+           
+            return prodq.ToList();
         }
 
         public List<ProductModel>GetProducts()
@@ -120,13 +193,35 @@ namespace SignalRService.Repositories
             return _db.Products.ToList();
         }
 
-        public List<ProductModel> GetProducts(int StartIndex, int PageSize, string sorting)
-        {
-            var products = new List<ProductModel>();
+     
 
-            products = _db.Products.OrderBy(ln => ln.ID).Skip(StartIndex).Take(PageSize).ToList();
-        
-            return products;
+        public List<ProductModel> GetProducts(int StartIndex, int PageSize, string sorting, Hubs.FilterSortConfig config)
+        {
+            IQueryable<ProductModel> prodq = _db.Products;
+            if (config.Filters != null)
+            {
+                foreach (var filter in config.Filters)
+                {
+                    prodq = Filter(prodq, filter);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(sorting))
+                prodq = Sort(prodq, sorting);
+            else
+                prodq.OrderBy(ln => ln.ID);
+
+            return prodq.Skip(StartIndex).Take(PageSize).ToList();
+        }
+
+        public int GetProductsTotal()
+        {
+            return _db.Products.Count();
+        }
+
+        public int GetProductsTotal(int UserId)
+        {
+            return _db.Products.Where(ln => ln.Owner.ID == UserId).Count();
         }
 
         #endregion

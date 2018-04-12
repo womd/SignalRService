@@ -12,6 +12,7 @@ namespace SignalRService.Models
 
         [Required]
         public virtual UserDataModel Owner { get; set; }
+        public string OwnerIdString { get; set; }
 
         public string SrcId { get; set; }
         public string Title { get; set; }
@@ -37,5 +38,6 @@ namespace SignalRService.Models
         public string ShippingCountry { get; set; }
         public string ShippingService { get; set; }
         public string ShippingPrice { get; set; }
+        
     }
 }

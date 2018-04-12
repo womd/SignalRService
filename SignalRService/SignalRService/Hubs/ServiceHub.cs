@@ -98,8 +98,8 @@ namespace SignalRService.Hubs
         /// <returns></returns>
         public List<ViewModels.ProductViewModel> getProducts(string group, SearchConfig config)
         {
-
-            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms);
+            var user = userRepository.GetUser(Context.Request.User.Identity.Name);
+            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms,user.Id);
 
             List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
 
@@ -344,6 +344,7 @@ namespace SignalRService.Hubs
 
     public class UiFilter
     {
+        public string Field { get; set; }
         public string Expression { get; set; }
     }
 

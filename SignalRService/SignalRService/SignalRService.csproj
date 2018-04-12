@@ -274,6 +274,10 @@
     <Compile Include="Migrations\201804091641327_ProductImportAddFields.Designer.cs">
       <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804120658493_ProductImportOwnerStringField.cs" />
+    <Compile Include="Migrations\201804120658493_ProductImportOwnerStringField.Designer.cs">
+      <DependentUpon>201804120658493_ProductImportOwnerStringField.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
@@ -295,6 +299,7 @@
     <Compile Include="Rest\RestProductController.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
+    <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
@@ -671,6 +676,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804091641327_ProductImportAddFields.resx">
       <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804120658493_ProductImportOwnerStringField.resx">
+      <DependentUpon>201804120658493_ProductImportOwnerStringField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -47,7 +47,8 @@ namespace SignalRService.Utils
             doc.Add(new Field("Brand", productData.Brand, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("Gtin", productData.Gtin, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("Mpn", productData.Mpn, Field.Store.YES, Field.Index.ANALYZED));
-
+            doc.Add(new Field("OwnerString", productData.OwnerIdString, Field.Store.YES, Field.Index.ANALYZED));
+          
             // add entry to index
             writer.AddDocument(doc);
         }
@@ -149,7 +150,7 @@ namespace SignalRService.Utils
             }
             return query;
         }
-        private static IEnumerable<ProductModel> _search (string searchQuery, string searchField = "")
+        private static IEnumerable<ProductModel> _search (string searchQuery, int UserId, string searchField = "")
         {
             // validation
             if (string.IsNullOrEmpty(searchQuery.Replace("*", "").Replace("?", ""))) return new List<ProductModel>();
@@ -159,13 +160,22 @@ namespace SignalRService.Utils
             {
                 var hits_limit = 20;
                 var analyzer = new StandardAnalyzer(Version.LUCENE_30);
+                Lucene.Net.Search.TermRangeFilter filter = new TermRangeFilter("OwnerIdString", UserId.ToString(), UserId.ToString(), true, true);
+
 
                 // search by single field
                 if (!string.IsNullOrEmpty(searchField))
                 {
                     var parser = new QueryParser(Version.LUCENE_30, searchField, analyzer);
                     var query = parseQuery(searchQuery, parser);
-                    var hits = searcher.Search(query, hits_limit).ScoreDocs;
+
+                    ScoreDoc[] hits;
+                    hits = searcher.Search(query, hits_limit).ScoreDocs;
+                    //if (UserId != 0)
+                    //    hits = searcher.Search(query, filter, hits_limit).ScoreDocs;
+                    //else
+                    //    hits = searcher.Search(query, hits_limit).ScoreDocs;
+
                     var results = _mapLuceneToDataList(hits, searcher);
                     analyzer.Close();
                     searcher.Dispose();
@@ -177,8 +187,15 @@ namespace SignalRService.Utils
                     var parser = new MultiFieldQueryParser
                         (Version.LUCENE_30, new[] { "SrcId", "Title", "Description", "Brand", "Gtin", "Mpn" }, analyzer);
                     var query = parseQuery(searchQuery, parser);
-                    var hits = searcher.Search
-                    (query, null, hits_limit, Sort.RELEVANCE).ScoreDocs;
+
+                    ScoreDoc[] hits;
+                    hits = searcher.Search(query, hits_limit).ScoreDocs;
+
+                    //if (UserId != 0)
+                    //    hits = searcher.Search(query, filter, hits_limit, Sort.RELEVANCE).ScoreDocs;
+                    //else
+                    //    hits = searcher.Search(query, null, hits_limit, Sort.RELEVANCE).ScoreDocs;
+
                     var results = _mapLuceneToDataList(hits, searcher);
                     analyzer.Close();
                     searcher.Dispose();
@@ -186,7 +203,7 @@ namespace SignalRService.Utils
                 }
             }
         }
-        public static IEnumerable<ProductModel> Search(string input, string fieldName = "")
+        public static IEnumerable<ProductModel> Search(string input, int userID, string fieldName = "")
         {
             if (string.IsNullOrEmpty(input)) return new List<ProductModel>();
 
@@ -194,12 +211,12 @@ namespace SignalRService.Utils
                 .Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Trim() + "*");
             input = string.Join(" ", terms);
 
-            return _search(input, fieldName);
+            return _search(input, userID, fieldName);
         }
 
-        public static IEnumerable<ProductModel> SearchDefault(string input, string fieldName = "")
+        public static IEnumerable<ProductModel> SearchDefault(string input, int UserId, string fieldName = "")
         {
-            return string.IsNullOrEmpty(input) ? new List<ProductModel>() : _search(input, fieldName);
+            return string.IsNullOrEmpty(input) ? new List<ProductModel>() : _search(input, UserId, fieldName);
         }
 
         public static IEnumerable<ProductModel> GetAllIndexRecords()

@@ -41,15 +41,22 @@ namespace SignalRService.Repositories
             return  productContext.GetProducts().ToProductViewModels();
         }
 
-        public List<ProductViewModel>GetProducts(int startIndex, int pageSize, string sorting)
+        public List<ProductViewModel>GetProducts(int startIndex, int pageSize, string sorting, Hubs.FilterSortConfig config)
         {
-            var products = productContext.GetProducts(startIndex, pageSize, sorting);
+            var products = productContext.GetProducts(startIndex, pageSize, sorting, config);
             return products.ToProductViewModels();
         }
 
-        public List<ViewModels.ProductViewModel> GetProducts(int userId, int startIndex, int pageSize, string sorting)
+        public int GetProductsTotal(int UserId)
         {
-            var products = productContext.GetProducts(userId, startIndex, pageSize, sorting);
+            if (UserId == 0)
+                return productContext.GetProductsTotal();
+            else
+                return productContext.GetProductsTotal(UserId);
+        }
+        public List<ViewModels.ProductViewModel> GetProducts(int userId, int startIndex, int pageSize, string sorting, Hubs.FilterSortConfig config)
+        {
+            var products = productContext.GetProducts(userId, startIndex, pageSize, sorting, config);
             return products.ToProductViewModels();
         }
         #endregion

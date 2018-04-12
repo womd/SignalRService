@@ -35,23 +35,26 @@ namespace SignalRService.Controllers
 
         #region productlist-jtable
 
-        public JsonResult List(int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
+        public JsonResult List(Hubs.FilterSortConfig config, int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
         {
             try
             {
                 List<ViewModels.ProductViewModel> products = new List<ViewModels.ProductViewModel>();
                 var userClaimPrincipal = User as ClaimsPrincipal;
+                int total = 0;
                 if (userClaimPrincipal.IsInRole("Admin"))
                 {
                     
-                    products = productRepository.GetProducts(jtStartIndex, jtPageSize, jtSorting);
+                    products = productRepository.GetProducts(jtStartIndex, jtPageSize, jtSorting, config);
+                    total = productRepository.GetProductsTotal(0);
                 }
                 else
                 {
                     var uservm = userRepository.GetUser(User.Identity.Name);
-                    products = productRepository.GetProducts(uservm.Id, jtStartIndex, jtPageSize, jtSorting);
+                    products = productRepository.GetProducts(uservm.Id, jtStartIndex, jtPageSize, jtSorting, config);
+                    total = productRepository.GetProductsTotal(uservm.Id);
                 }
-                return Json(new { Result = "OK", Records = products });
+                return Json(new { Result = "OK", Records = products, TotalRecordCount = total  });
             }
             catch (Exception ex)
             {
@@ -144,15 +147,16 @@ namespace SignalRService.Controllers
 
             var importer = Factories.ProductImportFactory.GetProductImportImplementation(Enums.EnumImportType.GoogleProductXML);
 
-            var toCleanCount = db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).Count();
+            Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("Cleaning"), 0, user.SignalRConnections);
             var prodsToRemove = db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList();
-            int rctr = 0;
-            foreach(var ritem in prodsToRemove)
-            {
-                rctr++;
-                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("CleaningItem") + " (" + rctr + " / " + toCleanCount + ")", Utils.ProductUtils.calc_percent(rctr, toCleanCount), user.SignalRConnections);
-                db.ProductTmpImport.Remove(ritem);
-            }
+            db.ProductTmpImport.RemoveRange(prodsToRemove);
+            //int rctr = 0;
+            //foreach(var ritem in prodsToRemove)
+            //{
+            //    rctr++;
+            //    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("CleaningItem") + " (" + rctr + " / " + toCleanCount + ")", Utils.ProductUtils.calc_percent(rctr, toCleanCount), user.SignalRConnections);
+            //    db.ProductTmpImport.Remove(ritem);
+            //}
             db.SaveChanges();
 
             if (importer.ImportSource(config.Source, user.Id))
@@ -165,6 +169,45 @@ namespace SignalRService.Controllers
                 Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportError"), 0, user.SignalRConnections);
                 return Json(new { Success = false, Message = "import failed.." });
             }
+        }
+
+        #endregion
+
+        #region product-ajax
+
+        public JsonResult DeleteOwnProducts()
+        {
+            var user = userRepository.GetUser(User.Identity.Name);
+            var ptr = db.Products.Where(ln => ln.Owner.ID == user.Id).ToList();
+            db.Products.RemoveRange(ptr);
+
+            var iptr = db.ProductTmpImport.Where(ln => ln.Owner.ID == user.Id).ToList();
+            db.ProductTmpImport.RemoveRange(iptr);
+            db.SaveChanges();
+
+            Utils.LuceneUtils.ClearLuceneIndex();
+            Utils.LuceneUtils.AddUpdateLuceneIndex(db.ProductTmpImport);
+
+            return Json(new { Success = true, Message = "ok, products deleted.." });
+        }
+
+        public JsonResult DeleteAllProducts()
+        {
+            if(User.IsInRole("Admin"))
+            {
+                var ptr = db.Products.ToList();
+                db.Products.RemoveRange(ptr);
+
+                var iptr = db.ProductTmpImport.ToList();
+                db.ProductTmpImport.RemoveRange(iptr);
+
+                db.SaveChanges();
+
+                Utils.LuceneUtils.ClearLuceneIndex();
+
+                return Json(new { Success = true, Message = "ok, products deleted.." });
+            }
+            return Json(new { Success = false, Message = "only admin can do this..." });
         }
 
         #endregion

@@ -1,11 +1,41 @@
 ﻿
 
+@Html.Raw(SignalRService.Utils.JTableHelper.Get_FilterSelector_Products())
+
+@Ajax.ActionLink(BaseResource.Get("BtnDeleteMyProducts"), "DeleteOwnProducts", "Product", new AjaxOptions{  HttpMethod= "POST" },new { @class = "ui-button ui-widget ui-corner-all" })
+@Ajax.ActionLink(BaseResource.Get("BtnDeleteAllProducts"), "DeletaAllProducts", "Product", null,new AjaxOptions{ HttpMethod = "POST" }, new { @class = "ui-button ui-widget ui-corner-all" })
+
 <div id="ProductListJTable"></div>
 
 
     <script>
 
-        function init_ClientsJTable() {
+        function filtersearchbuttonclicked() {
+            $('#ProductListJTable').jtable('reload');
+        }
+
+        function getFilterSortConfig() {
+            var config = {
+                Filters: get_selected_filters(),
+                Sorters: []
+            }
+            return config
+        }
+
+        function get_selected_filters() {
+            var Filters = [];
+            var term = $('#orderfilterinput').val();
+            if (term != "") {
+                $("#filter-select-products option:selected").each(function (idx) {
+                    var fieldval = $(this).val();
+                    var afilter = { Field: fieldval, Expression: term };
+                    Filters.push(afilter);
+                });
+            }
+            return Filters;
+        }
+
+        function init_ProductListJTable() {
 
             $('#ProductListJTable').jtable({
                 title: '@BaseResource.Get("TitleProductList")',
@@ -14,7 +44,7 @@
                 sorting: true, //Enable sorting
                 defaultSorting: 'Name ASC', //Set default sorting
                 actions: {
-                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "Product", "List") },
+                    listAction: function (postData, jtParams) { return jtable_datasource.list(getFilterSortConfig(), jtParams, "Product", "List") },
                     createAction: function (postData) { return jtable_datasource.create(postData, "Product", "Create") },
                     updateAction: function (postData) { return jtable_datasource.update(postData, "Product", "Update") },
                     deleteAction: function (postData) { return jtable_datasource.delete(postData, "Product", "Delete") }
@@ -52,7 +82,7 @@
 
     $(function () {
 
-        init_ClientsJTable();
+        init_ProductListJTable();
         $('#ProductListJTable').jtable('load');
 
     });

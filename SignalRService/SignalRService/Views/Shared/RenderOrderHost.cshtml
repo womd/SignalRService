@@ -259,9 +259,8 @@
             $("#sort-select-orders option:selected").each(function (idx) {
                 var asorter = { Expression: $(this).val() };
                 Sorters.push(asorter);
-            })
-
-            return Sorters;
+            });
+return Sorters;
         }
         
     }
@@ -528,7 +527,7 @@
     <div id="hostTabOrders">
 
         <div class="filterconfwrapper">
-            @Html.Raw(SignalRService.Utils.OrderUtils.Get_SortSelector_Orders())
+            @Html.Raw(SignalRService.Utils.JTableHelper.Get_SortSelector_Orders())
         </div>
     </div>
     <div id="hostDeliveryMap"> @Html.Partial("DeliveryMap")  </div>
