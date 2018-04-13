@@ -165,7 +165,7 @@ namespace SignalRService.Controllers
             //}
             db.SaveChanges();
 
-            if (importer.ImportSource(config.Source, user.Id))
+            if (importer.ImportSource(config.Source, config.Owner.ID))
             {
                     Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportFinished"), 100, user.SignalRConnections);
                     return Json(new { Success = true, Message = "import completed.." });
@@ -194,7 +194,7 @@ namespace SignalRService.Controllers
             Utils.LuceneUtils.ClearLuceneIndex();
             Utils.LuceneUtils.AddUpdateLuceneIndex(db.ProductTmpImport);
 
-            return Json(new { Success = true, Message = "ok, products deleted.." });
+            return Json(new { Success = true, Message = "ok, products deleted.." }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult DeleteAllProducts()

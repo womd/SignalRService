@@ -3,7 +3,7 @@
 @Html.Raw(SignalRService.Utils.JTableHelper.Get_FilterSelector_Products())
 
 @Ajax.ActionLink(BaseResource.Get("BtnDeleteMyProducts"), "DeleteOwnProducts", "Product", new AjaxOptions{  HttpMethod= "POST" },new { @class = "ui-button ui-widget ui-corner-all" })
-@Ajax.ActionLink(BaseResource.Get("BtnDeleteAllProducts"), "DeletaAllProducts", "Product", null,new AjaxOptions{ HttpMethod = "POST" }, new { @class = "ui-button ui-widget ui-corner-all" })
+@Ajax.ActionLink(BaseResource.Get("BtnDeleteAllProducts"), "DeleteAllProducts", "Product", null,new AjaxOptions{ HttpMethod = "POST" }, new { @class = "ui-button ui-widget ui-corner-all" })
 
 <div id="ProductListJTable"></div>
 

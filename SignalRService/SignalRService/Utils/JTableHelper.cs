@@ -13,7 +13,7 @@ namespace SignalRService.Utils
         {
             string res = @"
             <fieldset>
-            <label for='filter-select-products'>" + BaseResource.Get("FilterSelect") + @"} </label>
+            <label for='filter-select-products'>" + BaseResource.Get("FilterSelect") + @"</label>
             <select name='filter-select-products' id='filter-select-products'>
                 <option>" + BaseResource.Get("FilterSelectChoose") + @"</option>
                 <option value='PartNumber'>PartNumber</option>
