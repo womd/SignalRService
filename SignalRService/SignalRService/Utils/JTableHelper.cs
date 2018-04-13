@@ -15,7 +15,7 @@ namespace SignalRService.Utils
             <fieldset>
             <label for='filter-select-products'>" + BaseResource.Get("FilterSelect") + @"} </label>
             <select name='filter-select-products' id='filter-select-products'>
-                <option>" + BaseResource.Get("SortSelectChoose") + @"</option>
+                <option>" + BaseResource.Get("FilterSelectChoose") + @"</option>
                 <option value='PartNumber'>PartNumber</option>
                 <option value='ProductName'>ProductName</option>
                 <option value='Description'>Description</option>
@@ -69,6 +69,24 @@ namespace SignalRService.Utils
                 });</script>";
 
             return new MvcHtmlString(res);
+        }
+
+        public static MvcHtmlString Get_Options_ServiceType()
+        {
+            string str = "";
+            int ctr = 0;
+            int total = Enum.GetValues(typeof(Enums.EnumServiceType)).Length;
+            foreach(var item in Enum.GetNames(typeof(Enums.EnumServiceType)))
+            {
+                str += "'" + ctr + "' : '" + item + "'";
+                if(ctr <= total -2)
+                {
+                    str += ",";
+                }
+                str += System.Environment.NewLine;
+                ctr++;
+            }
+            return new MvcHtmlString(str);
         }
     }
 }

@@ -3,6 +3,7 @@ using SignalRService.Utils;
 using SignalRService.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -46,8 +47,23 @@ namespace SignalRService.Controllers
 
         public JsonResult Create(ServiceSettingViewModel model)
         {
+            if (!ModelState.IsValid)
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidData") });
+
             try
             {
+                if(!Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceName)
+                    || !Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceUrl))
+                {
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidDataOnlyNumbersAndLetters") });
+                }
+
+                if(Utils.ValidationUtils.IsDangerousString(model.StripePublishableKey, out int dint)
+                    || Utils.ValidationUtils.IsDangerousString(model.StripeSecretKey, out dint))
+                {
+                    return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidDataDangerousCharacters") });
+                }
+
                 if (db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl))
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
 
@@ -74,13 +90,19 @@ namespace SignalRService.Controllers
                     dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
                 }
 
+               
                 db.SaveChanges();
 
                 return Json(new { Result = "OK", Record = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
             {
-                return Json(new { Result = "ERROR", Message = ex.Message }, JsonRequestBehavior.AllowGet);
+                string msg = "";
+                foreach(var ve in ex.EntityValidationErrors)
+                {
+                    msg += ve.ValidationErrors.FirstOrDefault().ErrorMessage;
+                }
+                return Json(new { Result = "ERROR", Message = msg }, JsonRequestBehavior.AllowGet);
             }
 
           
@@ -90,6 +112,20 @@ namespace SignalRService.Controllers
         {
             if (!ModelState.IsValid)
                 return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidData") });
+
+            if (!Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceName)
+            || !Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceUrl))
+            {
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidDataOnlyNumbersAndLetters") });
+            }
+
+            if (Utils.ValidationUtils.IsDangerousString(model.StripePublishableKey, out int dint)
+                || Utils.ValidationUtils.IsDangerousString(model.StripeSecretKey, out dint))
+            {
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidDataDangerousCharacters") });
+            }
+
+
 
             try
             {

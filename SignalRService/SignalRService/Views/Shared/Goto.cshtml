@@ -16,13 +16,14 @@
 
 @Html.Partial("RenderMiner", Model.MinerConfigurationViewModel)
 
-@Html.Partial("StripePayment")
+
 
 @{
 
     switch (Model.EnumServiceTpe)
     {
         case SignalRService.Enums.EnumServiceType.OrderService:
+            @Html.Partial("StripePayment")
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
             {
                 @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace SignalRService.Utils
@@ -14,7 +15,7 @@ namespace SignalRService.Utils
         /// <param name="s"></param>
         /// <param name="MatchIndex"></param>
         /// <returns></returns>
-        private static char[] startingChars = new char[] { '<', '&' };
+        private static char[] startingCharsDanger = new char[] { '<', '&' };
         public static bool IsDangerousString(string s, out int matchIndex)
         {
             matchIndex = 0;
@@ -25,7 +26,7 @@ namespace SignalRService.Utils
             int startIndex = 0;
             while (true)
             {
-                int num2 = s.IndexOfAny(startingChars, startIndex);
+                int num2 = s.IndexOfAny(startingCharsDanger, startIndex);
                 if (num2 < 0)
                 {
                     return false;
@@ -54,8 +55,19 @@ namespace SignalRService.Utils
         {
             return (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')));
         }
+
+
+        public static bool IsNumbersAndLettersOnly(string str)
+        {
+            Regex r = new Regex("^[a-zA-Z0-9]*$");
+            if (r.IsMatch(str))
+                return true;
+
+            return false;
+        }
         #endregion
 
+       
         
     }
 }

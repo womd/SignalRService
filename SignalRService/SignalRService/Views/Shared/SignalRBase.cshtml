@@ -131,7 +131,9 @@
             // Start the connection.
             $.connection.hub.start().done(function () {
 
-                dmap.initialize();
+                if (typeof dmap !== 'undefined') {
+                    dmap.initialize();
+                }
 
                 @if (Model != null)
                 {
@@ -141,23 +143,23 @@
                 }
 
                 @{
-                    if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+                    if(Model.ServiceType == (int) SignalRService.Enums.EnumServiceType.OrderService)
                     {
-                        <text>
-                        itemOrderHost.run(".body-content");
-                        </text>
-                    }
-                    else
-                    {
-                        <text>
-                        itemOrderClient.run(".body-content");
-                        </text>
+                        if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+                        {
+                            <text>
+                            itemOrderHost.run(".body-content");
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                            itemOrderClient.run(".body-content");
+                            </text>
+                        }
                     }
                 }
-
-
                     });
-
         });
 
         //to avoid use of eval

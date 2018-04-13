@@ -48,17 +48,25 @@
                         create: true,
                         edit: true,
                         options: {
-                            '0': '@BaseResource.Get("ServiceType0")',
-                            '1': '@BaseResource.Get("ServiceType1")',
-                            '2': '@BaseResource.Get("ServiceType2")'
+                            @SignalRService.Utils.JTableHelper.Get_Options_ServiceType()
                         }
                     },
-                    User: {
-                        title: 'OwnerName',
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <text>
+                        User:
+                        {
+                            title: 'OwnerName',
                         create: false,
                         edit: false,
-                        display: function (data) { return data.record.User.Name }
-                    },
+                        display: function(data) { return data.record.User.Name }
+                        },
+                        </text>
+
+                    }
+
+                    
                     StripeSecretKey: {
                         title: 'StripeSecretKey',
                         create: true,
