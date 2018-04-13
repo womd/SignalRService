@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Transports;
-using SignalRService.Extensions;
 using SignalRService.Interfaces;
 using SignalRService.Localization;
 using SignalRService.Utils;
@@ -44,7 +43,9 @@ namespace SignalRService.Hubs
         public override Task OnConnected()
         {
             string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
-            string remoteIP = Context.Request.GetRemoteIpAddress();
+
+            var httpcontext = Context.Request.GetHttpContext();
+            string remoteIP = httpcontext.Request.UserHostAddress;
 
             //  Context.ConnectionId
             if (Context.Request.User.Identity.IsAuthenticated)

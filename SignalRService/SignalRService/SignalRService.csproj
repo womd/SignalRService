@@ -239,7 +239,6 @@
     <Compile Include="Enums\EnumShippingState.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
-    <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
     <Compile Include="Factories\ProductImportFactory.cs" />
     <Compile Include="Global.asax.cs">
@@ -644,6 +643,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
