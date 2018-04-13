@@ -140,10 +140,16 @@ namespace SignalRService.Controllers
 
             var config = db.ProductImportConfigurations.FirstOrDefault(ln => ln.Id == importConfigId);
             if (config == null)
+            {
+                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("ImportConfigNotFound"), 0, user.SignalRConnections);
                 return Json(new { Success = false, Message = "config not found.." });
+            }
 
-            if(config.Owner.ID != user.Id)
+            if (!User.IsInRole("Admin") && config.Owner.ID != user.Id)
+            {
+                Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("ImportNotOwnerOfConfig"), 0, user.SignalRConnections);
                 return Json(new { Success = false, Message = "no permission to load this config..." });
+            }
 
             var importer = Factories.ProductImportFactory.GetProductImportImplementation(Enums.EnumImportType.GoogleProductXML);
 
