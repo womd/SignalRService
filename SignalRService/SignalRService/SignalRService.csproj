@@ -227,6 +227,7 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
+    <Compile Include="Enums\EnumGeneralSetting.cs" />
     <Compile Include="Enums\EnumImportType.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
     <Compile Include="Enums\EnumOrderProcessingMethods.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="Enums\EnumPaymentState.cs" />
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
+    <Compile Include="Enums\EnumSettingType.cs" />
     <Compile Include="Enums\EnumShippingState.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
@@ -253,32 +255,13 @@
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201804050928498_InitDB.cs" />
-    <Compile Include="Migrations\201804050928498_InitDB.Designer.cs">
-      <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804090851216_AddProductImportConfigurations.cs" />
-    <Compile Include="Migrations\201804090851216_AddProductImportConfigurations.Designer.cs">
-      <DependentUpon>201804090851216_AddProductImportConfigurations.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804091100553_AddProductTMPImport.cs" />
-    <Compile Include="Migrations\201804091100553_AddProductTMPImport.Designer.cs">
-      <DependentUpon>201804091100553_AddProductTMPImport.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.cs" />
-    <Compile Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.Designer.cs">
-      <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804091641327_ProductImportAddFields.cs" />
-    <Compile Include="Migrations\201804091641327_ProductImportAddFields.Designer.cs">
-      <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804120658493_ProductImportOwnerStringField.cs" />
-    <Compile Include="Migrations\201804120658493_ProductImportOwnerStringField.Designer.cs">
-      <DependentUpon>201804120658493_ProductImportOwnerStringField.cs</DependentUpon>
+    <Compile Include="Migrations\201804131954312_InitDB.cs" />
+    <Compile Include="Migrations\201804131954312_InitDB.Designer.cs">
+      <DependentUpon>201804131954312_InitDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\GeneralSettingsModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
@@ -289,6 +272,7 @@
     <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
+    <Compile Include="Repositories\GeneralSettingsRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
@@ -298,12 +282,14 @@
     <Compile Include="Rest\RestProductController.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
+    <Compile Include="Utils\GeneralSettingsUtils.cs" />
     <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\UserHelper.cs" />
+    <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
@@ -637,6 +623,7 @@
     <Content Include="Views\Shared\SignalRBaseBackend.cshtml" />
     <Content Include="SignalRService.wpp.targets" />
     <Content Include="Views\Shared\GeneralHelpers.cshtml" />
+    <Content Include="Views\Shared\ProductEditFormPartial.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -662,23 +649,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804050928498_InitDB.resx">
-      <DependentUpon>201804050928498_InitDB.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804090851216_AddProductImportConfigurations.resx">
-      <DependentUpon>201804090851216_AddProductImportConfigurations.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804091100553_AddProductTMPImport.resx">
-      <DependentUpon>201804091100553_AddProductTMPImport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804091315229_AddProductTMPImportGoogleFields.resx">
-      <DependentUpon>201804091315229_AddProductTMPImportGoogleFields.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804091641327_ProductImportAddFields.resx">
-      <DependentUpon>201804091641327_ProductImportAddFields.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804120658493_ProductImportOwnerStringField.resx">
-      <DependentUpon>201804120658493_ProductImportOwnerStringField.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804131954312_InitDB.resx">
+      <DependentUpon>201804131954312_InitDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

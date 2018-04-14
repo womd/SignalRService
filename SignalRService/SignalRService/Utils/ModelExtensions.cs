@@ -182,6 +182,16 @@ namespace SignalRService.Utils
             return list;
         }
 
+        public static ViewModels.GeneralSettingsViewModel ToGeneralSettingsViewModel(this Models.GeneralSettingsModel model)
+        {
+            return new GeneralSettingsViewModel()
+            {
+                Id = model.Id,
+                Name = model.GeneralSetting.ToString(),
+                Type = model.Type,
+                Value = model.Value
+            };
+        }
 
     }
 }

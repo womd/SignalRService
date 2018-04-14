@@ -8,6 +8,20 @@ namespace SignalRService.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.GeneralSettingsModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Type = c.Int(nullable: false),
+                        GeneralSetting = c.Int(nullable: false),
+                        Value = c.String(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.GeneralSetting, unique: true);
+            
+            CreateTable(
                 "dbo.LocalizationModels",
                 c => new
                     {
@@ -88,6 +102,20 @@ namespace SignalRService.Migrations
                 .PrimaryKey(t => t.ID);
             
             CreateTable(
+                "dbo.ProductImportConfigurationModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Type = c.Int(nullable: false),
+                        Source = c.String(nullable: false),
+                        Name = c.String(nullable: false),
+                        Owner_ID = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.UserDataModels", t => t.Owner_ID, cascadeDelete: true)
+                .Index(t => t.Owner_ID);
+            
+            CreateTable(
                 "dbo.ProductModels",
                 c => new
                     {
@@ -96,7 +124,9 @@ namespace SignalRService.Migrations
                         PartNo = c.String(),
                         Name = c.String(),
                         Description = c.String(),
+                        ImageUrl = c.String(),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        SrcIdentifier = c.String(),
                         CreationDate = c.DateTime(nullable: false),
                         Archived = c.Boolean(nullable: false),
                         Owner_ID = c.Int(),
@@ -104,6 +134,41 @@ namespace SignalRService.Migrations
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.UserDataModels", t => t.Owner_ID)
                 .Index(t => t.ProductIdentifier, unique: true)
+                .Index(t => t.Owner_ID);
+            
+            CreateTable(
+                "dbo.ProductImportModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        OwnerIdString = c.String(),
+                        SrcId = c.String(),
+                        Title = c.String(),
+                        Description = c.String(),
+                        GoogleProductCategory = c.String(),
+                        ProductType = c.String(),
+                        Link = c.String(),
+                        ImageLink = c.String(),
+                        PriceString = c.String(),
+                        Condition = c.String(),
+                        Availabiliby = c.String(),
+                        Gtin = c.String(),
+                        Mpn = c.String(),
+                        Brand = c.String(),
+                        CustomLabel0 = c.String(),
+                        CustomLabel1 = c.String(),
+                        CustomLabel2 = c.String(),
+                        CustomLabel3 = c.String(),
+                        CustomLabel4 = c.String(),
+                        gGuid = c.String(),
+                        IdentifierExists = c.Boolean(nullable: false),
+                        ShippingCountry = c.String(),
+                        ShippingService = c.String(),
+                        ShippingPrice = c.String(),
+                        Owner_ID = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.UserDataModels", t => t.Owner_ID, cascadeDelete: true)
                 .Index(t => t.Owner_ID);
             
             CreateTable(
@@ -205,7 +270,9 @@ namespace SignalRService.Migrations
             DropForeignKey("dbo.SignalRConnectionModels", "User_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.StripeSettingsModels", "Service_Id", "dbo.ServiceSettingModels");
             DropForeignKey("dbo.ServiceSettingModels", "Owner_ID", "dbo.UserDataModels");
+            DropForeignKey("dbo.ProductImportModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductModels", "Owner_ID", "dbo.UserDataModels");
+            DropForeignKey("dbo.ProductImportConfigurationModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.MinerStatusModels", "SignalRConnectionID", "dbo.SignalRConnectionModels");
             DropIndex("dbo.OrderJournalModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "Order_ID" });
@@ -216,22 +283,28 @@ namespace SignalRService.Migrations
             DropIndex("dbo.StripeSettingsModels", new[] { "Service_Id" });
             DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
             DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
+            DropIndex("dbo.ProductImportModels", new[] { "Owner_ID" });
             DropIndex("dbo.ProductModels", new[] { "Owner_ID" });
             DropIndex("dbo.ProductModels", new[] { "ProductIdentifier" });
+            DropIndex("dbo.ProductImportConfigurationModels", new[] { "Owner_ID" });
             DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
             DropIndex("dbo.MinerStatusModels", new[] { "SignalRConnectionID" });
             DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");
+            DropIndex("dbo.GeneralSettingsModels", new[] { "GeneralSetting" });
             DropTable("dbo.OrderJournalModels");
             DropTable("dbo.OrderModels");
             DropTable("dbo.OrderItemModels");
             DropTable("dbo.StripeSettingsModels");
             DropTable("dbo.ServiceSettingModels");
+            DropTable("dbo.ProductImportModels");
             DropTable("dbo.ProductModels");
+            DropTable("dbo.ProductImportConfigurationModels");
             DropTable("dbo.UserDataModels");
             DropTable("dbo.SignalRConnectionModels");
             DropTable("dbo.MinerStatusModels");
             DropTable("dbo.MinerConfigurationModels");
             DropTable("dbo.LocalizationModels");
+            DropTable("dbo.GeneralSettingsModels");
         }
     }
 }

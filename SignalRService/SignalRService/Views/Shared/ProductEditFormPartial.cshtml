@@ -1,0 +1,98 @@
+﻿@using SignalRService.Utils
+@using SignalRService.Enums
+
+<div id="producteditelement" class="producteditwrapper">
+    <form id="producteditform">
+        <div data-role="fieldcontain">
+            <label for="editorcaption">@BaseResource.Get("ProductTitle")</label>
+            <input type="text" id="editorcaption" name="caption" placeholder="@BaseResource.Get("ProductTitlePlaceholder")" />
+        </div>
+        <div data-role="fieldcontain">
+            <label for="editorpartnumber">@BaseResource.Get("PartNumber")</label>
+            <input type="text" id="editorpartnumber" name="partnumber" placeholder="@BaseResource.Get("PartnumberPlaceholder")" />
+        </div>
+        <div data-role="fieldcontain">
+            <label for="editorprodimage">@BaseResource.Get("ImageUrl")</label>
+            <input type="text" id="editorprodimage" name="imageurl" placeholder="@BaseResource.Get("ImageUrlPlaceholder")" />
+        </div>
+        <div data-role="fieldcontain">
+            <label for="editordescription">@BaseResource.Get("ProductDescription")</label>
+            <textarea name="description" id="editordescription" placeholder="@BaseResource.Get("ProductDescription")"></textarea>
+        </div>
+            <div data-role="fieldcontain">
+                <label for="editorprice">@BaseResource.Get("ProductPrice")</label>
+                <input type="number" id="editorprice" name="price" placeholder="@BaseResource.Get("ProductPricePlaceholder")" />
+
+            </div>
+            <div class="ui-bar ui-bar-a">
+                <input type="button" data-icon="delete" value="@BaseResource.Get("BtnCancel")" id="cancel" />
+            </div>
+            <div class="ui-bar ui-bar-a">
+                <input type="submit" data-icon="check" value="@BaseResource.Get("BtnSave")" id="submit" />
+            </div>
+
+    </form>
+</div>
+
+<script>
+
+    $('#producteditform').validate({
+        rules: {
+            caption: {
+                required: true,
+                minlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductNameMinLength).ToString(),
+                maxlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductNameMaxLength).ToString()
+            },
+            imageurl: {
+                url: true
+            },
+            partnumber: {
+                required: true,
+                minlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductPartNumberMinLength).ToString(),
+                maxlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductPartNumberMaxLength).ToString()
+            },
+            price: {
+                required: true,
+                min: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductMinPrice).ToString(),
+                max: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductMaxPrice).ToString()
+            }
+        },
+        messages: {
+            caption: {
+                required: "@BaseResource.Get("MessageCaptionRequired")",
+                minlength: "@string.Format(BaseResource.Get("MessageMinLength"),GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductNameMinLength).ToString())",
+                maxlength: "@string.Format(BaseResource.Get("MessageMaxLength"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductNameMaxLength).ToString())"
+            },
+            imageurl: {
+                url: "@BaseResource.Get("InvalidImageUrl")"
+            },
+            partnumber: {
+                required: "@BaseResource.Get("MessagePartnumberRequired")",
+                minlength:"@string.Format(BaseResource.Get("MessageMinLength"),GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductPartNumberMinLength).ToString())",
+                maxlength: "@string.Format(BaseResource.Get("MessageMaxLength"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductPartNumberMaxLength).ToString())"
+            },
+            price: {
+                required: "@BaseResource.Get("MessagePriceRequired")",
+                min: "@string.Format(BaseResource.Get("MessageMinPrice"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductMinPrice).ToString())",
+                max: "@string.Format(BaseResource.Get("MessageMaxPrice"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductMaxPrice).ToString())"
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.appendTo(element.parent().prev());
+        },
+        submitHandler: function (form) {
+
+            itemOrderHost.productEditSave();
+            return false;
+        }
+    });
+
+</script>
+
+<style>
+
+    .producteditwrapper .error {
+        color: red;
+    }
+
+</style>

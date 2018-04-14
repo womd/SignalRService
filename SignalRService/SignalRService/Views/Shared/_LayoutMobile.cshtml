@@ -6,6 +6,7 @@
     <title>SRS</title>
     @Styles.Render("~/Content/mobilecss")
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
 
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -18,6 +19,9 @@
     
     <div data-role="page" class="mainpage">
         <div data-role="panel" id="pagepannel1"></div>
+        <div data-role="panel" id="pagepannel2">
+            @Html.Partial("ProductEditFormPartial")
+        </div>
         <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
         <div data-role="content">
             @RenderBody()

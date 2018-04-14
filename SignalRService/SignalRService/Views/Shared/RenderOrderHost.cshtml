@@ -40,7 +40,7 @@
                 "<input type=\"text\" id=\"editorcaption\" name=\"caption\" placeholder=\"@BaseResource.Get("ProductTitlePlaceholder")\" />" +
                 "</div>" +
 
-                "<label for=\"editorpartnumber\">@BaseResource.Get("PartNumber")</lable>" +
+                "<label for=\"editorpartnumber\">@BaseResource.Get("PartNumber")</label>" +
                 "<input type=\"text\" id=\"editorpartnumber\" name=\"partnumber\" placeholder=\"@BaseResource.Get("PartnumberPlaceholder")\" />" +
 
                 "<label for=\"editordescription\">@BaseResource.Get("ProductDescription")</label>" +
@@ -320,10 +320,9 @@
                 var plistelement = hostProducList.initialize("false", "false", "false");
                 $(itemOrderHost.productListTargetSelector).append(plistelement);
 
-                var productEdit = hostProducList.createEditItem();
-            $(itemOrderHost.productListTargetSelector).append(productEdit);
-
-            $("#producteditelement").popup();
+            //var productEdit = hostProducList.createEditItem();
+            //$(itemOrderHost.productListTargetSelector).append(productEdit);
+            //$("#producteditelement").popup();
 
                 itemOrderHost.loadProducts();
 
@@ -425,11 +424,11 @@
             $('.totaldetails').data("sum", total);
             $('.totaldetails .price').html(parseFloat(total).toFixed(2));
         },
-        productEditSave: function save_prodct(group) {
+        productEditSave: function save_prodct() {
             var product = itemOrderHost.getProductFromInput();
 
 
-            var stageRes = servicehub.server.stageProduct(product, group)
+            var stageRes = servicehub.server.stageProduct(product, @Model.SinalRGroup)
                 .done(function (data) {
                     if (!data.ErrorMessage) {
                         //ok no errors
@@ -520,7 +519,8 @@
     <div id="hostProductsTab" class="ui-body-d ui-content">
         <div class="search"><input name="searchterms" type="text" value="" onkeydown="itemOrderHost.loadProducts()" /></div>
         <div class="cntrls" data-role="controlgroup" data-type="horizontal" data-mini="true">
-            <a href="#producteditelement" data-rel="popup" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">@BaseResource.Get("BtnProductAdd")</a>
+            <a class="ui-btn ui-btn-inline ui-icon-plus" href="#pagepannel2">@BaseResource.Get("BtnProductAdd")</a>
+            @*<a href="#producteditelement" data-rel="popup" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus ui-btn-b">@BaseResource.Get("BtnProductAdd")</a>*@
         </div>
     </div>
     <div id="hostTabOrders">

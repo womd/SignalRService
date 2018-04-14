@@ -13,7 +13,7 @@ namespace SignalRService.DAL
 
         public ServiceContext() : base("ServiceContext")
         {
-
+            
         }
 
         public DbSet<SignalRConnectionModel>SignalRConnections { get; set; }
@@ -29,8 +29,9 @@ namespace SignalRService.DAL
         public DbSet<StripeSettingsModel> StripeSettings { get; set; }
         public DbSet<ProductImportConfigurationModel> ProductImportConfigurations { get; set; }
         public DbSet<ProductImportModel> ProductTmpImport { get; set; }
+        public DbSet<GeneralSettingsModel>GeneralSettings { get; set; }
 
-      
+       
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 
