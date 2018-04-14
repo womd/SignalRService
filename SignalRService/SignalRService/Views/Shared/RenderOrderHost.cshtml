@@ -428,10 +428,11 @@
             var product = itemOrderHost.getProductFromInput();
 
 
-            var stageRes = servicehub.server.stageProduct(product, @Model.SinalRGroup)
+            var stageRes = servicehub.server.stageProduct(product, "@Model.SinalRGroup")
                 .done(function (data) {
                     if (!data.ErrorMessage) {
                         //ok no errors
+                        $('#pagepannel2').panel("close");
                         console.log("product successfuly staged..");
                     }
                     else {

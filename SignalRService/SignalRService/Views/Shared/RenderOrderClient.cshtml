@@ -498,6 +498,8 @@
                 else {
                     $('#orderitemlist').children().remove();
                     totalsBox.calcTotals();
+                    $("#pagepannel1").panel("close");
+                    
                 }
                 console.log("placeOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
 

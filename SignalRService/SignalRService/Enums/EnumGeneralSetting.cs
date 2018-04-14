@@ -13,6 +13,8 @@ namespace SignalRService.Enums
         ProductMinPrice = 3,
         ProductMaxPrice = 4,
         ProductPartNumberMinLength = 5,
-        ProductPartNumberMaxLength = 6
+        ProductPartNumberMaxLength = 6,
+        ProductDescriptionMinLength = 7,
+        ProductDescriptionMaxLength = 8
     }
 }

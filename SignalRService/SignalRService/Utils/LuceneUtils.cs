@@ -16,7 +16,7 @@ namespace SignalRService.Utils
    /// https://www.codeproject.com/Articles/320219/Lucene-Net-ultra-fast-search-for-MVC-or-WebForms
     public static class LuceneUtils
     {
-        private static string _luceneDir = Path.Combine(HttpContext.Current.Request.PhysicalApplicationPath, "lucene_index");
+        private static string _luceneDir = Path.Combine(HttpRuntime.AppDomainAppPath, "lucene_index");
         private static FSDirectory _directoryTemp;
         private static FSDirectory _directory
         {

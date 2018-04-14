@@ -46,6 +46,11 @@
             imageurl: {
                 url: true
             },
+            description: {
+                required: true,
+                minlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductDescriptionMinLength).ToString(),
+                maxlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductDescriptionMaxLength).ToString()
+            },
             partnumber: {
                 required: true,
                 minlength: @GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductPartNumberMinLength).ToString(),
@@ -65,6 +70,11 @@
             },
             imageurl: {
                 url: "@BaseResource.Get("InvalidImageUrl")"
+            },
+            description: {
+                required: "@BaseResource.Get("MessageDescriptionRequired")",
+                minlength: "@string.Format(BaseResource.Get("MessageMinLength"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductDescriptionMinLength))",
+                maxlength: "@string.Format(BaseResource.Get("MessageMaxLength"), GeneralSettingsUtils.GetSettingValue(EnumGeneralSetting.ProductDescriptionMaxLength))"
             },
             partnumber: {
                 required: "@BaseResource.Get("MessagePartnumberRequired")",

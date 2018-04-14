@@ -99,14 +99,27 @@ namespace SignalRService.Hubs
         /// <returns></returns>
         public List<ViewModels.ProductViewModel> getProducts(string group, SearchConfig config)
         {
-            var user = userRepository.GetUser(Context.Request.User.Identity.Name);
-            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms,user.Id);
-
             List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
-
+            var user = userRepository.GetUser(Context.Request.User.Identity.Name);
             var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
             if (dbService == null)
                 return reslist;
+
+            if (config.SearchTerms.Length == 0)
+            {
+                foreach (var item in db.Products
+                        .Where(ln => ln.Owner.ID == dbService.Owner.ID)
+                        .OrderBy(ln => ln.Name).Take(10))
+                {
+                    reslist.Add(item.ToProductViewModel());
+                }
+                return reslist;
+            }
+
+            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms,user.Id);
+
+
+          
 
             foreach (var item in searchResItems)
             {
