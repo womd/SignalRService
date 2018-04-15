@@ -44,10 +44,10 @@ namespace SignalRService.Utils
             doc.Add(new Field("SrcId", productData.SrcId, Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("Title", productData.Title, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("Description", productData.Description, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("Brand", productData.Brand, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("Gtin", productData.Gtin, Field.Store.YES, Field.Index.ANALYZED));
+          //  doc.Add(new Field("Brand", productData.Brand, Field.Store.YES, Field.Index.ANALYZED));
+          //  doc.Add(new Field("Gtin", productData.Gtin, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("Mpn", productData.Mpn, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("OwnerString", productData.OwnerIdString, Field.Store.YES, Field.Index.ANALYZED));
+          //  doc.Add(new Field("OwnerString", productData.OwnerIdString, Field.Store.YES, Field.Index.ANALYZED));
           
             // add entry to index
             writer.AddDocument(doc);
