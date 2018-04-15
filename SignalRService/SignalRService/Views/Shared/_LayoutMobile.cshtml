@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -16,8 +17,17 @@
 
 </head>
 <body>
-    
+
     <div data-role="page" class="mainpage">
+        @if (Request.IsAuthenticated)
+        {
+            <a href="#accountpage">@User.Identity.GetUserName()</a>
+            <a href="#loginpage">@BaseResource.Get("LogOff")</a>
+        }
+        else
+        {
+            @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        }
         <div data-role="panel" id="pagepannel1"></div>
         <div data-role="panel" id="pagepannel2">
             @Html.Partial("ProductEditFormPartial")
@@ -27,6 +37,9 @@
             @RenderBody()
         </div>
     </div>
+
+    @Html.Partial("_LoginPartialMobile")
+
     <script>
         $(document).on("panelbeforeopen", "div[data-role='panel']", function (e, ui) {
             $.mobile.activeClickedLink = null;

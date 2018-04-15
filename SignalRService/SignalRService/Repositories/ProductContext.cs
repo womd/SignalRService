@@ -97,6 +97,68 @@ namespace SignalRService.Repositories
             }
         }
 
+        public bool RemoveProductbySrc(string SrcIdentifier)
+        {
+            var p = _db.Products.FirstOrDefault(ln => ln.SrcIdentifier == SrcIdentifier);
+            var ip = _db.ProductTmpImport.FirstOrDefault(ln => ln.SrcId == SrcIdentifier);
+            if(ip != null)
+                Utils.LuceneUtils.ClearLuceneIndexRecord(ip.Id);
+
+            if(p != null)
+            {
+                _db.Products.Remove(p);
+                _db.SaveChanges();
+                return true;
+            }
+            return false; 
+        }
+
+        public bool RemoveProduct(string Identifier)
+        {
+            try
+            {
+                var p = _db.Products.FirstOrDefault(ln => ln.ProductIdentifier == Identifier);
+                var ip = _db.ProductTmpImport.FirstOrDefault(ln => ln.SrcId == p.SrcIdentifier);
+                if (ip != null)
+                {
+                    Utils.LuceneUtils.ClearLuceneIndexRecord(ip.Id);
+                    _db.ProductTmpImport.Remove(ip);
+
+                }
+
+                if (p != null)
+                {
+                    _db.Products.Remove(p);
+                }
+                _db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Utils.SimpleLogger logger = new Utils.SimpleLogger();
+                string logstr = ex.Message;
+                if (ex.InnerException != null)
+                    logstr += ex.InnerException.Message;
+
+                logger.Fatal(logstr);
+                return false;
+            }
+            
+        }
+
+        public bool IsOwner(int UserId, string ProductIdentifier)
+        {
+            var prod = _db.Products.FirstOrDefault(ln => ln.ProductIdentifier == ProductIdentifier);
+            if(prod != null)
+            {
+                if (prod.Owner.ID == UserId)
+                    return true;
+            }
+            return false;
+        }
+
+
+
         public List<ProductModel>GetProducts(UserDataModel user)
         {
             return _db.Products.Where(ln => ln.Owner.ID == user.ID).ToList();

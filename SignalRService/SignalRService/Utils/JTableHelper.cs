@@ -45,7 +45,7 @@ namespace SignalRService.Utils
         {
             string res = @"
             <div class=\'ui-field-contain\'>
-            <label for='sort-select-orders'>" + BaseResource.Get("SortSelect") + @"} </label>
+            <label for='sort-select-orders'>" + BaseResource.Get("SortSelect") + @" </label>
             <select name='sort-select-orders' id='sort-select-orders' multiple='multiple' data-native-menu='false'>
                 <option>" + BaseResource.Get("SortSelectChoose") + @"</option>
                 <option value='CreationDate ASC'>CreationDate ASC</option>

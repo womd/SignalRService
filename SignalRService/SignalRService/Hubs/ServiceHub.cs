@@ -202,21 +202,32 @@ namespace SignalRService.Hubs
     //    [Authorize]
         public void RemoveProduct(string id, string group)
         {
-
             if (Context.User.IsInRole("Admin"))
             {
-                var prod = db.Products.FirstOrDefault(ln => ln.ProductIdentifier == id);
-                db.Products.Remove(prod);
-                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+                if(productRepository.RemoveProduct(id))
+                {
+                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+                }
             }
             else
             {
+                
                 var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
-                var prod = db.Products.FirstOrDefault(ln => ln.ProductIdentifier == id && ln.Owner.ID == user.Id);
-                if (prod != null)
+                if (productRepository.IsOwner(id,user.Id))
                 {
-                    db.Products.Remove(prod);
-                    GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+                    if(productRepository.RemoveProduct(id))
+                    {
+                        GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productRemove(id);
+                    }
+                    else
+                    {
+                        //todo: change returntype return object indicating state.
+                    }
+
+                }
+                else
+                {
+                    //todo: change returntype return object indicating state.
                 }
             }
             db.SaveChanges();

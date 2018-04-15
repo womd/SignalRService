@@ -59,6 +59,22 @@ namespace SignalRService.Repositories
             var products = productContext.GetProducts(userId, startIndex, pageSize, sorting, config);
             return products.ToProductViewModels();
         }
+        
+        public bool RemoveProductbySrc(string SrcIdentifier)
+        {
+            return productContext.RemoveProduct(SrcIdentifier);
+        }
+        
+        public bool RemoveProduct(string Identifier)
+        {
+            return productContext.RemoveProduct(Identifier);
+        }
+
+        public bool IsOwner(string ProductIndentifier, int OwnerId)
+        {
+            return productContext.IsOwner(OwnerId, ProductIndentifier);
+        }
+
         #endregion
 
         #region productImport

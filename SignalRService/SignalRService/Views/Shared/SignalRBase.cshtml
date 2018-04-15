@@ -77,7 +77,15 @@
             }
 
             servicehub.client.productRemove = function (id) {
-                itemOrderHost.productRemove(id);
+
+                if (typeof itemOrderClient !== 'undefined') {
+                    itemOrderClient.productRemove(id);
+                }
+
+                if (typeof itemOrderHost !== 'undefined') {
+                    itemOrderHost.productRemove(id);
+                }
+
             }
 
 

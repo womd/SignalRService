@@ -434,6 +434,8 @@
                         //ok no errors
                         $('#pagepannel2').panel("close");
                         console.log("product successfuly staged..");
+                        //empty form
+                        $('#producteditform').trigger('reset');
                     }
                     else {
                         showMessageDailog(data.ErrorMessage, "body");
@@ -445,7 +447,7 @@
 
         },
         productRemove: function remove_product(id) {
-            $("*[data-itemid='" + id + "']").parent().remove();
+            $("*[data-itemid='" + id + "']").remove();
 
         },
         getProductFromInput: function get_product_from_input() {
@@ -706,12 +708,7 @@
         width: 100%;
     }
 
-    .search {
-        position: fixed;
-        top: -6px;
-        right: 2px;
-        z-index: 100;
-    }
+
 
     h4 {
         margin-top: 45px;

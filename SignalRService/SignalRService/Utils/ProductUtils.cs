@@ -31,9 +31,10 @@ namespace SignalRService.Utils
                 return false;
             }
 
-            if (data.Name.Length < 2 && data.Name.Length > 120)
+            
+            if (data.Name.Length <  (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductNameMinLength) && data.Name.Length > (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductNameMaxLength))
             {
-                messages.Add("Name soll 2 - 120 Zeichen haben.");
+                messages.Add("Name soll " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductNameMinLength).ToString() + " - " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductNameMaxLength) + " Zeichen haben.");
                 return false;
             }
 
@@ -49,9 +50,9 @@ namespace SignalRService.Utils
                 return false;
             }
 
-            if (data.Description.Length < 2 && data.Description.Length > 200)
+            if (data.Description.Length < (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductDescriptionMaxLength) && data.Description.Length > (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductDescriptionMaxLength) )
             {
-                messages.Add("Name soll 2 - 200 Zeichen haben.");
+                messages.Add("Name soll " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductDescriptionMaxLength).ToString() + " - " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductDescriptionMaxLength) + " Zeichen haben.");
                 return false;
             }
 
@@ -61,9 +62,9 @@ namespace SignalRService.Utils
                 return false;
             }
 
-            if (data.Price > 100000 || data.Price < 0)
+            if (data.Price > (decimal) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMaxPrice) || data.Price < (decimal) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMinPrice) )
             {
-                messages.Add("Preis soll zwischen 0 und 100000 sein.");
+                messages.Add("Preis soll zwischen "+ Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMinPrice).ToString() + " und "+ Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMaxPrice).ToString() + " sein.");
                 return false;
             }
 
@@ -75,6 +76,13 @@ namespace SignalRService.Utils
                     return false;
                 }
             }
+
+            if(data.PartNumber.Length < (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductPartNumberMinLength) || data.PartNumber.Length > (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductPartNumberMaxLength) )
+            {
+                messages.Add("Teilenummer soll " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductPartNumberMinLength).ToString() + " - " + Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductPartNumberMaxLength) + " Zeichen haben.");
+                return false;
+            }
+
 
             return true;
         }

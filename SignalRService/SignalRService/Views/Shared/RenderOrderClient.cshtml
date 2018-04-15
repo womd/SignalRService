@@ -72,6 +72,10 @@
             });
             $("#customeritemlist").listview();
             $("#customeritemlist").listview('refresh');
+        },
+          productRemove: function remove_product(id) {
+            $("*[data-itemid='" + id + "']").remove();
+
         }
     }
 
@@ -746,13 +750,7 @@
         width: 100%;
     }
 
-    .search {
-        position: fixed;
-        top: -6px;
-        right: 2px;
-        z-index: 100;
-    }
-
+  
     h4 {
         margin-top: 45px;
         margin-bottom: 12px;
