@@ -5,6 +5,7 @@
 
 <h2>...</h2>
 
+@Ajax.ActionLink("SeedGeneralSettings", "SeedGeneralSettings", null,  new AjaxOptions() { InsertionMode = InsertionMode.Replace }, new { id = "testseedbtn", @class = "btn btn-primary" })
 @Ajax.ActionLink("Seed TestData", "SeedTestData", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "testseedbtn", @class = "btn btn-primary" })
 
 @Ajax.ActionLink("Seed Localization", "SeedLocalization", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "locseedbtn", @class = "btn btn-primary" })
