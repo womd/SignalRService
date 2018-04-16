@@ -133,7 +133,7 @@ namespace SignalRService.Implementation
 
        
 
-        public bool ImportSource(string src, int ownerId)
+        public bool ImportSource(string src, int ownerId, List<string>connections)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace SignalRService.Implementation
                 foreach (var item in items)
                 {
                     cntr++;
-                    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("ProcessingItem") + " (" + cntr + " / " + total + ")", Utils.ProductUtils.calc_percent(cntr,total), user.SignalRConnections);
+                    Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("ProcessingItem") + " (" + cntr + " / " + total + ")", Utils.ProductUtils.calc_percent(cntr,total), connections);
 
                     var pmodel = buildImportModel(item, dbuser);        
                     _db.ProductTmpImport.Add(pmodel);

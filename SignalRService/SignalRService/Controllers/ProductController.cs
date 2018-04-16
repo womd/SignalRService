@@ -165,7 +165,7 @@ namespace SignalRService.Controllers
             //}
             db.SaveChanges();
 
-            if (importer.ImportSource(config.Source, config.Owner.ID))
+            if (importer.ImportSource(config.Source, config.Owner.ID, user.SignalRConnections))
             {
                     Utils.ProgressDialogUtils.Update("productImport", BaseResource.Get("MessageProductImportFinished"), 100, user.SignalRConnections);
                     return Json(new { Success = true, Message = "import completed.." });

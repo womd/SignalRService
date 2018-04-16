@@ -5,11 +5,7 @@
         var servicehub;
         $(function () {
             servicehub = $.connection.serviceHub;
-            servicehub.client.hello = function () {
-                // Add the message to the page.
-                $('body').append('<strong>HELLO</strong>');
-            };
-
+         
             //general purpose callback method
             servicehub.client.clientCallback = function (data) {
                 var fn = getFunctionFromString(data.Method);
@@ -24,27 +20,6 @@
                 setTimeout(function () {
                     $('*[data-itemid=' + itemid + ']').removeClass("highlight");
                 }, 500);
-            }
-
-            servicehub.client.restageAll = function (group) {
-
-                var products = itemOrderHost.getProductsFromCookie();
-                for (var i = 0; i < products.length; i++) {
-
-                    servicehub.server.stageProduct(products[i], group)
-                        .done(function (data) {
-                            if (data.length == 0) {
-                                //all ok - no messages
-                            }
-                            else {
-                                showMessageDailog(data.toString(), 'body');
-                            }
-                        })
-                        .fail(function () {
-                            console.log("staeingRequest failed...");
-                        });
-
-                }
             }
 
             servicehub.client.productStaged = function (data) {

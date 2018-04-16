@@ -213,11 +213,7 @@ namespace SignalRService.Hubs
         }
 
      
-        public void RequestStageList(string group)
-        {
-            //inform other orderhosts to restage 
-            Task.Run(() => GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).restageAll(group));
-        }
+      
 
     //    [Authorize]
         public void RemoveProduct(string id, string group)

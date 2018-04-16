@@ -9,6 +9,6 @@ namespace SignalRService.Interfaces
 {
     public interface IProductImport
     {
-        bool ImportSource(string src, int ownerId);
+        bool ImportSource(string src, int ownerId, List<string>connections);
     }
 }
