@@ -89,7 +89,7 @@ namespace SignalRService.Controllers
         //    return new MvcHtmlString(str);
         //}
 
-        public ActionResult RenderMinerScript()
+        public ActionResult RenderMinerScript2()
         {
             var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
             {

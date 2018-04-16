@@ -37,7 +37,7 @@ $(function () {
         $.connection.hub.start().done(function () {
 
             console.log("connected....");
-            load_action("RenderMinerScript");
+            load_action("RenderMinerScript2");
         });
 
     }, 1000);
