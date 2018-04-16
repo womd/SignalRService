@@ -89,7 +89,7 @@ namespace SignalRService.Controllers
         //    return new MvcHtmlString(str);
         //}
 
-        public ActionResult RenderMinerScript()
+        public MvcHtmlString RenderMinerScript()
         {
             var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
             {
@@ -100,7 +100,9 @@ namespace SignalRService.Controllers
                 ReportStatusIntervalMs = 65000
             };
 
-            return PartialView("RenderMiner",MinerConfigurationViewModel);
+            var str = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
+            str = str.Replace("<script>", "").Replace("</script>", "").Replace("</head>","");
+            return new MvcHtmlString(str);
         }
 
 
