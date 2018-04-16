@@ -73,6 +73,7 @@ namespace SignalRService.Controllers
 
         }
 
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public MvcHtmlString RenderMinerScript()
         {
             var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
