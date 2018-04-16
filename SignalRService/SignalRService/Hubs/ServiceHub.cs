@@ -40,18 +40,22 @@ namespace SignalRService.Hubs
         }
 
 
-        public override Task OnConnected()
+        private string getRefererUrl()
         {
-            string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
+           return Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
+        }
 
+        private string getClientIp()
+        {
             var httpcontext = Context.Request.GetHttpContext();
-
             var forwardedFor = httpcontext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
             var userIpAddress = String.IsNullOrWhiteSpace(forwardedFor) ?
                 httpcontext.Request.ServerVariables["REMOTE_ADDR"] : forwardedFor.Split(',').Select(s => s.Trim()).First();
-            string remoteIP = userIpAddress;
+            return userIpAddress;
+        }
 
-            //  Context.ConnectionId
+        private void  addConnection(string refererUrl, string remoteIP)
+        {
             if (Context.Request.User.Identity.IsAuthenticated)
             {
                 db.AddConnection(Context.ConnectionId, refererUrl, remoteIP, Context.Request.User.Identity.Name);
@@ -62,6 +66,11 @@ namespace SignalRService.Hubs
                 db.AddConnection(Context.ConnectionId, refererUrl, remoteIP);
             }
 
+        }
+
+        public override Task OnConnected()
+        {
+            addConnection(getRefererUrl(), getClientIp());
             _RemoveDeadConnections();
             return base.OnConnected();
         }
@@ -74,7 +83,14 @@ namespace SignalRService.Hubs
 
         public override Task OnReconnected()
         {
-            db.UpdateConnectionState(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected);
+            if (!db.SignalRConnections.Any(ln => ln.SignalRConnectionId == Context.ConnectionId))
+            {
+                addConnection(getRefererUrl(), getClientIp());
+            }
+            else
+            {
+                db.UpdateConnectionState(Context.ConnectionId, Enums.EnumSignalRConnectionState.Connected);
+            }
             return base.OnReconnected();
         }
 

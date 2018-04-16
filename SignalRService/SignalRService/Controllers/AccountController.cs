@@ -392,6 +392,18 @@ namespace SignalRService.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            DAL.ServiceContext db = new DAL.ServiceContext();
+            Repositories.UserRepository userRepository = new Repositories.UserRepository(db);
+            
+            var user = userRepository.GetUser(User.Identity.Name);
+            var toRemove = user.SignalRConnections.ToList();
+            foreach(var item in toRemove)
+            {
+                var rm = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == item);
+                db.SignalRConnections.Remove(rm);
+            }
+            db.SaveChanges();
+
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
