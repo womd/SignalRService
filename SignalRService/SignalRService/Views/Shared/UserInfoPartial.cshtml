@@ -1,0 +1,12 @@
+﻿
+@using Microsoft.AspNet.Identity
+
+        @if (Request.IsAuthenticated)
+        {
+            <a href="/Account/Login" data-ajax="false">@BaseResource.Get("LogOff")</a>
+        }
+        else
+        {
+            <a href="/Account/Login" data-ajax="false">@BaseResource.Get("LogIn")</a>
+        }
+

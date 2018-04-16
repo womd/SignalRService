@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
+
+
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
     <script src="~/signalr/hubs"></script>
 
@@ -19,20 +21,16 @@
 <body>
 
     <div data-role="page" class="mainpage">
-        @if (Request.IsAuthenticated)
-        {
-            <a href="#accountpage">@User.Identity.GetUserName()</a>
-            <a href="#loginpage">@BaseResource.Get("LogOff")</a>
-        }
-        else
-        {
-            @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-        }
+
         <div data-role="panel" id="pagepannel1"></div>
         <div data-role="panel" id="pagepannel2">
             @Html.Partial("ProductEditFormPartial")
         </div>
+        <div data-role="panel" id="pagepannel3">
+            @Html.Partial("UserInfoPartial")
+        </div>
         <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+        <a class="ui-btn ui-btn-inline" href="#pagepannel3">@BaseResource.Get("BtnShowUseInfo")</a>
         <div data-role="content">
             @RenderBody()
         </div>

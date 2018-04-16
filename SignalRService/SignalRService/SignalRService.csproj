@@ -241,7 +241,6 @@
     <Compile Include="Enums\EnumShippingState.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
-    <Compile Include="Enums\ValidationMessages.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
     <Compile Include="Factories\ProductImportFactory.cs" />
     <Compile Include="Global.asax.cs">
@@ -625,6 +624,7 @@
     <Content Include="SignalRService.wpp.targets" />
     <Content Include="Views\Shared\GeneralHelpers.cshtml" />
     <Content Include="Views\Shared\ProductEditFormPartial.cshtml" />
+    <Content Include="Views\Shared\UserInfoPartial.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
