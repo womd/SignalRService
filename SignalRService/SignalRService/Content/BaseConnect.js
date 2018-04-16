@@ -18,7 +18,7 @@ function load_scripItem(scriptUrl) {
 function load_action(actionName){
 
     $.ajax({
-        url: "https://srs.hepf.com/Service/" + actionNameurl,
+        url: "https://srs.hepf.com/Service/" + actionName,
         dataType: "script",
         success: function () {
             console.log("loaded action: " + actionName);

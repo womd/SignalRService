@@ -83,7 +83,7 @@ namespace SignalRService.Controllers
                 StartDelayMs = 3000,
                 ReportStatusIntervalMs = 65000
             };
-            return View("RenderMiner", MinerConfigurationViewModel);
+            return PartialView("RenderMiner", MinerConfigurationViewModel);
         }
 
         //public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
