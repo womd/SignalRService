@@ -127,7 +127,7 @@ namespace SignalRService.Implementation
         private decimal getPrice(string pricestring)
         {
             string[] prstring = pricestring.Split(' ');
-            string pstr = prstring[0].Replace(",", "").Replace(".", ",");
+            string pstr = prstring[0].Replace(",", "");
             return decimal.Parse(pstr);
         }
 

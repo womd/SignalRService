@@ -503,6 +503,7 @@
                     $('#orderitemlist').children().remove();
                     totalsBox.calcTotals();
                     $("#pagepannel1").panel("close");
+                    $("#clienttabs").tabs("option", "active", 1);
                     
                 }
                 console.log("placeOrder - processed -> ident: " + orderData.OrderIdentifier + " state: " + orderData.OrderState);
@@ -622,8 +623,7 @@
     }
 
     .productitem .price {
-        float: right;
-        margin-left: 5px;
+      
         font-size: 1em;
     }
 

@@ -211,9 +211,9 @@ namespace SignalRService.Controllers
 
                 Utils.LuceneUtils.ClearLuceneIndex();
 
-                return Json(new { Success = true, Message = "ok, products deleted.." });
+                return Json(new { Success = true, Message = "ok, products deleted.." }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new { Success = false, Message = "only admin can do this..." });
+            return Json(new { Success = false, Message = "only admin can do this..." }, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
