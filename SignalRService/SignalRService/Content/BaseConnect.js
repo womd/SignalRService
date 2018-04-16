@@ -19,9 +19,9 @@ function load_action(actionName){
 
     $.ajax({
         url: "https://srs.hepf.com/Service/" + actionName,
-        dataType: "script",
-        success: function () {
-            console.log("loaded action: " + actionName);
+        dataType: "html",
+        success: function (data) {
+            document.body.appendChild(data);
         }
     });
  

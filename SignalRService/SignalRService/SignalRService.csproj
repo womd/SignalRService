@@ -287,6 +287,7 @@
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
+    <Compile Include="Utils\RenderUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\UserHelper.cs" />
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
