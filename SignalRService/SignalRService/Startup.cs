@@ -37,6 +37,8 @@ namespace SignalRService
                 // path.
                 map.RunSignalR(hubConfiguration);
             });
+
+
         }
     }
 }

@@ -45,7 +45,11 @@ namespace SignalRService.Hubs
             string refererUrl = Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
 
             var httpcontext = Context.Request.GetHttpContext();
-            string remoteIP = httpcontext.Request.UserHostAddress;
+
+            var forwardedFor = httpcontext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            var userIpAddress = String.IsNullOrWhiteSpace(forwardedFor) ?
+                httpcontext.Request.ServerVariables["REMOTE_ADDR"] : forwardedFor.Split(',').Select(s => s.Trim()).First();
+            string remoteIP = userIpAddress;
 
             //  Context.ConnectionId
             if (Context.Request.User.Identity.IsAuthenticated)
