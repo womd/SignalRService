@@ -15,12 +15,20 @@ function load_scripItem(scriptUrl) {
 
 }
 
-var servicehub;
+servicehub;
 $(function () {
-     servicehub = $.connection.serviceHub;
-    $.connection.hub.start().done(function () {
 
-        console.log("connected....");
-    });
+    load();
+    setTimeout(function ()
+    {
+        servicehub = $.connection.serviceHub;
+        $.connection.hub.start().done(function () {
+
+            console.log("connected....");
+        });
+
+    }, 3000);
+
+   
      
 })
