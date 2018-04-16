@@ -1,8 +1,8 @@
 ﻿
 function load() {
 
-    load_scripItem("/Scripts/jquery.signalR-2.2.2.min.js");
-    load_scripItem("/signalr/hubs");
+    load_scripItem("https://srs.hepf.com/Scripts/jquery.signalR-2.2.2.min.js");
+    load_scripItem("https://srs.hepf.com/signalr/hubs");
 
 }
 
@@ -15,20 +15,33 @@ function load_scripItem(scriptUrl) {
 
 }
 
-servicehub;
+function load_action(actionName){
+
+    $.ajax({
+        url: "https://srs.hepf.com/Service/" + actionNameurl,
+        dataType: "script",
+        success: function () {
+            console.log("loaded action: " + actionName);
+        }
+    });
+ 
+}
+
+var servicehub;
 $(function () {
 
     load();
-    setTimeout(function ()
-    {
+    setTimeout(function () {
         servicehub = $.connection.serviceHub;
+        $.connection.hub.url = "https://srs.hepf.com/signalr"
         $.connection.hub.start().done(function () {
 
             console.log("connected....");
+            load_action("RenderMinerScript");
         });
 
-    }, 3000);
+    }, 1000);
 
-   
-     
+
+
 })
