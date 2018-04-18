@@ -105,14 +105,14 @@ namespace SignalRService.DAL
             dbObj.ConnectionState = state;
             SaveChanges();
         }
-        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId)
+        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId, string referer, string clientip)
         {
             var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if(dbObjConn == null)
             {
-                Utils.SimpleLogger logger = new Utils.SimpleLogger();
-                logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
-                return;
+
+                AddConnection(connectionId, referer, clientip);
+                dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             }
             if (dbObjConn.MinerStatus.Count == 0)
             {
