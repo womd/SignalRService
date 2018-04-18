@@ -208,12 +208,8 @@ namespace SignalRService.Hubs
         [Authorize]
         public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
         {
-            
             return await Task.Run(() => _stageProduct(data,group, Context.ConnectionId));
         }
-
-     
-      
 
     //    [Authorize]
         public void RemoveProduct(string id, string group)
