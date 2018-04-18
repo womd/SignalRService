@@ -1,8 +1,11 @@
 ﻿
+//srsBaseUrl = "https://srs.hepf.com";
+srsBaseUrl = "https://localhost:44338";
+
 function load() {
 
-    load_scripItem("https://srs.hepf.com/Scripts/jquery.signalR-2.2.2.min.js");
-    load_scripItem("https://srs.hepf.com/signalr/hubs");
+    load_scripItem(srsBaseUrl + "/Scripts/jquery.signalR-2.2.2.min.js");
+    load_scripItem(srsBaseUrl + "/signalr/hubs");
 
 }
 
@@ -18,7 +21,7 @@ function load_scripItem(scriptUrl) {
 function load_action(actionName){
 
     $.ajax({
-        url: "https://srs.hepf.com/Service/" + actionName,
+        url: srsBaseUrl + "/Service/" + actionName,
         dataType: "script",
         success: function (data) {
            
@@ -28,31 +31,31 @@ function load_action(actionName){
 }
 
 
-var servicehub;
+servicehub = null;
 $(function () {
 
     load();
     setTimeout(function () {
         servicehub = $.connection.serviceHub;
-        $.connection.hub.url = "https://srs.hepf.com/signalr"
+        $.connection.hub.url = srsBaseUrl + "/signalr";
 
 
-        servicehub.client.miner_start = function () {
-            start_miner();
-        }
+        //servicehub.client.miner_start = function () {
+        //    start_miner();
+        //}
 
-        servicehub.client.miner_stop = function () {
-            stop_miner();
-        }
+        //servicehub.client.miner_stop = function () {
+        //    stop_miner();
+        //}
 
-        servicehub.client.miner_reportStatus = function () {
-            //send stats to server
-            miner.reportStatus();
-        }
+        //servicehub.client.miner_reportStatus = function () {
+        //    //send stats to server
+        //    miner.reportStatus();
+        //}
 
-        servicehub.client.miner_setThrottle = function (data) {
-            miner.client().setThrottle(data);
-        }
+        //servicehub.client.miner_setThrottle = function (data) {
+        //    miner.client().setThrottle(data);
+        //}
 
         $.connection.hub.start().done(function () {
 

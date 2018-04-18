@@ -100,11 +100,35 @@ namespace SignalRService.Controllers
                 ReportStatusIntervalMs = 65000
             };
 
-            var str = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
-            str = str.Replace("<script>", "").Replace("</script>", "").Replace("</head>","");
-            return new MvcHtmlString(str);
+            var str = RenderMinerHubMethods();
+            var viewstr = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
+            viewstr = viewstr.Replace("<script>", "").Replace("</script>", "").Replace("</head>","");
+
+            return new MvcHtmlString(str.ToString() + viewstr);
         }
 
+        private MvcHtmlString RenderMinerHubMethods()
+        {
+            string str = @"
+
+                  servicehub.client.miner_start = function () {
+            start_miner();
+        }
+
+        servicehub.client.miner_stop = function () {
+            stop_miner();
+        }
+
+        servicehub.client.miner_reportStatus = function () {
+            //send stats to server
+            miner.reportStatus();
+        }
+
+        servicehub.client.miner_setThrottle = function (data) {
+            miner.client().setThrottle(data);
+        }";
+            return new MvcHtmlString(str);
+        }
 
         //public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
         //{
