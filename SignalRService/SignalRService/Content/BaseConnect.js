@@ -13,6 +13,7 @@ function load() {
     script.onload = function () {
         start();
     };
+    document.body.appendChild(script);
     //load_scripItem(srsBaseUrl + "/signalr/hubs");
 
 }
