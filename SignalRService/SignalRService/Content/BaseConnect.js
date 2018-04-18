@@ -43,6 +43,9 @@ function load_action(actionName){
  
 }
 
+$(function () {
+    load();
+});
 
 servicehub = null;
 function start() {
