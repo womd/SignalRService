@@ -78,7 +78,7 @@ namespace SignalRService.DAL
         {
 
             Utils.SimpleLogger logger = new Utils.SimpleLogger();
-            logger.Debug("adding connection: " + connectionId + " - " + remoteIp + " - " + refererUrl);
+            logger.Error("adding connection: " + connectionId + " - " + remoteIp + " - " + refererUrl);
 
             var user = UserData.FirstOrDefault(ln => ln.IdentityName == "Anonymous");
             if (user == null)
