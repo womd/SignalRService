@@ -76,6 +76,10 @@ namespace SignalRService.DAL
         }
         public void AddConnection(string connectionId, string refererUrl, string remoteIp)
         {
+
+            Utils.SimpleLogger logger = new Utils.SimpleLogger();
+            logger.Debug("adding connection: " + connectionId + " - " + remoteIp + " - " + refererUrl);
+
             var user = UserData.FirstOrDefault(ln => ln.IdentityName == "Anonymous");
             if (user == null)
                 user = UserData.Add(new Models.UserDataModel() { IdentityName = "Anonymous" });
@@ -105,14 +109,14 @@ namespace SignalRService.DAL
             dbObj.ConnectionState = state;
             SaveChanges();
         }
-        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId, string referer, string clientip)
+        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId)
         {
             var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if(dbObjConn == null)
             {
-
-                AddConnection(connectionId, referer, clientip);
-                dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
+                Utils.SimpleLogger logger = new Utils.SimpleLogger();
+                logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+                return;
             }
             if (dbObjConn.MinerStatus.Count == 0)
             {

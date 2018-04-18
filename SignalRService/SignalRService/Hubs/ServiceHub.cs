@@ -325,7 +325,7 @@ namespace SignalRService.Hubs
 
         public void MinerReportStatus(MinerStatusData data)
         {
-            db.UpdateMinerState(data, Context.ConnectionId, getRefererUrl(),getClientIp());
+            db.UpdateMinerState(data, Context.ConnectionId);
         }
     }
 
