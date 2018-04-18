@@ -20,10 +20,16 @@
         },
 
         initialize: function loadScripts() {
-            var script = document.createElement("script");
+            @*var script = document.createElement("script");
             script.type = "text/javascript";
             script.src = "@Model.ScriptUrl"; 
-            document.body.appendChild(script);
+            document.body.appendChild(script);*@
+            jQuery.ajax({
+                url: "@Model.ScriptUrl",
+                dataType: 'script',
+                success: function () { },
+                async: true
+            });
         },
         run: function start() {
             this.client().start();
