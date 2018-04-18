@@ -26,7 +26,7 @@ namespace SignalRService
             var ex = Server.GetLastError();
             //log the error!
             SignalRService.Utils.SimpleLogger _logger = new Utils.SimpleLogger(true);
-            _logger.Error(ex.Message);
+            _logger.Error(ex.Message + ex.StackTrace);
         }
     }
 }
