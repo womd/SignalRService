@@ -63,6 +63,10 @@ $(function () {
             load_action("RenderMinerScript");
         });
 
+        $.connection.hub.error(function (error) {
+            console.log('SignalR error: ' + error)
+        });
+
     }, 1000);
 
 

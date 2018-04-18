@@ -83,8 +83,7 @@
                 }
             }
 
-            //----
-
+            
             servicehub.client.miner_start = function () {
                 start_miner();
             }
@@ -110,6 +109,11 @@
             servicehub.client.showProgressDialog = function (id, title, message) {
                 progressDialog.show(id, title, message)
             }
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
 
             // Start the connection.
             $.connection.hub.start().done(function () {
