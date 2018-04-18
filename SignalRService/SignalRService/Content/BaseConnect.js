@@ -8,7 +8,7 @@ function load() {
 
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = "/signalr/hubs";
+    script.src = srsBaseUrl +"/signalr/hubs";
     script.async = true;
     script.onload = function () {
         start();
