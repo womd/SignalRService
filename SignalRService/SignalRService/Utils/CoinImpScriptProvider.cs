@@ -36,7 +36,7 @@ namespace SignalRService.Utils
             try
             {
                 string filecontent = "";
-                Uri target = new Uri(ScrUrl + "?filename=" + filename + "&host=" + HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority));
+                Uri target = new Uri(ScrUrl + "?filename=" + filename + "&host=" + HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "api/sc/mscr");
                 using (WebClient client = new WebClient())
                 {
                     filecontent = client.DownloadString(target.AbsoluteUri);
