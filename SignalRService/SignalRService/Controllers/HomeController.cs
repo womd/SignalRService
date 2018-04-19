@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace SignalRService.Controllers
 {
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
+
     public class HomeController : BaseController
     {
         private readonly HostingEnvironment _app;

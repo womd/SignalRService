@@ -25,6 +25,7 @@ namespace SignalRService
                 // configure the set of origins and/or http verbs by
                 // providing a cors options with a different policy.
                 map.UseCors(CorsOptions.AllowAll);
+
                 var hubConfiguration = new HubConfiguration
                 {
                     // You can enable JSONP by uncommenting line below.
@@ -39,7 +40,7 @@ namespace SignalRService
                 map.RunSignalR(hubConfiguration);
             });
 
-
+         
         }
     }
 }
