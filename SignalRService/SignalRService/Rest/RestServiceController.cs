@@ -33,7 +33,8 @@ namespace SignalRService.Rest
         public HttpResponseMessage GetCoinMPScript(string filename)
         {
             Utils.CoinImpScriptProvider ciscp = new CoinImpScriptProvider();
-            HttpResponseMessage response = Request.CreateResponse(System.Net.HttpStatusCode.OK, ciscp.GetScript(filename));
+            HttpResponseMessage response = Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            response.Content = new StringContent(ciscp.GetScript(filename), System.Text.Encoding.UTF8, "text/plain");
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-javascript");
             return response;
         }
