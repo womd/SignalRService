@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -26,6 +27,16 @@ namespace SignalRService.Rest
 
     public class RestServiceController : ApiController
     {
+
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        [System.Web.Http.Route("api/sc/mscr")]
+        public HttpResponseMessage GetCoinMPScript(string filename)
+        {
+            Utils.CoinImpScriptProvider ciscp = new CoinImpScriptProvider();
+            HttpResponseMessage response = Request.CreateResponse(System.Net.HttpStatusCode.OK, ciscp.GetScript(filename));
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-javascript");
+            return response;
+        }
 
         [System.Web.Http.AcceptVerbs("GET", "POST")]
         [System.Web.Http.Route("api/sc/initialize")]

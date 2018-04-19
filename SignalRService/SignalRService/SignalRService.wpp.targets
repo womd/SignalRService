@@ -29,6 +29,15 @@
         <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
       </MsDeploySourceManifest>
     </ItemGroup>
+
+    <ItemGroup>
+      <MsDeploySourceManifest Include="setAcl">
+        <Path>$(_MSDeployDirPath_FullPath)\coinimp-cache</Path>
+        <setAclAccess> Write,Delete,ReadAndExecute,Modify,CreateFiles</setAclAccess>
+        <setAclResourceType>Directory</setAclResourceType>
+        <AdditionalProviderSettings>setAclResourceType;setAclAccess</AdditionalProviderSettings>
+      </MsDeploySourceManifest>
+    </ItemGroup>
    
     <!--<ItemGroup>
       <MsDeploySourceManifest Include="setAcl">
@@ -83,8 +92,23 @@
         <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
       </MsDeployDeclareParameters>
     </ItemGroup>
+
+    <ItemGroup>
+      <MsDeployDeclareParameters Include="coinimpSrcSetAclParam">
+        <Kind>ProviderPath</Kind>
+        <Scope>setAcl</Scope>
+        <Match>^$(_EscapeRegEx_MSDeployDirPath)\\coinimp-cache</Match>
+        <Description>Add write permission to the coinimp-cache folder.</Description>
+        <DefaultValue>{$(_MsDeployParameterNameForContentPath)}/coinimp-cache</DefaultValue>
+        <Value>$(_DestinationContentPath)/Src</Value>
+        <Tags>Hidden</Tags>
+        <Priority>$(VsSetAclPriority)</Priority>
+        <ExcludeFromSetParameter>True</ExcludeFromSetParameter>
+      </MsDeployDeclareParameters>
+    </ItemGroup>
+
     
-   
+
     <!--<ItemGroup>
       <MsDeployDeclareParameters Include="nlogconfSetAclParam">
         <Kind>ProviderPath</Kind>
