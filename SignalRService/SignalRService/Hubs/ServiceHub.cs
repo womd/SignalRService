@@ -71,7 +71,7 @@ namespace SignalRService.Hubs
         public override Task OnConnected()
         {
             addConnection(getRefererUrl(), getClientIp());
-        //    _RemoveDeadConnections();
+            _RemoveDeadConnections();
             return base.OnConnected();
         }
 
