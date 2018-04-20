@@ -17,7 +17,7 @@ namespace SignalRService.Utils
         /// Default is create a fresh new log file.
         /// </summary>
         /// <param name="append">True to append to existing log file, False to overwrite and create new log file</param>
-        public SimpleLogger(bool append = false)
+        public SimpleLogger(bool append = true)
         {
             DatetimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
             string webroot = HostingEnvironment.ApplicationPhysicalPath;
