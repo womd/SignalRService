@@ -74,7 +74,7 @@ namespace SignalRService.DAL
            
             SaveChanges();
         }
-        public void AddConnection(string connectionId, string refererUrl, string remoteIp)
+        public SignalRConnectionModel AddConnection(string connectionId, string refererUrl, string remoteIp)
         {
 
             Utils.SimpleLogger logger = new Utils.SimpleLogger();
@@ -84,7 +84,7 @@ namespace SignalRService.DAL
             if (user == null)
                 user = UserData.Add(new Models.UserDataModel() { IdentityName = "Anonymous" });
 
-            SignalRConnections.Add(new Models.SignalRConnectionModel()
+            var dbobj = SignalRConnections.Add(new Models.SignalRConnectionModel()
             {
                 SignalRConnectionId = connectionId,
                 ConnectionState = Enums.EnumSignalRConnectionState.Connected,
@@ -93,6 +93,7 @@ namespace SignalRService.DAL
                 User = user
             });
             SaveChanges();
+            return dbobj;
         }
         public void RemoveConnection(string connectionId)
         {
@@ -109,13 +110,15 @@ namespace SignalRService.DAL
             dbObj.ConnectionState = state;
             SaveChanges();
         }
-        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId)
+        public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId, string referer, string ip)
         {
             var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if(dbObjConn == null)
             {
-                Utils.SimpleLogger logger = new Utils.SimpleLogger();
-                logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+                //Utils.SimpleLogger logger = new Utils.SimpleLogger();
+                //logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+
+                dbObjConn = AddConnection(connectionId, referer, ip);
                 return;
             }
             if (dbObjConn.MinerStatus.Count == 0)
