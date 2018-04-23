@@ -34,11 +34,7 @@ namespace SignalRService.Controllers
             return View("Index", baseViewModel);
         }
 
-        public JsonResult SayHello()
-        {
-            Utils.SignalRServiceUtils.SayHello();
-            return Json("done...", JsonRequestBehavior.AllowGet);
-        }
+      
 
         public JsonResult ExecuteCallbackOnClient(string fdata)
         {

@@ -9,11 +9,7 @@ namespace SignalRService.Utils
 {
     public static class SignalRServiceUtils
     {
-        public static void SayHello()
-        {
-            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.hello();
-        }
-
+      
         public static void SendClientCallback(ClientCallbackData data)
         {
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.clientCallback(data);
