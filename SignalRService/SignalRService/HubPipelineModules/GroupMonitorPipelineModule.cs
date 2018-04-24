@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SignalRService.Utils;
 
 namespace SignalRService.HubPipelineModules
 {
@@ -11,14 +12,14 @@ namespace SignalRService.HubPipelineModules
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
          
-        protected override 
-
         protected override bool OnBeforeIncoming(IHubIncomingInvokerContext context)
         {
             var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
             if(dbCon == null)
             {
-                db.AddConnection(context.Hub.Context.ConnectionId, ((IRequest)context.Hub.Context.Request.GetHttpContext().Request.getc
+                SimpleLogger logger = new SimpleLogger();
+                logger.Info("added connection on BeForeIncoming");
+                db.AddConnection(context.Hub.Context.ConnectionId, context.Hub.Context.Request.GetRefererUrl(), context.Hub.Context.Request.GetClientIp());
             }
             
             //if (Enum.TryParse(context.MethodDescriptor.Name, out Enums.EnumServiceHubMethods res))

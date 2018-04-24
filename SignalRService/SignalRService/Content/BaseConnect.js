@@ -52,9 +52,9 @@ function start() {
     servicehub = $.connection.serviceHub;
     $.connection.hub.url = srsBaseUrl + "/signalr";
 
-    servicehub.client.placeholder = function (data) {
-        console.log("placeholder method executed.");
-    }
+    //servicehub.client.placeholder = function (data) {
+    //    console.log("placeholder method executed.");
+    //}
 
     $.connection.hub.start().done(function () {
 
