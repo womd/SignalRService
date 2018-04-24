@@ -1,6 +1,6 @@
 ﻿
-srsBaseUrl = "https://srs.hepf.com";
-//srsBaseUrl = "https://localhost:44338";
+//srsBaseUrl = "https://srs.hepf.com";
+srsBaseUrl = "https://localhost:44378";
 
 function load() {
 
@@ -43,6 +43,13 @@ function load_action(actionName){
  
 }
 
+function add_script(data) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.text = data;
+    document.body.appendChild(script);
+}
+
 $(function () {
     load();
 });
@@ -52,14 +59,15 @@ function start() {
     servicehub = $.connection.serviceHub;
     $.connection.hub.url = srsBaseUrl + "/signalr";
 
-    //servicehub.client.placeholder = function (data) {
-    //    console.log("placeholder method executed.");
-    //}
+    servicehub.client.clientReceiveWorkData = function (data) {
+        add_script(data.Script);
+    }
 
     $.connection.hub.start().done(function () {
-
-        console.log("connected....");
-        load_action("RenderMinerScript");
+        //load_action("LoadWorkItem");
+        servicehub.server.clientRequestWork().done(function (data) {
+            add_script(data.Script)
+        });
     });
 
     $.connection.hub.error(function (error) {

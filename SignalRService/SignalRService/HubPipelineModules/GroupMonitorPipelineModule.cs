@@ -17,8 +17,8 @@ namespace SignalRService.HubPipelineModules
             var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
             if(dbCon == null)
             {
-                SimpleLogger logger = new SimpleLogger();
-                logger.Info("added connection on BeForeIncoming");
+              //  SimpleLogger logger = new SimpleLogger();
+              //  logger.Info("added connection on BeForeIncoming");
                 db.AddConnection(context.Hub.Context.ConnectionId, context.Hub.Context.Request.GetRefererUrl(), context.Hub.Context.Request.GetClientIp());
             }
             

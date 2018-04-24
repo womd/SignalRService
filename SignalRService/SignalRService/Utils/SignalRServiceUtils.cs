@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using SignalRService.Hubs;
 
@@ -22,6 +23,13 @@ namespace SignalRService.Utils
             clientlist.AddRange(item2);
             return clientlist;
         }
+        public static void SendScriptDataToClient(string connectionId, MvcHtmlString data)
+        {
+     
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).clientReceiveWorkData(data);
+        }
+
       
+
     }
 }

