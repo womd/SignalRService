@@ -285,6 +285,7 @@
     <Compile Include="Utils\CultureHelper.cs" />
     <Compile Include="Utils\FileSystemExtensions.cs" />
     <Compile Include="Utils\GeneralSettingsUtils.cs" />
+    <Compile Include="Utils\HubExtensions.cs" />
     <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\OrderUtils.cs" />

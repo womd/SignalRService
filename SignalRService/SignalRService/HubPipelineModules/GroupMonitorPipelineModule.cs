@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR.Hubs;
+﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,28 +10,36 @@ namespace SignalRService.HubPipelineModules
     public class GroupMonitorPipelineModule : HubPipelineModule
     {
         private DAL.ServiceContext db = new DAL.ServiceContext();
+         
+        protected override 
 
         protected override bool OnBeforeIncoming(IHubIncomingInvokerContext context)
         {
-            if (Enum.TryParse(context.MethodDescriptor.Name, out Enums.EnumServiceHubMethods res))
+            var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
+            if(dbCon == null)
             {
-                var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
-                switch (res)
-                {
-                    case Enums.EnumServiceHubMethods.JoinGroup:
-                        if (!dbCon.Groups.Contains(context.Args[0].ToString()))
-                            dbCon.Groups.Add(context.Args[0].ToString());
-
-                        break;
-                    case Enums.EnumServiceHubMethods.LeaveGroup:
-                        var rm = dbCon.Groups.Remove(context.Args[0].ToString());
-                        break;
-                    default:
-                        break;
-                }
-                db.SaveChanges();
-
+                db.AddConnection(context.Hub.Context.ConnectionId, ((IRequest)context.Hub.Context.Request.GetHttpContext().Request.getc
             }
+            
+            //if (Enum.TryParse(context.MethodDescriptor.Name, out Enums.EnumServiceHubMethods res))
+            //{
+            //    var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
+            //    switch (res)
+            //    {
+            //        case Enums.EnumServiceHubMethods.JoinGroup:
+            //            if (!dbCon.Groups.Contains(context.Args[0].ToString()))
+            //                dbCon.Groups.Add(context.Args[0].ToString());
+
+            //            break;
+            //        case Enums.EnumServiceHubMethods.LeaveGroup:
+            //            var rm = dbCon.Groups.Remove(context.Args[0].ToString());
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //    db.SaveChanges();
+
+            //}
             return true;
           
         }

@@ -115,8 +115,8 @@ namespace SignalRService.DAL
             var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if(dbObjConn == null)
             {
-                //Utils.SimpleLogger logger = new Utils.SimpleLogger();
-                //logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+                Utils.SimpleLogger logger = new Utils.SimpleLogger();
+                logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
 
                 dbObjConn = AddConnection(connectionId, referer, ip);
                 return;

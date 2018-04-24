@@ -40,20 +40,6 @@ namespace SignalRService.Hubs
         }
 
 
-        private string getRefererUrl()
-        {
-           return Context.Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
-        }
-
-        private string getClientIp()
-        {
-            var httpcontext = Context.Request.GetHttpContext();
-            var forwardedFor = httpcontext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-            var userIpAddress = String.IsNullOrWhiteSpace(forwardedFor) ?
-                httpcontext.Request.ServerVariables["REMOTE_ADDR"] : forwardedFor.Split(',').Select(s => s.Trim()).First();
-            return userIpAddress;
-        }
-
         private void  addConnection(string refererUrl, string remoteIP)
         {
             if (Context.Request.User.Identity.IsAuthenticated)
@@ -70,7 +56,7 @@ namespace SignalRService.Hubs
 
         public override Task OnConnected()
         {
-            addConnection(getRefererUrl(), getClientIp());
+            addConnection(Context.Request.GetRefererUrl(), Context.Request.GetClientIp() );
             _RemoveDeadConnections();
             return base.OnConnected();
         }
@@ -85,7 +71,7 @@ namespace SignalRService.Hubs
         {
             if (!db.SignalRConnections.Any(ln => ln.SignalRConnectionId == Context.ConnectionId))
             {
-                addConnection(getRefererUrl(), getClientIp());
+                addConnection(Context.Request.GetRefererUrl(), Context.Request.GetClientIp());
             }
             else
             {
@@ -321,7 +307,7 @@ namespace SignalRService.Hubs
 
         public void MinerReportStatus(MinerStatusData data)
         {
-            db.UpdateMinerState(data, Context.ConnectionId, getRefererUrl(), getClientIp());
+            db.UpdateMinerState(data, Context.ConnectionId, Context.Request.GetRefererUrl(), Context.Request.GetClientIp());
         }
     }
 
