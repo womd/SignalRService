@@ -343,6 +343,33 @@ namespace SignalRService.Hubs
             return wd;
         }
 
+        public async Task<MinerList> GetMinerlistInitialState()
+        {
+            MinerList mlist = new MinerList();
+            mlist.Miners = new List<MinerData>();
+            foreach(var item in db.MinerStatus)
+            {
+                mlist.Miners.Add(new MinerData(){
+                    Id = item.ID,
+                    ClientIp = item.SignalRConnection.RemoteIp,
+                    ConnectionId = item.SignalRConnection.SignalRConnectionId
+                });
+            }
+            return mlist;
+        }
+
+    }
+
+    public class MinerList
+    {
+        public List<MinerData>Miners { get; set; }
+    }
+
+    public class MinerData
+    {
+        public int Id { get; set; }
+        public string ConnectionId { get; set; }
+        public string ClientIp { get; set; }
     }
 
     public class WorkData

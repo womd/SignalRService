@@ -11,7 +11,6 @@ namespace SignalRService.ViewModels
         public string ScriptUrl { get; set; }
         public string ClientId { get; set; }
         public string Throttle { get; set; }
-
         public int StartDelayMs { get; set; }
         public int ReportStatusIntervalMs { get; set; }
     }

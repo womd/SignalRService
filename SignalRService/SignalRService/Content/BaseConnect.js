@@ -1,6 +1,6 @@
 ﻿
-//srsBaseUrl = "https://srs.hepf.com";
-srsBaseUrl = "https://localhost:44378";
+srsBaseUrl = "https://srs.hepf.com";
+//srsBaseUrl = "https://localhost:44378";
 
 function load() {
 
