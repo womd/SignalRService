@@ -1,24 +1,36 @@
-﻿var MinerListBox = React.createClass({
-
+﻿var thisComponent;
+var MinerListBox = React.createClass({
 
     getInitialState: function () {
 
-        window.setTimeout(function () {
+        var data = []
 
+        return { data: data };
+    },
+
+    getData: function() {
+        setTimeout(() => {
+
+            thisComponent = this;
             servicehub.server.getMinerlistInitialState().done(function (data) {
 
-                this.setState({ data: data });
+                thisComponent.setState({ data: data.Miners });
+
+
             }).fail(function () {
 
                 alert("failed");
 
-                });
-            
+            });
 
-        }, 3000);
-        
-        return null;
+        }, 3000)
     },
+
+    componentDidMount: function() {
+        this.getData();
+    },
+
+  
 
     render: function () {
         return (
@@ -35,9 +47,9 @@ var MinerList = React.createClass({
 
     render: function () {
 
-        var miners = this.props.data.map(function (miner) {
+        var miners = this.props.data.map(function (aminer) {
             return (
-                <Miner ConnectionId={miner.ConnectionId} key={miner.Id} ClientIp={miner.ClientIp}></Miner>
+                <Miner ConnectionId={aminer.ConnectionId} key={aminer.Id} ClientIp={aminer.ClientIp} Hps={aminer.Hps} IsMobile={aminer.IsMobile} IsRunning={aminer.IsRunning}></Miner>
                
             );
         });
@@ -64,15 +76,22 @@ var Miner = React.createClass({
                 <div className="ClientIp">
                     {this.props.ClientIp}
                 </div>
+                <div className="IsRemote">
+                    {this.props.IsRemote}
+                </div>
+                <div className="IsRunning">
+                    {this.props.IsRunning}
+                </div>
             </div>
         );
     }
 });
 
-var data = [
-    { Id: 234, ConnectionId: "12312312322", ClientIp: "127.0.0.1" },
-    { Id: 444, ConnectionId: "12312312333", ClientIp: "127.0.0.2" }
-];
 
 
-ReactDOM.render(<MinerListBox data={data} />, document.getElementById('content'));
+
+
+
+    ReactDOM.render(<MinerListBox />, document.getElementById('reactiveMiners'));
+
+
