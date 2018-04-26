@@ -10,10 +10,11 @@ namespace SignalRService.HubPipelineModules
 {
     public class GroupMonitorPipelineModule : HubPipelineModule
     {
-        private DAL.ServiceContext db = new DAL.ServiceContext();
+      
          
         protected override bool OnBeforeIncoming(IHubIncomingInvokerContext context)
         {
+            DAL.ServiceContext db = new DAL.ServiceContext();
             var dbCon = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == context.Hub.Context.ConnectionId);
             if(dbCon == null)
             {

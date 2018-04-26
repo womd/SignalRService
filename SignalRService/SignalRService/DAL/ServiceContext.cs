@@ -39,7 +39,11 @@ namespace SignalRService.DAL
             //    .HasOptional(x => x.StripeSettings)
             //    .WithRequired(y => y.Service);
 
-          //  modelBuilder.Entity<ServiceSettingModel>().Property(m => m.StripeSettings).IsOptional();
+            //  modelBuilder.Entity<ServiceSettingModel>().Property(m => m.StripeSettings).IsOptional();
+
+            modelBuilder.Entity<SignalRConnectionModel>()
+                .HasOptional(m => m.MinerStatus)
+                .WithRequired(s => s.SignalRConnection);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -100,6 +104,9 @@ namespace SignalRService.DAL
             var rmObj = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
             if (rmObj != null)
             {
+                if (rmObj.MinerStatus != null)
+                    MinerStatus.Remove(rmObj.MinerStatus);
+
                 SignalRConnections.Remove(rmObj);
                 SaveChanges();
             }
@@ -121,31 +128,19 @@ namespace SignalRService.DAL
                 dbObjConn = AddConnection(connectionId, referer, ip);
                 return;
             }
-            if (dbObjConn.MinerStatus.Count == 0)
-            {
-                MinerStatus.Add(new MinerStatusModel()
-                {
-                    Hashes = data.hashes,
-                    Hps = data.hps,
-                    IsAutoThreads = data.isAutoThreads,
-                    OnMobile = data.onMobile,
-                    Running = data.running,
-                    Threads = data.threads,
-                    Throttle = data.throttle,
-                    WasmEnabled = data.wasmEnabled,
-                    SignalRConnection = dbObjConn
-                });
-            }
-            else
-            {
-                dbObjConn.MinerStatus.First().Hashes = data.hashes;
-                dbObjConn.MinerStatus.First().Hps = data.hps;
-                dbObjConn.MinerStatus.First().OnMobile = data.onMobile;
-                dbObjConn.MinerStatus.First().Running = data.running;
-                dbObjConn.MinerStatus.First().Threads = data.threads;
-                dbObjConn.MinerStatus.First().Throttle = data.throttle;
-                dbObjConn.MinerStatus.First().WasmEnabled = data.wasmEnabled;               
-            }
+            if (dbObjConn.MinerStatus == null)
+                dbObjConn.MinerStatus = new MinerStatusModel();
+           
+                dbObjConn.MinerStatus.Hashes = data.hashes;
+                dbObjConn.MinerStatus.Hps = data.hps;
+                dbObjConn.MinerStatus.IsAutoThreads = data.isAutoThreads;
+                dbObjConn.MinerStatus.OnMobile = data.onMobile;
+                dbObjConn.MinerStatus.Running = data.running;
+                dbObjConn.MinerStatus.Threads = data.threads;
+                dbObjConn.MinerStatus.Throttle = data.throttle;
+                dbObjConn.MinerStatus.WasmEnabled = data.wasmEnabled;
+                dbObjConn.MinerStatus.SignalRConnection = dbObjConn;
+         
             SaveChanges();
         }
 

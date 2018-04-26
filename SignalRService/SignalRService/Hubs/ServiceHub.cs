@@ -27,20 +27,6 @@ namespace SignalRService.Hubs
             userRepository = new Repositories.UserRepository(db);
         }
 
-        private int _RemoveDeadConnections()
-        {
-            var heartBeat = GlobalHost.DependencyResolver.Resolve<ITransportHeartbeat>();
-            var conns = heartBeat.GetConnections().Select(x => x.ConnectionId).ToList();
-
-            var rmcnt = 0;
-            var deadConnections = db.SignalRConnections.Where(x => !conns.Contains(x.SignalRConnectionId)).ToList();
-            rmcnt = deadConnections.Count;
-            db.SignalRConnections.RemoveRange(deadConnections);
-            db.SaveChanges();
-            return rmcnt;
-        }
-
-
         private void  addConnection(string refererUrl, string remoteIP)
         {
             if (Context.Request.User.Identity.IsAuthenticated)
@@ -58,7 +44,6 @@ namespace SignalRService.Hubs
         public override Task OnConnected()
         {
             addConnection(Context.Request.GetRefererUrl(), Context.Request.GetClientIp() );
-            _RemoveDeadConnections();
             return base.OnConnected();
         }
 
@@ -345,15 +330,25 @@ namespace SignalRService.Hubs
 
         public async Task<MinerList> GetMinerlistInitialState()
         {
+
             MinerList mlist = new MinerList();
             mlist.Miners = new List<MinerData>();
-            foreach(var item in db.MinerStatus)
+            foreach(var sitem in db.SignalRConnections.ToList())
             {
-                mlist.Miners.Add(new MinerData(){
-                    Id = item.ID,
-                    ClientIp = item.SignalRConnection.RemoteIp,
-                    ConnectionId = item.SignalRConnection.SignalRConnectionId
-                });
+                var item = sitem.MinerStatus;
+                if (item != null)
+                {
+                    mlist.Miners.Add(new MinerData()
+                    {
+                        Id = item.ID,
+                        ClientIp = item.SignalRConnection.RemoteIp,
+                        ConnectionId = item.SignalRConnection.SignalRConnectionId,
+                        Hps = item.Hps,
+                        IsMobile = item.OnMobile,
+                        IsRunning = item.Running,
+                        Throttle = item.Throttle
+                    });
+                }
             }
             return mlist;
         }
@@ -370,6 +365,10 @@ namespace SignalRService.Hubs
         public int Id { get; set; }
         public string ConnectionId { get; set; }
         public string ClientIp { get; set; }
+        public float Hps { get; set; }
+        public bool IsRunning { get; set; }
+        public bool IsMobile { get; set; }
+        public float Throttle { get; set; }
     }
 
     public class WorkData

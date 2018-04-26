@@ -3,7 +3,7 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitDB : DbMigration
+    public partial class DbInit : DbMigration
     {
         public override void Up()
         {
@@ -56,8 +56,7 @@ namespace SignalRService.Migrations
                 "dbo.MinerStatusModels",
                 c => new
                     {
-                        ID = c.Int(nullable: false, identity: true),
-                        SignalRConnectionID = c.Int(nullable: false),
+                        ID = c.Int(nullable: false),
                         Running = c.Boolean(nullable: false),
                         OnMobile = c.Boolean(nullable: false),
                         WasmEnabled = c.Boolean(nullable: false),
@@ -70,8 +69,8 @@ namespace SignalRService.Migrations
                         Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.SignalRConnectionModels", t => t.SignalRConnectionID, cascadeDelete: true)
-                .Index(t => t.SignalRConnectionID);
+                .ForeignKey("dbo.SignalRConnectionModels", t => t.ID)
+                .Index(t => t.ID);
             
             CreateTable(
                 "dbo.SignalRConnectionModels",
@@ -273,7 +272,7 @@ namespace SignalRService.Migrations
             DropForeignKey("dbo.ProductImportModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductImportConfigurationModels", "Owner_ID", "dbo.UserDataModels");
-            DropForeignKey("dbo.MinerStatusModels", "SignalRConnectionID", "dbo.SignalRConnectionModels");
+            DropForeignKey("dbo.MinerStatusModels", "ID", "dbo.SignalRConnectionModels");
             DropIndex("dbo.OrderJournalModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "Order_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "CustomerUser_ID" });
@@ -288,7 +287,7 @@ namespace SignalRService.Migrations
             DropIndex("dbo.ProductModels", new[] { "ProductIdentifier" });
             DropIndex("dbo.ProductImportConfigurationModels", new[] { "Owner_ID" });
             DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
-            DropIndex("dbo.MinerStatusModels", new[] { "SignalRConnectionID" });
+            DropIndex("dbo.MinerStatusModels", new[] { "ID" });
             DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");
             DropIndex("dbo.GeneralSettingsModels", new[] { "GeneralSetting" });
             DropTable("dbo.OrderJournalModels");

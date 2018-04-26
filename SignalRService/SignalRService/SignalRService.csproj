@@ -463,9 +463,9 @@
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201804131954312_InitDB.cs" />
-    <Compile Include="Migrations\201804131954312_InitDB.Designer.cs">
-      <DependentUpon>201804131954312_InitDB.cs</DependentUpon>
+    <Compile Include="Migrations\201804261607033_DbInit.cs" />
+    <Compile Include="Migrations\201804261607033_DbInit.Designer.cs">
+      <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -876,8 +876,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804131954312_InitDB.resx">
-      <DependentUpon>201804131954312_InitDB.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804261607033_DbInit.resx">
+      <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

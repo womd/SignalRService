@@ -31,11 +31,13 @@ namespace SignalRService.Controllers
             try
             {
 
+                //Utils.SignalRServiceUtils.RemoveDeadConnections();
+
                 List<SignalRConnectionModel> sigRClients = db.SignalRConnections.ToList();
                 List<UserDataSignalRTableViewModel> uvms = new List<UserDataSignalRTableViewModel>();
                 foreach(var sigRC in sigRClients)
                 {
-                    var mstat = sigRC.MinerStatus.FirstOrDefault();
+                    var mstat = sigRC.MinerStatus;
 
                     uvms.Add(new UserDataSignalRTableViewModel() {
                         ConnectionId = sigRC.SignalRConnectionId,
@@ -80,7 +82,7 @@ namespace SignalRService.Controllers
             {
 
                 var dbConn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == model.ConnectionId);
-                var minerstat = dbConn.MinerStatus.FirstOrDefault();
+                var minerstat = dbConn.MinerStatus;
                 if(minerstat != null)
                 {
                     if (minerstat.Running && model.MinerIsRunning)

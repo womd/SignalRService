@@ -9,11 +9,10 @@ namespace SignalRService.Models
 {
     public class MinerStatusModel : BaseModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID { get; set; }
 
-        public int SignalRConnectionID { get; set; }
         public virtual SignalRConnectionModel SignalRConnection { get; set; }  
 
         public bool Running { get; set; }

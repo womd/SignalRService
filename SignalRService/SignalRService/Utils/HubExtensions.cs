@@ -10,6 +10,9 @@ namespace SignalRService.Utils
     {
         public static string GetRefererUrl(this IRequest Request)
         {
+            var htc = Request.GetHttpContext();
+            var vars = htc.Request.ServerVariables;
+            string referer = vars["HTTP_REFERER"];
             return Request.GetHttpContext().Request.ServerVariables["HTTP_REFERER"];
         }
 
