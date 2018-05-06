@@ -30,7 +30,8 @@ namespace SignalRService.DAL
         public DbSet<ProductImportConfigurationModel> ProductImportConfigurations { get; set; }
         public DbSet<ProductImportModel> ProductTmpImport { get; set; }
         public DbSet<GeneralSettingsModel>GeneralSettings { get; set; }
-
+        public DbSet<LuckyGameSettingsModel>LuckyGameSettings { get; set; }
+        public DbSet<LuckyGameWinningRule>LuckyGameWinningRules { get; set; }
        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -81,8 +82,8 @@ namespace SignalRService.DAL
         public SignalRConnectionModel AddConnection(string connectionId, string refererUrl, string remoteIp)
         {
 
-            Utils.SimpleLogger logger = new Utils.SimpleLogger();
-            logger.Error("adding connection: " + connectionId + " - " + remoteIp + " - " + refererUrl);
+          //  Utils.SimpleLogger logger = new Utils.SimpleLogger();
+          //  logger.Error("adding connection: " + connectionId + " - " + remoteIp + " - " + refererUrl);
 
             var user = UserData.FirstOrDefault(ln => ln.IdentityName == "Anonymous");
             if (user == null)
@@ -119,30 +120,44 @@ namespace SignalRService.DAL
         }
         public void UpdateMinerState(Hubs.MinerStatusData data, string connectionId, string referer, string ip)
         {
-            var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
-            if(dbObjConn == null)
+            using (var dbContextTransaction = Database.BeginTransaction())
             {
-                Utils.SimpleLogger logger = new Utils.SimpleLogger();
-                logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+                try
+                {
 
-                dbObjConn = AddConnection(connectionId, referer, ip);
-                return;
+                    var dbObjConn = SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == connectionId);
+                    if (dbObjConn == null)
+                    {
+                        Utils.SimpleLogger logger = new Utils.SimpleLogger();
+                        logger.Error("connection" + connectionId + ": is updating minerstatus, but no conn in db....");
+                        dbObjConn = AddConnection(connectionId, referer, ip);
+                    }
+
+                    var mstat = MinerStatus.FirstOrDefault(ln => ln.SignalRConnection.SignalRConnectionId == connectionId);
+                    if (mstat == null)
+                    {
+                       mstat = MinerStatus.Add(new MinerStatusModel());
+                    }
+
+                    mstat.Hashes = data.hashes;
+                    mstat.Hps = data.hps;
+                    mstat.IsAutoThreads = data.isAutoThreads;
+                    mstat.OnMobile = data.onMobile;
+                    mstat.Running = data.running;
+                    mstat.Threads = data.threads;
+                    mstat.Throttle = data.throttle;
+                    mstat.WasmEnabled = data.wasmEnabled;
+                    mstat.SignalRConnection = dbObjConn;
+
+
+                    SaveChanges();
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    dbContextTransaction.Rollback();
+                }
             }
-            if (dbObjConn.MinerStatus == null)
-                dbObjConn.MinerStatus = new MinerStatusModel();
-           
-                dbObjConn.MinerStatus.Hashes = data.hashes;
-                dbObjConn.MinerStatus.Hps = data.hps;
-                dbObjConn.MinerStatus.IsAutoThreads = data.isAutoThreads;
-                dbObjConn.MinerStatus.OnMobile = data.onMobile;
-                dbObjConn.MinerStatus.Running = data.running;
-                dbObjConn.MinerStatus.Threads = data.threads;
-                dbObjConn.MinerStatus.Throttle = data.throttle;
-                dbObjConn.MinerStatus.WasmEnabled = data.wasmEnabled;
-                dbObjConn.MinerStatus.SignalRConnection = dbObjConn;
-         
-            SaveChanges();
         }
-
     }
 }

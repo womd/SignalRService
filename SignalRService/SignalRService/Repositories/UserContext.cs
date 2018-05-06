@@ -14,6 +14,36 @@ namespace SignalRService.Repositories
             _db = db;
         }
 
+        public double getTotalMoney(int UserId)
+        {
+            var useerdata =_db.UserData.FirstOrDefault(ln => ln.ID == UserId);
+            if (useerdata != null)
+                return useerdata.TotalMoney;
+
+            return 0;
+        }
+
+        public double withDrawMoney(int UserId, double Amount)
+        {
+            var userdata = _db.UserData.FirstOrDefault(ln => ln.ID == UserId);
+            if(userdata != null)
+            {
+                userdata.TotalMoney = userdata.TotalMoney - Amount;
+                _db.SaveChanges();
+            }
+            return userdata.TotalMoney;
+        }
+
+        public double DepositMoneyToUser(int UserId, double Amount)
+        {
+            var userdata = _db.UserData.FirstOrDefault(ln => ln.ID == UserId);
+            if(userdata != null) {
+                userdata.TotalMoney = userdata.TotalMoney + Amount;
+                _db.SaveChanges();
+            }
+            return userdata.TotalMoney;
+        }
+
         public Models.UserDataModel GetUser(string identifier)
         {
             return _db.UserData.FirstOrDefault(ln => ln.IdentityName == identifier);

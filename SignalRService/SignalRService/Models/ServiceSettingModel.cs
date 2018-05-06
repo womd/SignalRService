@@ -22,6 +22,7 @@ namespace SignalRService.Models
 
 
         public virtual ICollection<StripeSettingsModel> StripeSettings { get; set; }
+        public virtual ICollection<LuckyGameSettingsModel>LuckyGameSettings { get; set; }
     }
 
    

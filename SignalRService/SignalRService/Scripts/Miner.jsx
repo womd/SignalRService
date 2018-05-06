@@ -137,7 +137,7 @@ var Miner = React.createClass({
                             <p style={{ width: 180 + 'px' }}>
                                
                                 
-                                    <input id="sliderThrottle" className="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="1" value="0.9" step="0.1" onChange="{onChangeThrootle}" />
+                                    <input id="sliderThrottle" className="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="1" value="0.9" step="0.1" onChange="{this.onChangeThrootle}" />
                               
                                
                             </p>
@@ -152,6 +152,9 @@ var Miner = React.createClass({
 });
 
 
+function onChangeThrootle(e) {
+    console.log("changeing throotle...");
+}
 
     ReactDOM.render(<MinerListBox />, document.getElementById('reactiveMiners'));
 

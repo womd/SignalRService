@@ -18,7 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44393</IISExpressSSLPort>
+    <IISExpressSSLPort>44352</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -425,6 +425,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocalizationController.cs" />
+    <Compile Include="Controllers\LuckyGameController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MinerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
@@ -467,10 +468,19 @@
     <Compile Include="Migrations\201804261607033_DbInit.Designer.cs">
       <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805061203096_LuckyGame.cs" />
+    <Compile Include="Migrations\201805061203096_LuckyGame.Designer.cs">
+      <DependentUpon>201805061203096_LuckyGame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805061611165_GameTotalAmount.cs" />
+    <Compile Include="Migrations\201805061611165_GameTotalAmount.Designer.cs">
+      <DependentUpon>201805061611165_GameTotalAmount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
+    <Compile Include="Models\LuckyGameSettingsModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
@@ -496,6 +506,7 @@
     <Compile Include="Utils\HubExtensions.cs" />
     <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
+    <Compile Include="Utils\LuckyGameUtils.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\RenderUtils.cs" />
@@ -504,6 +515,8 @@
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
+    <Compile Include="ViewModels\LuckyGameConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ProductImportConfigurationViewModel.cs" />
@@ -737,6 +750,8 @@
     <Content Include="Scripts\jtable\themes\metro\red\jtable.css" />
     <Content Include="Scripts\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Scripts\jtable\themes\metro\red\loading.gif" />
+    <Content Include="Scripts\MoneyOverview.jsx" />
+    <Content Include="Scripts\LuckyGame.jsx" />
     <Content Include="Scripts\Miner.jsx" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\react\react-dom-server.js" />
@@ -851,6 +866,7 @@
     <Content Include="Views\Shared\UserInfoPartial.cshtml" />
     <Content Include="Views\Shared\_LayoutReact.cshtml" />
     <Content Include="Views\Miner\Index.cshtml" />
+    <Content Include="Views\LuckyGame\Index.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -878,6 +894,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201804261607033_DbInit.resx">
       <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805061203096_LuckyGame.resx">
+      <DependentUpon>201805061203096_LuckyGame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805061611165_GameTotalAmount.resx">
+      <DependentUpon>201805061611165_GameTotalAmount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
@@ -935,7 +957,16 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44352/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

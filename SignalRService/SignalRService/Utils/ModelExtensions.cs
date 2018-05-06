@@ -16,7 +16,7 @@ namespace SignalRService.Utils
                 Id = dbmodel.Id,
                 ServiceName = dbmodel.ServiceName,
                 ServiceUrl = dbmodel.ServiceUrl,
-                ServiceType = (int) dbmodel.ServiceType,
+                ServiceType = (int)dbmodel.ServiceType,
                 EnumServiceTpe = dbmodel.ServiceType,
                 MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
                 {
@@ -43,8 +43,41 @@ namespace SignalRService.Utils
                 },
                 User = dbmodel.Owner.ToUserDataViewModel(),
                 StripeSecretKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "",
-                StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : ""
+                StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "",
+                LuckyGameConfiguration = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameConfigurationViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() }
                 
+            };
+        }
+
+        public static ViewModels.LuckyGameConfigurationViewModel ToLuckyGameConfigurationViewModel(this Models.LuckyGameSettingsModel model)
+        {
+            return new LuckyGameConfigurationViewModel()
+            {
+                Id = model.ID,
+                MoneyAvailable = model.MoneyAvailable,
+                WinningRules = model.WinningRules.ToList().ToWinningRuleViewModels(),
+                SignalRGroup = model.ServiceSettings.ServiceUrl
+            };
+        }
+
+        public static List<ViewModels.LuckyGameWinningRuleViewModel>ToWinningRuleViewModels(this List<Models.LuckyGameWinningRule>model)
+        {
+            List<ViewModels.LuckyGameWinningRuleViewModel> res = new List<LuckyGameWinningRuleViewModel>();
+            foreach(var item in model)
+            {
+                res.Add(item.ToWinningRuleViewModel());
+            }
+            return res;
+        }
+
+        public static ViewModels.LuckyGameWinningRuleViewModel ToWinningRuleViewModel(this Models.LuckyGameWinningRule model)
+        {
+            return new LuckyGameWinningRuleViewModel()
+            {
+                 Id = model.ID,
+                 AmountMatchingCards = model.AmountMatchingCards,
+                 WinFactor = model.WinFactor
+                 
             };
         }
 

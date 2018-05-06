@@ -90,6 +90,29 @@ namespace SignalRService.Controllers
                     dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
                 }
 
+                if(model.ServiceType == (int)Enums.EnumServiceType.LuckyGameDefault)
+                {
+                    var defRule0 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 2, WinFactor = 1.2f };
+                    var defRule1 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 3, WinFactor = 1.6f };
+                    var defRule2 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 4, WinFactor = 4 };
+                    var defRule3 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 5, WinFactor = 5 };
+                    var defRule4 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 6, WinFactor = 10 };
+
+                    var gsmodel = new Models.LuckyGameSettingsModel() {
+                        MoneyAvailable = 0,
+                        WinningRules = new List<Models.LuckyGameWinningRule>()
+                         
+                    };
+                    gsmodel.WinningRules.Add(defRule0);
+                    gsmodel.WinningRules.Add(defRule1);
+                    gsmodel.WinningRules.Add(defRule2);
+                    gsmodel.WinningRules.Add(defRule3);
+                    gsmodel.WinningRules.Add(defRule4);
+
+                    dbobj.LuckyGameSettings = new List<Models.LuckyGameSettingsModel>();
+                    dbobj.LuckyGameSettings.Add(gsmodel);
+                }
+
                
                 db.SaveChanges();
 

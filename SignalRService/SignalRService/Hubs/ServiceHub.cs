@@ -43,6 +43,7 @@ namespace SignalRService.Hubs
 
         public override Task OnConnected()
         {
+            Utils.SignalRServiceUtils.RemoveDeadConnections();
             addConnection(Context.Request.GetRefererUrl(), Context.Request.GetClientIp() );
             return base.OnConnected();
         }
@@ -291,9 +292,124 @@ namespace SignalRService.Hubs
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.All.updatePosition(loc);
         }
 
+        public async Task<List<Utils.LuckyGameCard>> getLuckyGameCards()
+        {
+            return await Task.Run(() => _getLuckyGameCards());
+        }
+
+        private List<Utils.LuckyGameCard> _getLuckyGameCards()
+        {
+            return Utils.LuckyGameUtils.GetCards();
+        }
+
+        public async Task<double> getMoneyTotal()
+        {
+            return await Task.Run(() => _getMoneyTotal(Context.ConnectionId));
+        }
+
+        private double _getMoneyTotal(string connectionId)
+        {
+            var user = userRepository.GetUserFromSignalR(connectionId);
+            return userRepository.GetUserTotalMoney(user.Id);
+        }
+
+        public async Task<Utils.LuckyGameCardResult> getLuckyGameResult(int slotCount, string group, double amount)
+        {
+            return await Task.Run(() => getLuckyGameResultFor(slotCount, group, amount));
+        }
+
+        private Utils.LuckyGameCardResult getLuckyGameResultFor(int slotCount, string group, double amount)
+        {
+            var res = new Utils.LuckyGameCardResult();
+            res.Cards = new List<Utils.LuckyGameCard>();
+
+            if(amount < 1)
+            {
+                res.ErrorNumber = 667;
+                res.Message = BaseResource.Get("AmountToLow");
+            }
+
+            var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+            var userTotal = userRepository.GetUserTotalMoney(user.Id);
+
+            if(userTotal < amount)
+            {
+                res.ErrorNumber = 666;
+                res.Message = BaseResource.Get("NotEnoughMoney");
+                return res;
+            }
+
+          
+            List<Utils.LuckyGameCard> reslist = new List<Utils.LuckyGameCard>();
+            for(int i = 0; i < slotCount; i++)
+            {
+                reslist.Add(Utils.LuckyGameUtils.GetRandomCard());
+            }
+
+            var groups = reslist.OrderBy(x => x.Key).GroupBy(x => x.Key);
+            
+
+            var service = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if(service != null)
+            {
+                var gameSettings = service.LuckyGameSettings.FirstOrDefault();
+                if(gameSettings != null)
+                {
+                    float winFactor = 0;
+                    foreach (var gitem in groups)
+                    {
+                        var matches = gitem.Count();
+                        var rule = gameSettings.WinningRules.FirstOrDefault(ln => ln.AmountMatchingCards == matches);
+                        if (rule != null)
+                        {
+                            if (rule.WinFactor > winFactor)
+                                winFactor = rule.WinFactor;
+                        }
+                    }
+                    if(winFactor == 0)
+                    {
+                        //lost
+                        res.AmountLost = amount;
+                        res.UserTotalAmount = userRepository.WithdrawMoney(user.Id,amount);
+                        gameSettings.MoneyAvailable = gameSettings.MoneyAvailable + amount;
+                        res.TotalAmountAvailable = gameSettings.MoneyAvailable;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        //won
+                        res.WinFactor = winFactor;
+                        res.AmountWon = amount * winFactor;
+                        gameSettings.MoneyAvailable = gameSettings.MoneyAvailable - res.AmountWon;
+                        res.TotalAmountAvailable = gameSettings.MoneyAvailable;
+                        res.UserTotalAmount = userTotal + res.AmountWon;
+                        db.SaveChanges();
+                    }
+                    
+                }
+                else
+                {
+                    res.ErrorNumber = 231;
+                    res.Message = "No gameSettings...";
+                }
+            }
+
+            res.Cards = reslist;
+           
+            return res;
+        }
+
         public void MinerReportStatus(MinerStatusData data)
         {
             db.UpdateMinerState(data, Context.ConnectionId, Context.Request.GetRefererUrl(), Context.Request.GetClientIp());
+
+            if (data.running && data.hps > 0)
+            {
+                var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+                var newtotal = userRepository.DepositMoneyToUser(user.Id, data.hps);
+
+                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(Context.ConnectionId).updateUserTotal(newtotal);
+            }
         }
 
         public async Task<WorkData> ClientRequestWork()

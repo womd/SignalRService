@@ -45,6 +45,11 @@
                 @Html.Partial("RenderDroneClient", Model.OrderClientConfigurationViewModel)
             }
             break;
+        case SignalRService.Enums.EnumServiceType.LuckyGameDefault:
+            Layout = "~/Views/Shared/_LayoutReact.cshtml";
+            @Html.Partial("~/Views/LuckyGame/Index.cshtml", Model.LuckyGameConfiguration);
+            break;
+            
         default:
             break;
     }
