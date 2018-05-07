@@ -19,12 +19,14 @@ namespace SignalRService.Hubs
         private Repositories.OrderRepository orderRepository;
         private Repositories.ProductRepository productRepository;
         private Repositories.UserRepository userRepository;
+        private Repositories.GameSettingsRepository gameSettingsRepository;
 
         public ServiceHub()
         {
             orderRepository = new Repositories.OrderRepository(db);
             productRepository = new Repositories.ProductRepository(db);
             userRepository = new Repositories.UserRepository(db);
+            gameSettingsRepository = new Repositories.GameSettingsRepository(db);
         }
 
         private void  addConnection(string refererUrl, string remoteIP)
@@ -302,15 +304,42 @@ namespace SignalRService.Hubs
             return Utils.LuckyGameUtils.GetCards();
         }
 
-        public async Task<double> getMoneyTotal()
+        public async Task<double> getMoneyRoomTotal(string group)
         {
-            return await Task.Run(() => _getMoneyTotal(Context.ConnectionId));
+            return await Task.Run(() => _getMoneyRoomTotal(group));
         }
 
-        private double _getMoneyTotal(string connectionId)
+        private double _getMoneyRoomTotal(string group)
+        {
+            var lgs = db.LuckyGameSettings.FirstOrDefault(ln => ln.ServiceSettings.ServiceUrl == group);
+            if (lgs != null)
+                return lgs.MoneyAvailable;
+
+            return 0;
+        }
+
+        public async Task<double> getMoneyUserTotal()
+        {
+            return await Task.Run(() => _getMoneyUserTotal(Context.ConnectionId));
+        }
+
+        private double _getMoneyUserTotal(string connectionId)
         {
             var user = userRepository.GetUserFromSignalR(connectionId);
             return userRepository.GetUserTotalMoney(user.Id);
+        }
+
+        public async Task<List<Models.LuckyGameWinningRule>>getLuckyGameWinningRules(string group)
+        {
+            return await Task.Run(() => _getLuckyGameWinningRules(group));
+        }
+
+        public List<Models.LuckyGameWinningRule>_getLuckyGameWinningRules(string group)
+        {
+            List<Models.LuckyGameWinningRule> res = new List<Models.LuckyGameWinningRule>();
+            var gs = db.LuckyGameSettings.FirstOrDefault(x => x.ServiceSettings.ServiceUrl == group);
+            res.AddRange(gs.WinningRules);
+            return res;
         }
 
         public async Task<Utils.LuckyGameCardResult> getLuckyGameResult(int slotCount, string group, double amount)
@@ -370,20 +399,16 @@ namespace SignalRService.Hubs
                     {
                         //lost
                         res.AmountLost = amount;
-                        res.UserTotalAmount = userRepository.WithdrawMoney(user.Id,amount);
-                        gameSettings.MoneyAvailable = gameSettings.MoneyAvailable + amount;
-                        res.TotalAmountAvailable = gameSettings.MoneyAvailable;
-                        db.SaveChanges();
+                        res.UserTotalAmount = userRepository.WithdrawMoneyFromUser(user.Id,amount);
+                        res.TotalAmountAvailable = gameSettingsRepository.AddMoneyToGame(amount, group);
                     }
                     else
                     {
                         //won
                         res.WinFactor = winFactor;
                         res.AmountWon = amount * winFactor;
-                        gameSettings.MoneyAvailable = gameSettings.MoneyAvailable - res.AmountWon;
-                        res.TotalAmountAvailable = gameSettings.MoneyAvailable;
-                        res.UserTotalAmount = userTotal + res.AmountWon;
-                        db.SaveChanges();
+                        res.TotalAmountAvailable = gameSettingsRepository.WidthdrawMoneyFromGame(amount, group);
+                        res.UserTotalAmount = userRepository.DepositMoneyToUser(user.Id, amount);
                     }
                     
                 }
@@ -402,13 +427,10 @@ namespace SignalRService.Hubs
         public void MinerReportStatus(MinerStatusData data)
         {
             db.UpdateMinerState(data, Context.ConnectionId, Context.Request.GetRefererUrl(), Context.Request.GetClientIp());
-
             if (data.running && data.hps > 0)
             {
                 var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
                 var newtotal = userRepository.DepositMoneyToUser(user.Id, data.hps);
-
-                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(Context.ConnectionId).updateUserTotal(newtotal);
             }
         }
 

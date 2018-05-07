@@ -20,14 +20,18 @@ namespace SignalRService.Repositories
             return userContext.getTotalMoney(UserId);
         }
 
-        public double WithdrawMoney(int UserId, double amount)
+        public double WithdrawMoneyFromUser(int UserId, double amount)
         {
-            return userContext.withDrawMoney(UserId, amount);
+            var res = userContext.withDrawMoney(UserId, amount);
+            Utils.LuckyGameUtils.SendUserTotalMoneyUpdate(UserId, res);
+            return res;
         }
 
         public double DepositMoneyToUser(int UserId, double amount)
         {
-            return userContext.DepositMoneyToUser(UserId, amount);
+            var res = userContext.DepositMoneyToUser(UserId, amount);
+            Utils.LuckyGameUtils.SendUserTotalMoneyUpdate(UserId,res);
+            return res;
         }
 
         public ViewModels.UserDataViewModel GetUserFromSignalR(string connectionId)

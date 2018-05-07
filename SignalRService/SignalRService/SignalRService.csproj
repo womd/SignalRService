@@ -18,7 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44352</IISExpressSSLPort>
+    <IISExpressSSLPort>44378</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -490,11 +490,14 @@
     <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
+    <Compile Include="Repositories\GameSettingsContext.cs" />
+    <Compile Include="Repositories\GameSettingsRepository.cs" />
     <Compile Include="Repositories\GeneralSettingsRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
+    <Compile Include="Repositories\ServiceContext.cs" />
     <Compile Include="Repositories\UserContext.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
@@ -750,6 +753,7 @@
     <Content Include="Scripts\jtable\themes\metro\red\jtable.css" />
     <Content Include="Scripts\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Scripts\jtable\themes\metro\red\loading.gif" />
+    <Content Include="Scripts\LuckyGameWinningRules.jsx" />
     <Content Include="Scripts\MoneyOverview.jsx" />
     <Content Include="Scripts\LuckyGame.jsx" />
     <Content Include="Scripts\Miner.jsx" />
@@ -959,7 +963,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>29206</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>https://localhost:44352/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

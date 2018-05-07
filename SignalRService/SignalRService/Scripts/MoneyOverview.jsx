@@ -1,5 +1,34 @@
-﻿
-class MoneyOverview extends React.Component
+﻿class MoneyOverviewRoom extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { Total: 0 };
+
+    }
+
+    componentDidMount() {
+        var component = this;
+        servicehub.server.getMoneyRoomTotal(signalRGroup).done(function (data) {
+            component.setState({ Total: data });
+        }).fail(function () {
+            console.log("failed getting information from server");
+        });
+    }
+
+    renderTotal() {
+        return <TotalRoom key="roomtotal0" value={this.state.Total} />
+    }
+
+    render() {
+        return (
+            <div>
+                {this.renderTotal()}
+            </div>
+        );
+    }
+}
+
+
+class MoneyOverviewUser extends React.Component
 {
     constructor(props) {
         super(props);
@@ -7,12 +36,17 @@ class MoneyOverview extends React.Component
 
     }
 
-    componentDitMount() {
-        
+    componentDidMount() {
+         var component = this;
+        servicehub.server.getMoneyUserTotal().done(function (data) {
+            component.setState({ Total: data });
+        }).fail(function () {
+            console.log("failed getting information from server");
+        });
     }
 
     renderTotal() {
-        return <Total key="total0" value={this.state.Total} />
+        return <TotalUser key="total0" value={this.state.Total} />
     }
 
     render() {
@@ -24,27 +58,27 @@ class MoneyOverview extends React.Component
     }
 }
 
-class Total extends React.Component
+class TotalRoom extends React.Component
 {
     constructor(props) {
         super(props);
-        this.state = { value: this.props.value };
+      
     }
     componentDidMount() {
-        var component = this;
-        servicehub.server.getMoneyTotal().done(function (data) {
-            component.setState({ value: data });
-        }).fail(function () {
-            console.log("failed getting information from server");
-        });
+        //var component = this;
+        //servicehub.server.getMoneyTotal().done(function (data) {
+        //    component.setState({ value: data });
+        //}).fail(function () {
+        //    console.log("failed getting information from server");
+        //});
         
     }
     render() {
         return (
             <div className="Total"> 
             <span className="mdl-chip mdl-chip--contact">
-                    <span className="mdl-chip__contact mdl-color--teal mdl-color-text--white"><i className="fab fa-monero"></i>A</span>
-                <span className="mdl-chip__text">{this.state.value}</span>
+                    <span className="mdl-chip__contact mdl-color--teal mdl-color-text--white"><i className="fas fa-object-group"></i> </span>
+                <span className="mdl-chip__text">{this.props.value}</span>
             </span>
             </div>
 
@@ -52,18 +86,55 @@ class Total extends React.Component
     }
 }
 
+class TotalUser extends React.Component {
+    constructor(props) {
+        super(props);
+
+    }
+    componentDidMount() {
+        //var component = this;
+        //servicehub.server.getMoneyTotal().done(function (data) {
+        //    component.setState({ value: data });
+        //}).fail(function () {
+        //    console.log("failed getting information from server");
+        //});
+
+    }
+    render() {
+        return (
+            <div className="Total">
+                <span className="mdl-chip mdl-chip--contact">
+                    <span className="mdl-chip__contact mdl-color--teal mdl-color-text--white"><i className="fas fa-user-astronaut"></i> </span>
+                    <span className="mdl-chip__text">{this.props.value}</span>
+                </span>
+            </div>
+
+        );
+    }
+}
+
 // ========================================
-var moneyOverviewElement;
+var moneyOverviewUserElement, moneyOverviewRoomElement;
 function startMoneyOverview() {
 
-    moneyOverviewElement = ReactDOM.render(
-        <MoneyOverview />,
-        document.getElementById('MoneyOverview')
+    moneyOverviewUserElement = ReactDOM.render(
+        <MoneyOverviewUser />,
+        document.getElementById('MoneyOverviewUser')
+    );
+
+    moneyOverviewRoomElement = ReactDOM.render(
+        <MoneyOverviewRoom />,
+        document.getElementById('MoneyOverviewRoom')
     );
 
 }
 
 function UpdateMoneyOverview(value) {
     
-    moneyOverviewElement.setState({ Total: value });
+    moneyOverviewUserElement.setState({ Total: value });
+}
+
+function UpdateAvailableMoneyOverview(value) {
+
+    moneyOverviewRoomElement.setState({ Total: value });
 }

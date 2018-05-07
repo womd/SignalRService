@@ -43,9 +43,11 @@ class LuckyGame extends React.Component {
         super(props);
         
         this.play = this.play.bind(this);
+        this.renderSlotBoard = this.renderSlotBoard.bind(this);
         this.renderResMessage = this.renderResMessage.bind(this);
+        this.amountSliderChanged = this.amountSliderChanged.bind(this);
         this.state = {
-            slotCount: this.props.slotCount, resultData: { Cards: {} } };
+            slotCount: this.props.slotCount, resultData: { Cards: {}, UserTotalAmount: 0 } };
     }
     componentDidMount() {
        
@@ -54,15 +56,21 @@ class LuckyGame extends React.Component {
     renderResMessage() {
         return <ResMessage key="rmx0" resultData={this.state.resultData} />;
     }
+    renderSlotBoard() {
+        return <SlotBoard key="sb01" slotCount={this.state.slotCount} resultData={this.state.resultData} />
+    }
+    renderSlider() {
+        return <input id="slideramount" className="mdl-slider mdl-js-slider" type="range"
+            min="1" max="100000" value="1" tabindex="0" onChange={this.amountSliderChanged} /> 
+    }
+
     play() {
-        
         
         var component = this;
         servicehub.server.getLuckyGameResult(this.props.slotCount, signalRGroup, $('#amount').val()).done(function (data) {
 
-            
             component.resultData = data;
-            component.setState({ slotCount: component.props.slotCount, resultData:data })
+            component.setState({ slotCount: component.props.slotCount, resultData: data});
           
             setTimeout(function () {
                // component.setState({ slotCount: component.props.slotCount, resultData: null });
@@ -72,21 +80,29 @@ class LuckyGame extends React.Component {
             console.log("failed getting luckyGameRes from server");
         });
     }
+
+    amountSliderChanged() {
+        $('#amount').val($('#slideramount').val());
+        componentHandler.upgradeDom();
+    }
+
     render() {
 
         return (
             <div>
-                <SlotBoard key="sb01" slotCount={this.state.slotCount} resultData={this.state.resultData} />
+                {this.renderSlotBoard()}
                 
                 <div className="mdl-textfield mdl-js-textfield">
                     <input className="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="amount" />
                         <label className="mdl-textfield__label" for="amount">Betrag</label>
                         <span className="mdl-textfield__error">Bitte nur Zahlen!</span>
                 </div>
+             
                 
                 <button onClick={this.play} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                     Go
                 </button>
+               {this.renderSlider()}
                {this.renderResMessage()}
 
             </div>);
@@ -140,15 +156,18 @@ class SlotBoard extends React.Component {
     constructor(props) {
         super(props);
         this.buildSlots = this.buildSlots.bind(this);
-        this.state = { slotCount: this.props.slotCount, cardData: this.props.resultData.Cards }
+        this.state = { slotCount: this.props.slotCount, cardData: this.props.resultData }
     }
     buildSlots(slotCount) {
         var slots = [];
         var cnt = 0;
         for (i = 1; i <= slotCount; i++) {
             var resdata = null;
-            if (this.props.resultData) {
-               resdata = this.props.resultData[cnt];
+            if (this.props.resultData.Cards[cnt]) {
+                resdata = this.props.resultData.Cards[cnt];
+            }
+            else {
+               resdata = getFirstCard(cardCollection);
             }
             slots.push({ key: "slot_" + i, spinStartDelay: i * 300, cardData: resdata});
             cnt++;
@@ -177,12 +196,12 @@ class CardSlot extends React.Component {
         this.tick = this.tick.bind(this);
         this.spinStart = this.spinStart.bind(this);
         //console.log("here at init: " + this.props.delay);
-       
-            this.state = { card: getFirstCard(cardCollection) };
-        
+     
+            this.state = { card: this.props.cardData };
+     
     }
     componentDidMount() {
-      //  setTimeout(this.spinStart, this.props.delay);
+ //        setTimeout(this.spinStart, this.props.delay);
        
     }
     tick() {
@@ -196,16 +215,14 @@ class CardSlot extends React.Component {
     }
 
     render() {
-        var symbol;
-        if (this.props.cardData) {
-            symbol = this.props.cardData.Symbol;
-            this.spinStop;
-           
+        var symbol = "";
+        if (this.props.cardData && this.props.cardData.Key) {
+          
+                symbol = this.props.cardData.Symbol; 
+         
         } else {
-            symbol = this.state.card.Symbol
-            
+            symbol = this.state.card.Symbol;
         }
-        this.props.cardData = null;
         return (
             <div className="cardslot">
                 <i className={symbol}></i>
