@@ -15,7 +15,7 @@ class LuckyGameWinningRules extends React.Component {
     }
 
     renderRule(element) {
-        return <WinningRule ID={element.ID} AmountMatchingCards={element.AmountMatchingCards} WinFactor={element.WinFactor} />
+        return <WinningRule Id={element.Id} AmountMatchingCards={element.AmountMatchingCards} WinFactor={element.WinFactor} />
     }
 
     render() {
@@ -34,7 +34,7 @@ class LuckyGameWinningRules extends React.Component {
 class WinningRule extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { ruleId : this.props.ID, amountMatchingCards : this.props.AmountMatchingCards, winFactor : this.props.WinFactor };
+        this.state = { ruleId : this.props.Id, amountMatchingCards : this.props.AmountMatchingCards, winFactor : this.props.WinFactor };
         
     }
    
@@ -50,26 +50,26 @@ class WinningRule extends React.Component {
 class WinningRuleEditItem extends React.Component {
     constructor(props) {
         super(props);
-        this.itemRemoveClicked = this.itemRemoveClicked.bind(this);
         this.state = { ruleId: this.props.ruleId, amountMatchingCards: this.props.amountMatchingCards, winFactor: this.props.winFactor}
     }
 
     amountMatchingCardsChanged() {
     }
 
-    itemRemoveClicked() {
-        var component = this;
-        servicehub.server.removeLuckyGameWinningRule().done(function (data) {
-
+    itemRemoveClicked(e) {
+        var ruleIdElement = $(e).closest("input[name='wre_id']");
+        var ruleId = $(ruleIdElement).val();
+        servicehub.server.removeLuckyGameWinningRule(ruleId).done(function (data) {
+            console.log("ruleitem deleted");
         }).fail(function (data) {
-
+            console.log("failed request deleting rule");
         });
     }
 
     render() {
         return (
             <div className="winningruledititem">
-            <input type="hidden" id="wre_id" name="wre_id" value={this.state.ruleId} />
+            <input type="hidden" id="wre_id{this.state.ruleId}" name="wre_id" value={this.state.ruleId} />
             <div className="mdl-textfield mdl-js-textfield">
                 <input onChange={this.amountMatchingCardsChagned} className="mdl-textfield__input" type="text" id="wre_amc" name="wre_amc" pattern="-?[0-9]*(\.[0-9]+)?" value={this.state.amountMatchingCards} />
                 <label class="mdl-textfield__label" for="wre_amc">gleiche Symbole</label>

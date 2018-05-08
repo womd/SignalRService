@@ -27,5 +27,16 @@ namespace SignalRService.Repositories
             Utils.LuckyGameUtils.AvailableMoneyUpdate(amount, group);
             return res;
         }
+
+        public bool RemoveWinningRule(int ruleId, string group)
+        {
+            var res = context.RemoveWinningRule(ruleId);
+            if (res)
+            {
+                Utils.LuckyGameUtils.WinningRulesUpdate(group);
+                return true;
+            }
+            return false;
+        }
     }
 }

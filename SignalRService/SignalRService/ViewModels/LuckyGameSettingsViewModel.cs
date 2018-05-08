@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class LuckyGameConfigurationViewModel
+    public class LuckyGameSettingsViewModel
     {
         public int Id { get; set; }
         public double MoneyAvailable { get; set; }

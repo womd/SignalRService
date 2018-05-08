@@ -20,6 +20,7 @@ namespace SignalRService.Hubs
         private Repositories.ProductRepository productRepository;
         private Repositories.UserRepository userRepository;
         private Repositories.GameSettingsRepository gameSettingsRepository;
+        private Repositories.ServiceSettingRepositorie serviceSettingsRepository;
 
         public ServiceHub()
         {
@@ -27,6 +28,7 @@ namespace SignalRService.Hubs
             productRepository = new Repositories.ProductRepository(db);
             userRepository = new Repositories.UserRepository(db);
             gameSettingsRepository = new Repositories.GameSettingsRepository(db);
+            serviceSettingsRepository = new Repositories.ServiceSettingRepositorie(db);
         }
 
         private void  addConnection(string refererUrl, string remoteIP)
@@ -329,17 +331,27 @@ namespace SignalRService.Hubs
             return userRepository.GetUserTotalMoney(user.Id);
         }
 
-        public async Task<List<Models.LuckyGameWinningRule>>getLuckyGameWinningRules(string group)
+        public async Task<List<ViewModels.LuckyGameWinningRuleViewModel>> getLuckyGameWinningRules(string group)
         {
             return await Task.Run(() => _getLuckyGameWinningRules(group));
         }
 
-        public List<Models.LuckyGameWinningRule>_getLuckyGameWinningRules(string group)
+        public List<ViewModels.LuckyGameWinningRuleViewModel> _getLuckyGameWinningRules(string group)
         {
-            List<Models.LuckyGameWinningRule> res = new List<Models.LuckyGameWinningRule>();
+            List<ViewModels.LuckyGameWinningRuleViewModel> res = new List<ViewModels.LuckyGameWinningRuleViewModel>();
             var gs = db.LuckyGameSettings.FirstOrDefault(x => x.ServiceSettings.ServiceUrl == group);
-            res.AddRange(gs.WinningRules);
+            res.AddRange(gs.WinningRules.ToList().ToWinningRuleViewModels());
             return res;
+        }
+
+        public async Task<bool> removeLuckyGameWinningRule(int ruleId, string group)
+        {
+            return await Task.Run(() => _removeLuckyGameWinningRule(ruleId, group));
+        }
+
+        private bool _removeLuckyGameWinningRule(int ruleId, string group)
+        {
+            return gameSettingsRepository.RemoveWinningRule(ruleId, group);
         }
 
         public async Task<Utils.LuckyGameCardResult> getLuckyGameResult(int slotCount, string group, double amount)

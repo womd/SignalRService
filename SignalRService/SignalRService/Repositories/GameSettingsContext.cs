@@ -39,5 +39,19 @@ namespace SignalRService.Repositories
             return res;
         }
 
+        public bool RemoveWinningRule(int ruleId)
+        {
+            var dbrm =_db.LuckyGameWinningRules.FirstOrDefault(ln => ln.ID == ruleId);
+            if(dbrm != null)
+            {
+                _db.LuckyGameWinningRules.Remove(dbrm);
+                _db.SaveChanges();
+                return true;
+            }
+           
+            return false;
+           
+        }
+
     }
 }

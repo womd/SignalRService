@@ -49,6 +49,14 @@ namespace SignalRService.Utils
             var user = userRepository.GetUser(UserId);
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Clients(user.SignalRConnections).updateUserTotal(amount);
         }
+
+        public static void WinningRulesUpdate(string group)
+        {
+            var db = new DAL.ServiceContext();
+            var service = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            var gs = service.LuckyGameSettings.FirstOrDefault();
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).updateWinningRules(gs.WinningRules.ToList().ToWinningRuleViewModels());
+        }
     }
 
     public class LuckyGameCard

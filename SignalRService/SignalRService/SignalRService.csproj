@@ -18,7 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44378</IISExpressSSLPort>
+    <IISExpressSSLPort>44352</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -497,7 +497,8 @@
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
-    <Compile Include="Repositories\ServiceContext.cs" />
+    <Compile Include="Repositories\ServiceSettingContext.cs" />
+    <Compile Include="Repositories\ServiceSettingRepositorie.cs" />
     <Compile Include="Repositories\UserContext.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
@@ -518,7 +519,7 @@
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
-    <Compile Include="ViewModels\LuckyGameConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\LuckyGameSettingsViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
