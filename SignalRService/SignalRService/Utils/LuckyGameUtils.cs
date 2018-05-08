@@ -39,7 +39,7 @@ namespace SignalRService.Utils
 
         public static void AvailableMoneyUpdate(double amount, string group)
         {
-            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).updateAvailableMoney(amount);
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group.ToLower()).updateAvailableMoney(amount);
         }
 
         public static void SendUserTotalMoneyUpdate(int UserId, double amount)
@@ -55,7 +55,8 @@ namespace SignalRService.Utils
             var db = new DAL.ServiceContext();
             var service = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
             var gs = service.LuckyGameSettings.FirstOrDefault();
-            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).updateWinningRules(gs.WinningRules.ToList().ToWinningRuleViewModels());
+            var data = gs.WinningRules.ToList().ToWinningRuleViewModels();
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group.ToLower()).updateWinningRules(data);
         }
     }
 
@@ -76,6 +77,14 @@ namespace SignalRService.Utils
         public double TotalAmountAvailable { get; set; }
         public int ErrorNumber { get; set; }
         public string Message { get; set; }
+    }
+
+    public class LuckyGameResponse
+    {
+        public object ResponseData { get; set; }
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
    

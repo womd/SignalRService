@@ -53,5 +53,49 @@ namespace SignalRService.Repositories
            
         }
 
+        public int GetOwnerIdForGroup(string group)
+        {
+            var service = _db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if (service == null)
+                return -1;
+
+            return service.Owner.ID;
+
+        }
+
+        public bool AddOrUpdateWinningRule(ViewModels.LuckyGameWinningRuleViewModel rule, string group)
+        {
+            var service = _db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
+            if (service != null)
+            {
+                var game = service.LuckyGameSettings.FirstOrDefault();
+                if(game != null)
+                {
+                    if(rule.Id == 0)
+                    {
+                        game.WinningRules.Add(new Models.LuckyGameWinningRule()
+                        {
+                            AmountMatchingCards = rule.AmountMatchingCards,
+                            WinFactor = rule.WinFactor
+                        });
+                    }
+                    else
+                    {
+                        var dbrule = game.WinningRules.FirstOrDefault(ln => ln.ID == rule.Id);
+                        if (dbrule == null)
+                            return false;
+
+                        dbrule.AmountMatchingCards = rule.AmountMatchingCards;
+                        dbrule.WinFactor = rule.WinFactor;
+                    }
+
+                    _db.SaveChanges();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }

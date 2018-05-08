@@ -17,7 +17,7 @@ namespace SignalRService.Repositories
         public double AddMoneyToGame(double amount, string group)
         {
             var res = context.AddMoneyToGame(amount, group);
-            Utils.LuckyGameUtils.AvailableMoneyUpdate(amount, group);
+            Utils.LuckyGameUtils.AvailableMoneyUpdate(res, group);
             return res;
         }
 
@@ -31,6 +31,22 @@ namespace SignalRService.Repositories
         public bool RemoveWinningRule(int ruleId, string group)
         {
             var res = context.RemoveWinningRule(ruleId);
+            if (res)
+            {
+                Utils.LuckyGameUtils.WinningRulesUpdate(group);
+                return true;
+            }
+            return false;
+        }
+
+        public int GetOwnerIdForGroup(string group)
+        {
+            return context.GetOwnerIdForGroup(group);
+        }
+
+        public bool AddOrUpdateWinningRule(ViewModels.LuckyGameWinningRuleViewModel rule, string group)
+        {
+            var res = context.AddOrUpdateWinningRule(rule, group);
             if (res)
             {
                 Utils.LuckyGameUtils.WinningRulesUpdate(group);

@@ -344,14 +344,89 @@ namespace SignalRService.Hubs
             return res;
         }
 
-        public async Task<bool> removeLuckyGameWinningRule(int ruleId, string group)
+        public async Task<LuckyGameResponse> addOrUpdateLuckyGameWinningRule(ViewModels.LuckyGameWinningRuleViewModel rule, string group)
+        {
+            return await Task.Run(() => _addOrUpdateLuckyGameWinningRule(rule, group));
+        }
+
+        private LuckyGameResponse _addOrUpdateLuckyGameWinningRule(ViewModels.LuckyGameWinningRuleViewModel rule, string group)
+        {
+            LuckyGameResponse response = new LuckyGameResponse();
+            
+            if (rule.AmountMatchingCards < 1)
+            {
+                return new LuckyGameResponse() {
+                    Success = false,
+                    ErrorMessage = "AmountMatchingCards must be > 1"
+                };
+            }
+
+            if(rule.WinFactor < 1)
+            {
+                return new LuckyGameResponse()
+                {
+                    Success = false,
+                    ErrorMessage = "WinFactor must be > 1"
+                };
+            }
+
+            var ownerId = gameSettingsRepository.GetOwnerIdForGroup(group);
+            var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+            if (ownerId == user.Id)
+            {
+
+                return new LuckyGameResponse()
+                {
+                     Success = true,
+                     ResponseData = gameSettingsRepository.AddOrUpdateWinningRule(rule, group)
+                };
+                  
+            }
+            else
+            {
+                return new LuckyGameResponse()
+                {
+                    Success = false,
+                    ErrorMessage = "Not allowed to do this.."
+                };
+            }
+            
+        }
+
+        public async Task<LuckyGameResponse> removeLuckyGameWinningRule(int ruleId, string group)
         {
             return await Task.Run(() => _removeLuckyGameWinningRule(ruleId, group));
         }
 
-        private bool _removeLuckyGameWinningRule(int ruleId, string group)
+        private LuckyGameResponse _removeLuckyGameWinningRule(int ruleId, string group)
         {
-            return gameSettingsRepository.RemoveWinningRule(ruleId, group);
+            var ownerId = gameSettingsRepository.GetOwnerIdForGroup(group);
+            var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
+            if (ownerId == user.Id)
+            {
+                if(gameSettingsRepository.RemoveWinningRule(ruleId, group))
+                {
+                    return new LuckyGameResponse()
+                    {
+                        ResponseData = true,
+                        Success = true
+                    };
+                }
+                else
+                {
+                    return new LuckyGameResponse()
+                    {
+                        Success = false,
+                        ErrorMessage = "Error removing rule"
+                    };
+                }
+            }
+
+            return new LuckyGameResponse()
+            {
+                Success = false,
+                ErrorMessage = "not allowed todo this.."
+            };
         }
 
         public async Task<Utils.LuckyGameCardResult> getLuckyGameResult(int slotCount, string group, double amount)

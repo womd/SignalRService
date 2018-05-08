@@ -56,7 +56,7 @@ namespace SignalRService.Utils
                 Id = model.ID,
                 MoneyAvailable = model.MoneyAvailable,
                 WinningRules = model.WinningRules.ToList().ToWinningRuleViewModels(),
-                SignalRGroup = model.ServiceSettings.ServiceUrl
+                SignalRGroup = model.ServiceSettings.ServiceUrl.ToLower()
             };
         }
 

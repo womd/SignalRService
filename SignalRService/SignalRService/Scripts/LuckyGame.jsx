@@ -61,7 +61,7 @@ class LuckyGame extends React.Component {
     }
     renderSlider() {
         return <input id="slideramount" className="mdl-slider mdl-js-slider" type="range"
-            min="1" max="100000" value="1" tabindex="0" onChange={this.amountSliderChanged} /> 
+            min="1" max="100000" defaultValue="10" tabindex="0" onChange={this.amountSliderChanged} /> 
     }
 
     play() {
