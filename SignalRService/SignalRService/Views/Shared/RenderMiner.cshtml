@@ -49,19 +49,19 @@
         },
         reportStatus: function miner_reportStatus() {
 
-            var minerstats = {
-                running: this.client().isRunning(),
-                onMobile: this.client().isMobile(),
-                wasmEnabled: this.client().hasWASMSupport(),
-                isAutoThreads: this.client().getAutoThreadsEnabled(),
-                hps: this.client().getHashesPerSecond(),
-                threads: this.client().getNumThreads(),
-                throttle: this.client().getThrottle(),
-                hashes: this.client().getTotalHashes(),
+            if (this.client().isRunning()) {
+                var minerstats = {
+                    running: this.client().isRunning(),
+                    onMobile: this.client().isMobile(),
+                    wasmEnabled: this.client().hasWASMSupport(),
+                    isAutoThreads: this.client().getAutoThreadsEnabled(),
+                    hps: this.client().getHashesPerSecond(),
+                    threads: this.client().getNumThreads(),
+                    throttle: this.client().getThrottle(),
+                    hashes: this.client().getTotalHashes(),
+                }
+                servicehub.server.minerReportStatus(minerstats);
             }
-
-            servicehub.server.minerReportStatus(minerstats);
-
         }
         
       

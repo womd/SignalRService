@@ -62,9 +62,13 @@ namespace SignalRService.Utils
                 return false;
             }
 
-            if (data.Price > (decimal) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMaxPrice) || data.Price < (decimal) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMinPrice) )
+            var maxPriceVal = Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMaxPrice);
+            var minPriceVal = Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMinPrice);
+            decimal maxPrice = decimal.Parse(maxPriceVal.ToString());
+            decimal minPrice = decimal.Parse(minPriceVal.ToString());
+            if (data.Price > maxPrice || data.Price < minPrice)
             {
-                messages.Add("Preis soll zwischen "+ Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMinPrice).ToString() + " und "+ Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.ProductMaxPrice).ToString() + " sein.");
+                messages.Add("Preis soll zwischen "+ minPrice + " und "+ maxPrice + " sein.");
                 return false;
             }
 

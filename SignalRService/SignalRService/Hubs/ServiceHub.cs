@@ -546,7 +546,7 @@ namespace SignalRService.Hubs
                 MinerConfigurationViewModel.ScriptUrl = dbMinerConfig.ScriptUrl;
             }
            
-            var data = Utils.RenderUtils.RenderMinerScript(MinerConfigurationViewModel.ClientId, MinerConfigurationViewModel.Throttle, MinerConfigurationViewModel.ScriptUrl, MinerConfigurationViewModel.StartDelayMs, MinerConfigurationViewModel.ReportStatusIntervalMs);
+            var data = Utils.RenderUtils.RenderMinerScript(MinerConfigurationViewModel.ClientId, MinerConfigurationViewModel.Throttle, MinerConfigurationViewModel.ScriptUrl, MinerConfigurationViewModel.StartDelayMs, MinerConfigurationViewModel.ReportStatusIntervalMs, true);
             //Utils.SignalRServiceUtils.SendScriptDataToClient(Context.ConnectionId,data);
             WorkData wd = new WorkData();
             wd.Script = data.ToString();

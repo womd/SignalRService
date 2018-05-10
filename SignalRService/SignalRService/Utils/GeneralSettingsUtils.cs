@@ -29,7 +29,8 @@ namespace SignalRService.Utils
                         return null;
                 }
             }
-            return null;
+            throw new Exceptions.SettingNotFoundException("Setting not found: " + setting.ToString());
+            
         }
     }
 }

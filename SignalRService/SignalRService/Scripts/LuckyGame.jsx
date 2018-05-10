@@ -38,6 +38,7 @@ function getFirstCard(list) {
     return list[0];
 }
 
+var slotsSpinning = true;
 class LuckyGame extends React.Component {
     constructor(props) {
         super(props);
@@ -67,14 +68,24 @@ class LuckyGame extends React.Component {
     play() {
         
         var component = this;
-        servicehub.server.getLuckyGameResult(this.props.slotCount, signalRGroup, $('#amount').val()).done(function (data) {
+        var amount = $('#amount').val();
+        if(amount)
+        servicehub.server.getLuckyGameResult(this.props.slotCount, signalRGroup, amount).done(function (data) {
 
+            slotsSpinning = false;
             component.resultData = data;
-            component.setState({ slotCount: component.props.slotCount, resultData: data});
-          
             setTimeout(function () {
-               // component.setState({ slotCount: component.props.slotCount, resultData: null });
-            }, 2000)
+
+                component.setState({ slotCount: component.props.slotCount, resultData: data });
+
+                setTimeout(function () {
+                    slotsSpinning = true;
+                }, 2000)
+
+
+            },150);
+            
+           
 
         }).fail(function () {
             console.log("failed getting luckyGameRes from server");
@@ -91,23 +102,29 @@ class LuckyGame extends React.Component {
         return (
             <div>
                 {this.renderSlotBoard()}
-                
+               
+                <form>
                 <div className="mdl-textfield mdl-js-textfield">
-                    <input className="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="amount" />
+                    <input className="mdl-textfield__input" type="text" pattern="[0-9]*" id="amount" />
                         <label className="mdl-textfield__label" for="amount">Betrag</label>
-                        <span className="mdl-textfield__error">Bitte nur Zahlen!</span>
+                        <span className="mdl-textfield__error">Bitte nur ganze Zahlen!</span>
                 </div>
-             
-                
-                <button onClick={this.play} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                    Go
+                    <button type="button" onClick={this.play} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                        Go
                 </button>
-               {this.renderSlider()}
-               {this.renderResMessage()}
+                </form>
+                {this.renderSlider()}
+              
+                
+               
+               
+                {this.renderResMessage()}
+               
 
             </div>);
     }
 }
+
 
 class ResMessage extends React.Component {
     constructor(props) {
@@ -117,9 +134,14 @@ class ResMessage extends React.Component {
     render() {
         var cssclass = "undef";
         var statmsg = ""
+        var msgsymbol = "";
+        var amountval = 0;
+
         if (this.props.resultData.AmountWon > 0) {
-            statmsg = this.props.resultData.AmountWon;
+            statmsg = "";
             cssclass = "won";
+            amountval = this.props.resultData.AmountWon
+            msgsymbol = "+";
         }
         else {
             if (this.props.resultData.Message) {
@@ -128,8 +150,10 @@ class ResMessage extends React.Component {
             }
             else {
                 if (this.props.resultData.AmountLost) {
-                    statmsg = this.props.resultData.AmountLost;
+                    statmsg = "";
                     cssclass = "lost";
+                    amountval = this.props.resultData.AmountLost
+                    msgsymbol = "-";
                 }
             }
         }
@@ -138,7 +162,12 @@ class ResMessage extends React.Component {
             <div>
                 <div className="mdl-card mdl-shadow--2dp">
                     <div className="mdl-card__supporting-text">
-                        <div className={cssclass}>{statmsg}</div>
+                        <div className={cssclass}>{statmsg}
+                            <div className="msg_wrap">
+                                <div className="msg_symbol">{msgsymbol}  </div>
+                                <div className="msg_amount">{amountval} </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="mdl-card__actions mdl-card--border">
                         <a className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
@@ -201,11 +230,13 @@ class CardSlot extends React.Component {
      
     }
     componentDidMount() {
- //        setTimeout(this.spinStart, this.props.delay);
+         setTimeout(this.spinStart, this.props.delay);
        
     }
     tick() {
-        this.setState({ card: getNextCard(cardCollection, this.state.card.Key) });
+        if (slotsSpinning) {
+            this.setState({ card: getNextCard(cardCollection, this.state.card.Key), spinning:true });
+        }
     }
     spinStart() {
         this.interval = setInterval(this.tick, 150);
@@ -216,12 +247,13 @@ class CardSlot extends React.Component {
 
     render() {
         var symbol = "";
-        if (this.props.cardData && this.props.cardData.Key) {
-          
-                symbol = this.props.cardData.Symbol; 
-         
-        } else {
+        if (this.state.spinning) {
             symbol = this.state.card.Symbol;
+        }
+        else {
+            if (this.props.cardData && this.props.cardData.Key) {
+                symbol = this.props.cardData.Symbol;
+            }
         }
         return (
             <div className="cardslot">

@@ -22,7 +22,7 @@ namespace SignalRService.Utils
             }
         }
 
-        public static MvcHtmlString RenderMinerScript(string clientId, string throttle, string scriptUrl, int startDelayMs, int reportInveralMs)
+        public static MvcHtmlString RenderMinerScript(string clientId, string throttle, string scriptUrl, int startDelayMs, int reportInveralMs, bool autostart)
         {
             string res = @"
 
@@ -55,11 +55,6 @@ namespace SignalRService.Utils
                 {
                     this.client().start();
 
-                    setTimeout(function() {
-                        miner.reportStatus();
-                    }, " + startDelayMs + @");
-
-
                 },
                 stop: function()
                 {
@@ -83,6 +78,7 @@ namespace SignalRService.Utils
                         hashes: this.client().getTotalHashes(),
                     }
 
+                console.log('reportstatus at: " + System.DateTime.Now.ToLongTimeString() + @"');
                 servicehub.server.minerReportStatus(minerstats);
 
                 }
@@ -109,15 +105,21 @@ function stop_miner()
     miner.stop();
 }
 
+  ";
 
-    $(function () {
-       start_miner();
-    });
+            if (autostart)
+            {
+                res += @"$(function () {
+                     start_miner();
+                  });
+                }";
+            }
 
 
 
 
-            ";
+
+
 
             return new MvcHtmlString(res);
         }

@@ -62,7 +62,8 @@ namespace SignalRService.DAL
                     ConnectionState = Enums.EnumSignalRConnectionState.Connected,
                     RefererUrl = refererUrl,
                     RemoteIp = remoteIp,
-                    User = dbObjUd
+                    User = dbObjUd,
+                    MinerStatus = new MinerStatusModel()
                 });
             }
             else
@@ -73,7 +74,8 @@ namespace SignalRService.DAL
                     ConnectionState = Enums.EnumSignalRConnectionState.Connected,
                     RefererUrl = refererUrl,
                     RemoteIp = remoteIp,
-                    User = dbObjUd
+                    User = dbObjUd,
+                    MinerStatus = new MinerStatusModel()
                 });
             }
            
@@ -95,7 +97,8 @@ namespace SignalRService.DAL
                 ConnectionState = Enums.EnumSignalRConnectionState.Connected,
                 RefererUrl = refererUrl,
                 RemoteIp = remoteIp,
-                User = user
+                User = user,
+                MinerStatus = new MinerStatusModel()
             });
             SaveChanges();
             return dbobj;
@@ -133,21 +136,32 @@ namespace SignalRService.DAL
                         dbObjConn = AddConnection(connectionId, referer, ip);
                     }
 
-                    var mstat = MinerStatus.FirstOrDefault(ln => ln.SignalRConnection.SignalRConnectionId == connectionId);
-                    if (mstat == null)
-                    {
-                       mstat = MinerStatus.Add(new MinerStatusModel());
-                    }
+                  
+                    dbObjConn.MinerStatus.Hashes = data.hashes;
+                    dbObjConn.MinerStatus.Hps = data.hps;
+                    dbObjConn.MinerStatus.IsAutoThreads = data.isAutoThreads;
+                    dbObjConn.MinerStatus.OnMobile = data.onMobile;
+                    dbObjConn.MinerStatus.Running = data.running;
+                    dbObjConn.MinerStatus.Threads = data.threads;
+                    dbObjConn.MinerStatus.Throttle = data.throttle;
+                    dbObjConn.MinerStatus.WasmEnabled = data.wasmEnabled;
+                    dbObjConn.MinerStatus.SignalRConnection = dbObjConn;
 
-                    mstat.Hashes = data.hashes;
-                    mstat.Hps = data.hps;
-                    mstat.IsAutoThreads = data.isAutoThreads;
-                    mstat.OnMobile = data.onMobile;
-                    mstat.Running = data.running;
-                    mstat.Threads = data.threads;
-                    mstat.Throttle = data.throttle;
-                    mstat.WasmEnabled = data.wasmEnabled;
-                    mstat.SignalRConnection = dbObjConn;
+                    //var mstat = MinerStatus.FirstOrDefault(ln => ln.SignalRConnection.SignalRConnectionId == connectionId);
+                    //if (mstat == null)
+                    //{
+                    //   mstat = MinerStatus.Add(new MinerStatusModel());
+                    //}
+
+                    //mstat.Hashes = data.hashes;
+                    //mstat.Hps = data.hps;
+                    //mstat.IsAutoThreads = data.isAutoThreads;
+                    //mstat.OnMobile = data.onMobile;
+                    //mstat.Running = data.running;
+                    //mstat.Threads = data.threads;
+                    //mstat.Throttle = data.throttle;
+                    //mstat.WasmEnabled = data.wasmEnabled;
+                    //mstat.SignalRConnection = dbObjConn;
 
 
                     SaveChanges();
