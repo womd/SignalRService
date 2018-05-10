@@ -19,6 +19,7 @@ namespace SignalRService.Migrations
 
         protected override void Seed(ServiceContext context)
         {
+            base.Seed(context);
             //here it would seed things on db-migration
             // moved all seeding to homecontroller until further refactoring
         }
