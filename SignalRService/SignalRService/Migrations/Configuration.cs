@@ -15,11 +15,13 @@ namespace SignalRService.Migrations
             //AutomaticMigrationsEnabled = true;
             CommandTimeout = Int32.MaxValue;
             ContextKey = "SignalRService.DAL.ServiceContext";
+            AutomaticMigrationsEnabled = true;
+
         }
 
         protected override void Seed(ServiceContext context)
         {
-            base.Seed(context);
+            //base.Seed(context);
             //here it would seed things on db-migration
             // moved all seeding to homecontroller until further refactoring
         }
