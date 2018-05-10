@@ -31,11 +31,13 @@ namespace SignalRService.Utils
                 {
                     _cultures = new List<string>();
                     DAL.ServiceContext db = new DAL.ServiceContext();
-                    _cultures = db.Localization.Select(x => x.Culture).Distinct().ToList();
-                    if (_cultures.Count == 0)
+                    if(db.Localization.Count() == 0)
                     {
                         _cultures.Add("de-DE");
                         _cultures.Add("en-US");
+                    }
+                    else { 
+                        _cultures = db.Localization.Select(x => x.Culture).Distinct().ToList();
                     }
                 }
 
