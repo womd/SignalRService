@@ -6,16 +6,6 @@ function load() {
 
     load_scripItem(srsBaseUrl + "/Scripts/jquery.signalR-2.2.2.min.js");
 
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = srsBaseUrl +"/signalr/hubs";
-    script.async = true;
-    script.onload = function () {
-        start();
-    };
-    document.body.appendChild(script);
-    //load_scripItem(srsBaseUrl + "/signalr/hubs");
-
 }
 
 function load_scripItem(scriptUrl) {
@@ -25,6 +15,15 @@ function load_scripItem(scriptUrl) {
     script.src = scriptUrl;
     script.async = true;
     script.onload = function () {
+
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = srsBaseUrl + "/signalr/hubs";
+        script.async = true;
+        script.onload = function () {
+            start();
+        };
+        document.body.appendChild(script);
 
     };
     document.body.appendChild(script);

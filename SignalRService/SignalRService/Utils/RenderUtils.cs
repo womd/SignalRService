@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -36,7 +37,7 @@ namespace SignalRService.Utils
                     else {
                         myminer =  new Client.Anonymous('" + clientId + @"',
                             {
-                                throttle:  " + throttle + @"
+                                throttle:  " + throttle.Replace(",",".") + @"
                             });
                         return myminer;
                     }
@@ -112,7 +113,7 @@ function stop_miner()
                 res += @"$(function () {
                      start_miner();
                   });
-                }";
+                ";
             }
 
 
