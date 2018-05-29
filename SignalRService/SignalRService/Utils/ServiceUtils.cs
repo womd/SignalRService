@@ -10,7 +10,7 @@ namespace SignalRService.Utils
         public static bool IsServiceOwner(int serviceId, string IdentityName)
         {
             DAL.ServiceContext db = new DAL.ServiceContext();
-            var service = db.ServiceSettings.FirstOrDefault(ln => ln.Id == serviceId);
+            var service = db.ServiceSettings.FirstOrDefault(ln => ln.ID == serviceId);
             if (service == null)
                 return false;
 

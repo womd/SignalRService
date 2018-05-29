@@ -152,11 +152,11 @@ namespace SignalRService.Controllers
 
             try
             {
-                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.Id == model.Id);
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == model.Id);
                 if(dbObj == null)
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidSettingsId") });
 
-                if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl && ln.Id != model.Id))
+                if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl && ln.ID != model.Id))
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
 
                 dbObj.ServiceName = model.ServiceName;
@@ -198,7 +198,7 @@ namespace SignalRService.Controllers
         {
             try
             {
-                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.Id == Id);
+                var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == Id);
 
                 db.StripeSettings.RemoveRange(dbObj.StripeSettings);
 

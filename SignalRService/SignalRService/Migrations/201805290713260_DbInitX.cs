@@ -3,7 +3,7 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class DbInit : DbMigration
+    public partial class DbInitX : DbMigration
     {
         public override void Up()
         {
@@ -40,6 +40,38 @@ namespace SignalRService.Migrations
                 .Index(t => new { t.Culture, t.Key }, unique: true, name: "IX_Localization_Culture_Key");
             
             CreateTable(
+                "dbo.LuckyGameSettingsModels",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        MoneyAvailable = c.Double(nullable: false),
+                        ServiceSettings_ID = c.Int(),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.ServiceSettingModels", t => t.ServiceSettings_ID)
+                .Index(t => t.ServiceSettings_ID);
+            
+            CreateTable(
+                "dbo.ServiceSettingModels",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        ServiceName = c.String(),
+                        ServiceUrl = c.String(maxLength: 16),
+                        ServiceType = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
+                        MinerConfiguration_ID = c.Int(),
+                        Owner_ID = c.Int(),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.MinerConfigurationModels", t => t.MinerConfiguration_ID)
+                .ForeignKey("dbo.UserDataModels", t => t.Owner_ID)
+                .Index(t => t.ServiceUrl, unique: true, name: "ServiceUrl_Index")
+                .Index(t => t.MinerConfiguration_ID)
+                .Index(t => t.Owner_ID);
+            
+            CreateTable(
                 "dbo.MinerConfigurationModels",
                 c => new
                     {
@@ -47,47 +79,12 @@ namespace SignalRService.Migrations
                         ScriptUrl = c.String(),
                         ClientId = c.String(),
                         Throttle = c.Single(nullable: false),
+                        StartDelayMs = c.Int(nullable: false),
+                        ReportStatusIntervalMs = c.Int(nullable: false),
                         CreationDate = c.DateTime(nullable: false),
                         Archived = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.ID);
-            
-            CreateTable(
-                "dbo.MinerStatusModels",
-                c => new
-                    {
-                        ID = c.Int(nullable: false),
-                        Running = c.Boolean(nullable: false),
-                        OnMobile = c.Boolean(nullable: false),
-                        WasmEnabled = c.Boolean(nullable: false),
-                        IsAutoThreads = c.Boolean(nullable: false),
-                        Hps = c.Single(nullable: false),
-                        Threads = c.Int(nullable: false),
-                        Throttle = c.Single(nullable: false),
-                        Hashes = c.Int(nullable: false),
-                        CreationDate = c.DateTime(nullable: false),
-                        Archived = c.Boolean(nullable: false),
-                    })
-                .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.SignalRConnectionModels", t => t.ID)
-                .Index(t => t.ID);
-            
-            CreateTable(
-                "dbo.SignalRConnectionModels",
-                c => new
-                    {
-                        ID = c.Int(nullable: false, identity: true),
-                        SignalRConnectionId = c.String(),
-                        ConnectionState = c.Int(nullable: false),
-                        RefererUrl = c.String(),
-                        RemoteIp = c.String(),
-                        CreationDate = c.DateTime(nullable: false),
-                        Archived = c.Boolean(nullable: false),
-                        User_ID = c.Int(),
-                    })
-                .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.UserDataModels", t => t.User_ID)
-                .Index(t => t.User_ID);
             
             CreateTable(
                 "dbo.UserDataModels",
@@ -95,6 +92,7 @@ namespace SignalRService.Migrations
                     {
                         ID = c.Int(nullable: false, identity: true),
                         IdentityName = c.String(),
+                        TotalMoney = c.Double(nullable: false),
                         CreationDate = c.DateTime(nullable: false),
                         Archived = c.Boolean(nullable: false),
                     })
@@ -171,21 +169,41 @@ namespace SignalRService.Migrations
                 .Index(t => t.Owner_ID);
             
             CreateTable(
-                "dbo.ServiceSettingModels",
+                "dbo.SignalRConnectionModels",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
-                        ServiceName = c.String(),
-                        ServiceUrl = c.String(maxLength: 16),
-                        ServiceType = c.Int(nullable: false),
+                        ID = c.Int(nullable: false, identity: true),
+                        SignalRConnectionId = c.String(),
+                        ConnectionState = c.Int(nullable: false),
+                        RefererUrl = c.String(),
+                        RemoteIp = c.String(),
                         CreationDate = c.DateTime(nullable: false),
                         Archived = c.Boolean(nullable: false),
-                        Owner_ID = c.Int(),
+                        User_ID = c.Int(),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.UserDataModels", t => t.Owner_ID)
-                .Index(t => t.ServiceUrl, unique: true, name: "ServiceUrl_Index")
-                .Index(t => t.Owner_ID);
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.UserDataModels", t => t.User_ID)
+                .Index(t => t.User_ID);
+            
+            CreateTable(
+                "dbo.MinerStatusModels",
+                c => new
+                    {
+                        ID = c.Int(nullable: false),
+                        Running = c.Boolean(nullable: false),
+                        OnMobile = c.Boolean(nullable: false),
+                        WasmEnabled = c.Boolean(nullable: false),
+                        IsAutoThreads = c.Boolean(nullable: false),
+                        Hps = c.Single(nullable: false),
+                        Threads = c.Int(nullable: false),
+                        Throttle = c.Single(nullable: false),
+                        Hashes = c.Int(nullable: false),
+                        CreationDate = c.DateTime(nullable: false),
+                        Archived = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.SignalRConnectionModels", t => t.ID)
+                .Index(t => t.ID);
             
             CreateTable(
                 "dbo.StripeSettingsModels",
@@ -194,11 +212,24 @@ namespace SignalRService.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         SecretKey = c.String(),
                         PublishableKey = c.String(),
-                        Service_Id = c.Int(),
+                        Service_ID = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.ServiceSettingModels", t => t.Service_Id)
-                .Index(t => t.Service_Id);
+                .ForeignKey("dbo.ServiceSettingModels", t => t.Service_ID)
+                .Index(t => t.Service_ID);
+            
+            CreateTable(
+                "dbo.LuckyGameWinningRules",
+                c => new
+                    {
+                        ID = c.Int(nullable: false, identity: true),
+                        AmountMatchingCards = c.Int(nullable: false),
+                        WinFactor = c.Single(nullable: false),
+                        LuckyGameSettingsModel_ID = c.Int(),
+                    })
+                .PrimaryKey(t => t.ID)
+                .ForeignKey("dbo.LuckyGameSettingsModels", t => t.LuckyGameSettingsModel_ID)
+                .Index(t => t.LuckyGameSettingsModel_ID);
             
             CreateTable(
                 "dbo.OrderItemModels",
@@ -266,42 +297,50 @@ namespace SignalRService.Migrations
             DropForeignKey("dbo.OrderModels", "StoreUser_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.OrderItemModels", "Order_ID", "dbo.OrderModels");
             DropForeignKey("dbo.OrderModels", "CustomerUser_ID", "dbo.UserDataModels");
+            DropForeignKey("dbo.LuckyGameWinningRules", "LuckyGameSettingsModel_ID", "dbo.LuckyGameSettingsModels");
+            DropForeignKey("dbo.StripeSettingsModels", "Service_ID", "dbo.ServiceSettingModels");
             DropForeignKey("dbo.SignalRConnectionModels", "User_ID", "dbo.UserDataModels");
-            DropForeignKey("dbo.StripeSettingsModels", "Service_Id", "dbo.ServiceSettingModels");
+            DropForeignKey("dbo.MinerStatusModels", "ID", "dbo.SignalRConnectionModels");
             DropForeignKey("dbo.ServiceSettingModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductImportModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ProductImportConfigurationModels", "Owner_ID", "dbo.UserDataModels");
-            DropForeignKey("dbo.MinerStatusModels", "ID", "dbo.SignalRConnectionModels");
+            DropForeignKey("dbo.ServiceSettingModels", "MinerConfiguration_ID", "dbo.MinerConfigurationModels");
+            DropForeignKey("dbo.LuckyGameSettingsModels", "ServiceSettings_ID", "dbo.ServiceSettingModels");
             DropIndex("dbo.OrderJournalModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "Order_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "CustomerUser_ID" });
             DropIndex("dbo.OrderModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderModels", new[] { "CustomerUser_ID" });
             DropIndex("dbo.OrderItemModels", new[] { "Order_ID" });
-            DropIndex("dbo.StripeSettingsModels", new[] { "Service_Id" });
-            DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
-            DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
+            DropIndex("dbo.LuckyGameWinningRules", new[] { "LuckyGameSettingsModel_ID" });
+            DropIndex("dbo.StripeSettingsModels", new[] { "Service_ID" });
+            DropIndex("dbo.MinerStatusModels", new[] { "ID" });
+            DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
             DropIndex("dbo.ProductImportModels", new[] { "Owner_ID" });
             DropIndex("dbo.ProductModels", new[] { "Owner_ID" });
             DropIndex("dbo.ProductModels", new[] { "ProductIdentifier" });
             DropIndex("dbo.ProductImportConfigurationModels", new[] { "Owner_ID" });
-            DropIndex("dbo.SignalRConnectionModels", new[] { "User_ID" });
-            DropIndex("dbo.MinerStatusModels", new[] { "ID" });
+            DropIndex("dbo.ServiceSettingModels", new[] { "Owner_ID" });
+            DropIndex("dbo.ServiceSettingModels", new[] { "MinerConfiguration_ID" });
+            DropIndex("dbo.ServiceSettingModels", "ServiceUrl_Index");
+            DropIndex("dbo.LuckyGameSettingsModels", new[] { "ServiceSettings_ID" });
             DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");
             DropIndex("dbo.GeneralSettingsModels", new[] { "GeneralSetting" });
             DropTable("dbo.OrderJournalModels");
             DropTable("dbo.OrderModels");
             DropTable("dbo.OrderItemModels");
+            DropTable("dbo.LuckyGameWinningRules");
             DropTable("dbo.StripeSettingsModels");
-            DropTable("dbo.ServiceSettingModels");
+            DropTable("dbo.MinerStatusModels");
+            DropTable("dbo.SignalRConnectionModels");
             DropTable("dbo.ProductImportModels");
             DropTable("dbo.ProductModels");
             DropTable("dbo.ProductImportConfigurationModels");
             DropTable("dbo.UserDataModels");
-            DropTable("dbo.SignalRConnectionModels");
-            DropTable("dbo.MinerStatusModels");
             DropTable("dbo.MinerConfigurationModels");
+            DropTable("dbo.ServiceSettingModels");
+            DropTable("dbo.LuckyGameSettingsModels");
             DropTable("dbo.LocalizationModels");
             DropTable("dbo.GeneralSettingsModels");
         }

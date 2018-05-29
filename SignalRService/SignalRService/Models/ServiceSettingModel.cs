@@ -11,7 +11,7 @@ namespace SignalRService.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int ID { get; set; }
         public virtual UserDataModel Owner { get; set; }
 
         public string ServiceName { get; set; }
@@ -22,7 +22,10 @@ namespace SignalRService.Models
 
 
         public virtual ICollection<StripeSettingsModel> StripeSettings { get; set; }
-        public virtual ICollection<LuckyGameSettingsModel>LuckyGameSettings { get; set; }
+        public virtual ICollection<LuckyGameSettingsModel> LuckyGameSettings { get; set; }
+
+        public virtual MinerConfigurationModel MinerConfiguration { get; set; }
+
     }
 
    

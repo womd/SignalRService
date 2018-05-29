@@ -18,7 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44352</IISExpressSSLPort>
+    <IISExpressSSLPort>44378</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -465,17 +465,9 @@
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201804261607033_DbInit.cs" />
-    <Compile Include="Migrations\201804261607033_DbInit.Designer.cs">
-      <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805061203096_LuckyGame.cs" />
-    <Compile Include="Migrations\201805061203096_LuckyGame.Designer.cs">
-      <DependentUpon>201805061203096_LuckyGame.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805061611165_GameTotalAmount.cs" />
-    <Compile Include="Migrations\201805061611165_GameTotalAmount.Designer.cs">
-      <DependentUpon>201805061611165_GameTotalAmount.cs</DependentUpon>
+    <Compile Include="Migrations\201805290713260_DbInitX.cs" />
+    <Compile Include="Migrations\201805290713260_DbInitX.Designer.cs">
+      <DependentUpon>201805290713260_DbInitX.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -494,6 +486,8 @@
     <Compile Include="Repositories\GameSettingsContext.cs" />
     <Compile Include="Repositories\GameSettingsRepository.cs" />
     <Compile Include="Repositories\GeneralSettingsRepository.cs" />
+    <Compile Include="Repositories\MinerContext.cs" />
+    <Compile Include="Repositories\MinerRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
@@ -898,14 +892,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804261607033_DbInit.resx">
-      <DependentUpon>201804261607033_DbInit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805061203096_LuckyGame.resx">
-      <DependentUpon>201805061203096_LuckyGame.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805061611165_GameTotalAmount.resx">
-      <DependentUpon>201805061611165_GameTotalAmount.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201805290713260_DbInitX.resx">
+      <DependentUpon>201805290713260_DbInitX.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
