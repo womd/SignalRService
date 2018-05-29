@@ -113,6 +113,8 @@ namespace SignalRService.Controllers
                     dbobj.LuckyGameSettings.Add(gsmodel);
                 }
 
+                Repositories.MinerContext minerContext = new Repositories.MinerContext(db);
+                dbobj.MinerConfiguration = minerContext.GetDefaultMinerConfig();
                
                 db.SaveChanges();
 
