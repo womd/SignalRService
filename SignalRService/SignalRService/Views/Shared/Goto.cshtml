@@ -12,9 +12,10 @@
 
 <h4>@Model.ServiceName</h4>
 
-@Html.Partial("RenderMiner", Model.MinerConfigurationViewModel)
-
-
+@*@Html.Partial("RenderMiner", Model.MinerConfigurationViewModel)*@
+<script>
+@SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+</script>
 
 @{
 

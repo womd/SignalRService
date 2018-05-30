@@ -62,7 +62,7 @@ class LuckyGame extends React.Component {
     }
     renderSlider() {
         return <input id="slideramount" className="mdl-slider mdl-js-slider" type="range"
-            min="1" max="100000" defaultValue="10" tabindex="0" onChange={this.amountSliderChanged} /> 
+            min="1" max="100000" defaultValue="10" tabIndex="0" onChange={this.amountSliderChanged} /> 
     }
 
     play() {
@@ -106,7 +106,7 @@ class LuckyGame extends React.Component {
                 <form>
                 <div className="mdl-textfield mdl-js-textfield">
                     <input className="mdl-textfield__input" type="text" pattern="[0-9]*" id="amount" />
-                        <label className="mdl-textfield__label" for="amount">Betrag</label>
+                        <label className="mdl-textfield__label" htmlFor="amount">Betrag</label>
                         <span className="mdl-textfield__error">Bitte nur ganze Zahlen!</span>
                 </div>
                     <button type="button" onClick={this.play} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">

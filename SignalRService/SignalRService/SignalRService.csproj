@@ -500,6 +500,7 @@
     <Compile Include="Localization\LocalizationProvider.cs" />
     <Compile Include="Utils\CoinImpScriptProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
+    <Compile Include="Utils\DbSeeder.cs" />
     <Compile Include="Utils\FileSystemExtensions.cs" />
     <Compile Include="Utils\GeneralSettingsUtils.cs" />
     <Compile Include="Utils\HubExtensions.cs" />

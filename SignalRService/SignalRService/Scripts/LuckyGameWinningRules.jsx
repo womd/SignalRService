@@ -27,7 +27,7 @@ class LuckyGameWinningRules extends React.Component {
     }
 
     renderRule(element) {
-        return <WinningRule Id={element.Id} AmountMatchingCards={element.AmountMatchingCards} WinFactor={element.WinFactor} unMountMe={this.handleItemUnmount} />
+        return <WinningRule key={element.Id} Id={element.Id} AmountMatchingCards={element.AmountMatchingCards} WinFactor={element.WinFactor} unMountMe={this.handleItemUnmount} />
     }
 
     ruleItemAddClicked() {
@@ -130,11 +130,11 @@ class WinningRuleEditItem extends React.Component {
             <input type="hidden" id={itemid} name="wre_id" value={this.state.ruleId} />
             <div className="mdl-textfield mdl-js-textfield">
                     <input className="mdl-textfield__input" type="text" id={matchamountelementid} name="wre_amc" pattern="-?[0-9]*(\.[0-9]+)?" defaultValue={this.state.amountMatchingCards} />
-                <label class="mdl-textfield__label" for="wre_amc">gleiche Symbole</label>
+                <label className="mdl-textfield__label" htmlFor="wre_amc">gleiche Symbole</label>
             </div>
             <div className="mdl-textfield mdl-js-textfield">
                     <input className="mdl-textfield__input" type="text" id={winfactorelementid} name="wre_wft" pattern="-?[0-9]*(\.[0-9]+)?" defaultValue={this.state.winFactor} />
-                <label class="mdl-textfield__label" for="wrc_wft">Gewinnfaktor</label>
+                <label className="mdl-textfield__label" htmlFor="wrc_wft">Gewinnfaktor</label>
                 </div>
                 <button className="deletebtn" onClick={this.itemRemoveClicked} >
                     <i title="löschen" className="fas fa-minus"></i>
