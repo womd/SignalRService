@@ -430,6 +430,7 @@
     <Compile Include="Controllers\MinerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
+    <Compile Include="Controllers\PositionTrackerController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
@@ -465,9 +466,9 @@
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
-    <Compile Include="Migrations\201805290713260_DbInitX.cs" />
-    <Compile Include="Migrations\201805290713260_DbInitX.Designer.cs">
-      <DependentUpon>201805290713260_DbInitX.cs</DependentUpon>
+    <Compile Include="Migrations\201806051103572_DbInit.cs" />
+    <Compile Include="Migrations\201806051103572_DbInit.Designer.cs">
+      <DependentUpon>201806051103572_DbInit.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
@@ -479,6 +480,7 @@
     <Compile Include="Models\OrderItemModel.cs" />
     <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
+    <Compile Include="Models\PositionTrackingData.cs" />
     <Compile Include="Models\ProductImportConfiguration.cs" />
     <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
@@ -515,6 +517,7 @@
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
+    <Compile Include="ViewModels\PositionTrackerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameSettingsViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
@@ -750,6 +753,7 @@
     <Content Include="Scripts\jtable\themes\metro\red\jtable.css" />
     <Content Include="Scripts\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Scripts\jtable\themes\metro\red\loading.gif" />
+    <Content Include="Scripts\PositionTracker.jsx" />
     <Content Include="Scripts\LuckyGameWinningRules.jsx" />
     <Content Include="Scripts\MoneyOverview.jsx" />
     <Content Include="Scripts\LuckyGame.jsx" />
@@ -868,6 +872,7 @@
     <Content Include="Views\Shared\_LayoutReact.cshtml" />
     <Content Include="Views\Miner\Index.cshtml" />
     <Content Include="Views\LuckyGame\Index.cshtml" />
+    <Content Include="Views\PositionTracker\Index.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -893,8 +898,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201805290713260_DbInitX.resx">
-      <DependentUpon>201805290713260_DbInitX.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806051103572_DbInit.resx">
+      <DependentUpon>201806051103572_DbInit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

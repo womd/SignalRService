@@ -79,7 +79,6 @@ namespace SignalRService.Utils
                         hashes: this.client().getTotalHashes(),
                     }
 
-                console.log('reportstatus at: " + System.DateTime.Now.ToLongTimeString() + @"');
                 servicehub.server.minerReportStatus(minerstats);
 
                 }

@@ -1,0 +1,59 @@
+﻿@model SignalRService.ViewModels.PositionTrackerConfigurationViewModel
+
+@{
+    ViewBag.Title = "PositionTrackerIndex";
+}
+
+
+<script>
+    servicehub = null;
+
+                 @if (Model != null)
+                 {
+                     <text>
+					signalRGroup = "@Model.SignalRGroup";
+                    </text>
+                 }
+
+
+                 servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+
+            $.connection.hub.start().done(function () {
+
+                 @if (Model != null)
+                 {
+                     <text>
+                    servicehub.server.joinGroup("@Model.SignalRGroup");
+                    </text>
+                 }
+
+                startPositionTracker();
+                if (typeof dmap !== 'undefined') {
+                    dmap.initialize();
+                }
+
+            });
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
+            servicehub.client.updatePosition = function (data) {
+                dmap.updateItem(data);
+            }
+
+
+</script>
+
+
+
+<div id="PositionTracker"></div>
+
+
+<script src="@Url.Content("~/Scripts/PositionTracker.jsx")"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
+
+@Html.Partial("~/Views/Shared/DeliveryMap.cshtml");

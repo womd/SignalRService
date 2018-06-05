@@ -17,6 +17,8 @@ namespace SignalRService.Enums
         [Display(Name = "ServiceTypeOrderServiceDrone")]
         OrderServiceDrone = 3,
         [Display(Name = "LuckyGame")]
-        LuckyGameDefault = 4
+        LuckyGameDefault = 4,
+        [Display(Name = "BaseTracking")]
+        BaseTracking = 5
     }
 }

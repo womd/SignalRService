@@ -7,13 +7,13 @@ namespace SignalRService.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class DbInitX : IMigrationMetadata
+    public sealed partial class DbInit : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(DbInitX));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(DbInit));
         
         string IMigrationMetadata.Id
         {
-            get { return "201805290713260_DbInitX"; }
+            get { return "201806051103572_DbInit"; }
         }
         
         string IMigrationMetadata.Source

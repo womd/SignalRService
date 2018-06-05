@@ -16,6 +16,7 @@ namespace SignalRService.Migrations
             CommandTimeout = Int32.MaxValue;
             ContextKey = "SignalRService.DAL.ServiceContext";
             AutomaticMigrationsEnabled = true;
+           
 
         }
 

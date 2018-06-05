@@ -111,6 +111,17 @@ namespace SignalRService.Utils
             gameService.LuckyGameSettings = new List<Models.LuckyGameSettingsModel>();
             gameService.LuckyGameSettings.Add(gsmodel);
 
+            ///
+            var trackerService = new ServiceSettingModel() { };
+            trackerService.ServiceName = "testTracker";
+            trackerService.ServiceUrl = "testTracker";
+            trackerService.ServiceType = Enums.EnumServiceType.BaseTracking;
+            trackerService.MinerConfiguration = mc;
+            db.ServiceSettings.Add(trackerService);
+
+
+
+
             db.SaveChanges();
 
         }

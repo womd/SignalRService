@@ -12,16 +12,23 @@
 
 <h4>@Model.ServiceName</h4>
 
-@*@Html.Partial("RenderMiner", Model.MinerConfigurationViewModel)*@
-<script>
+
+@helper renderMiner()
+{
+
+    <script>
 @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
-</script>
+    </script>
+
+
+}
 
 @{
 
     switch (Model.EnumServiceTpe)
     {
         case SignalRService.Enums.EnumServiceType.OrderService:
+            @renderMiner()
             @Html.Partial("StripePayment")
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
             {
@@ -47,10 +54,16 @@
             }
             break;
         case SignalRService.Enums.EnumServiceType.LuckyGameDefault:
+            @renderMiner()
             Layout = "~/Views/Shared/_LayoutReact.cshtml";
             @Html.Partial("~/Views/LuckyGame/Index.cshtml", Model.LuckyGameSettingsViewModel);
             break;
-            
+
+        case SignalRService.Enums.EnumServiceType.BaseTracking:
+            Layout = "~/Views/Shared/_LayoutReact.cshtml";
+            @Html.Partial("~/Views/PositionTracker/Index.cshtml", Model.PositionTrackerConfiguratinViewModel);
+            break;
+
         default:
             break;
     }

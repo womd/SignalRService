@@ -50,7 +50,8 @@ namespace SignalRService.Utils
                 User = dbmodel.Owner.ToUserDataViewModel(),
                 StripeSecretKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "",
                 StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "",
-                LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() }
+                LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() },
+                PositionTrackerConfiguratinViewModel = new PositionTrackerConfigurationViewModel() { Id = dbmodel.ID, SignalRGroup = dbmodel.ServiceUrl.ToLower() }
                 
             };
         }

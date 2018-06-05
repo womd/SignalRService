@@ -32,7 +32,9 @@ namespace SignalRService.DAL
         public DbSet<GeneralSettingsModel>GeneralSettings { get; set; }
         public DbSet<LuckyGameSettingsModel>LuckyGameSettings { get; set; }
         public DbSet<LuckyGameWinningRule>LuckyGameWinningRules { get; set; }
-       
+        public DbSet<PositionTrackingData> PositionTrackingData { get; set; }
+        public DbSet<Coordinates> Coordinates { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

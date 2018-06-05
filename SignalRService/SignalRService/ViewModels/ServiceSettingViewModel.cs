@@ -20,6 +20,8 @@ namespace SignalRService.ViewModels
         public ViewModels.OrderHostConfigurationViewModel OrderHostConfigurationViewModel { get; set; }
         public ViewModels.LuckyGameSettingsViewModel LuckyGameSettingsViewModel { get; set; } 
 
+        public ViewModels.PositionTrackerConfigurationViewModel PositionTrackerConfiguratinViewModel { get; set; }
+
         public string StripeSecretKey { get; set; }
         public string StripePublishableKey { get; set; }
     }

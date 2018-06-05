@@ -3,10 +3,25 @@ namespace SignalRService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class DbInitX : DbMigration
+    public partial class DbInit : DbMigration
     {
         public override void Up()
         {
+            CreateTable(
+                "dbo.Coordinates",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Latitude = c.Double(nullable: false),
+                        Longitude = c.Double(nullable: false),
+                        Altitude = c.Double(nullable: false),
+                        Accuracy = c.Double(nullable: false),
+                        AltitudeAccuracy = c.Double(nullable: false),
+                        Heading = c.Double(nullable: false),
+                        Speed = c.Double(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
             CreateTable(
                 "dbo.GeneralSettingsModels",
                 c => new
@@ -287,10 +302,23 @@ namespace SignalRService.Migrations
                 .Index(t => t.Order_ID)
                 .Index(t => t.StoreUser_ID);
             
+            CreateTable(
+                "dbo.PositionTrackingDatas",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        TimeStamp = c.DateTime(nullable: false),
+                        Coords_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Coordinates", t => t.Coords_Id)
+                .Index(t => t.Coords_Id);
+            
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.PositionTrackingDatas", "Coords_Id", "dbo.Coordinates");
             DropForeignKey("dbo.OrderJournalModels", "StoreUser_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.OrderJournalModels", "Order_ID", "dbo.OrderModels");
             DropForeignKey("dbo.OrderJournalModels", "CustomerUser_ID", "dbo.UserDataModels");
@@ -307,6 +335,7 @@ namespace SignalRService.Migrations
             DropForeignKey("dbo.ProductImportConfigurationModels", "Owner_ID", "dbo.UserDataModels");
             DropForeignKey("dbo.ServiceSettingModels", "MinerConfiguration_ID", "dbo.MinerConfigurationModels");
             DropForeignKey("dbo.LuckyGameSettingsModels", "ServiceSettings_ID", "dbo.ServiceSettingModels");
+            DropIndex("dbo.PositionTrackingDatas", new[] { "Coords_Id" });
             DropIndex("dbo.OrderJournalModels", new[] { "StoreUser_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "Order_ID" });
             DropIndex("dbo.OrderJournalModels", new[] { "CustomerUser_ID" });
@@ -327,6 +356,7 @@ namespace SignalRService.Migrations
             DropIndex("dbo.LuckyGameSettingsModels", new[] { "ServiceSettings_ID" });
             DropIndex("dbo.LocalizationModels", "IX_Localization_Culture_Key");
             DropIndex("dbo.GeneralSettingsModels", new[] { "GeneralSetting" });
+            DropTable("dbo.PositionTrackingDatas");
             DropTable("dbo.OrderJournalModels");
             DropTable("dbo.OrderModels");
             DropTable("dbo.OrderItemModels");
@@ -343,6 +373,7 @@ namespace SignalRService.Migrations
             DropTable("dbo.LuckyGameSettingsModels");
             DropTable("dbo.LocalizationModels");
             DropTable("dbo.GeneralSettingsModels");
+            DropTable("dbo.Coordinates");
         }
     }
 }
