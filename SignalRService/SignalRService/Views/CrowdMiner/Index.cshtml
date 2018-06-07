@@ -1,0 +1,65 @@
+﻿@model SignalRService.ViewModels.ServiceSettingViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>CrowdMiner @Model.CrowdMinerConfigurationViewModel.SignalRGroup</h2>
+
+
+<script>
+    servicehub = null;
+
+                @if (Model != null)
+                {
+                    <text>
+    				signalRGroup = "@Model.CrowdMinerConfigurationViewModel.SignalRGroup";
+                    </text>
+                }
+
+            servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+
+            $.connection.hub.start().done(function () {
+
+                 @if (Model != null)
+                 {
+                     <text>
+                    servicehub.server.joinGroup("@Model.CrowdMinerConfigurationViewModel.SignalRGroup");
+                    </text>
+                 }
+
+                servicehub.server.getMiningRoomOverview("@Model.CrowdMinerConfigurationViewModel.Id").done(function (data) {
+
+                    $('#RoomName').text(data.Name);
+                    $('#RoomDescription').html(data.Description);
+                    $('#RoomHashesTotal').text(data.HashesTotal);
+                    $('#XMRMined').text(data.XMR_Mined);
+                    $('#XMR_Needed').text(data.XMR_Needed);
+
+                }).fail(function () {
+                    console.log('could not get RoomOverView data.');
+                });
+                 
+            });
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
+</script>
+
+<div class="roominfowrapper">
+    <div id="RoomName"></div>
+    <div id="RoomDescription"></div>
+    <div id="RoomHashesTotal"></div>
+    <div id="XMRMined"></div>
+    <div id="XMRNeeded"></div>
+</div>
+
+<div class="youstatswrapper">
+    <div id="youHashes"></div>
+    <div id="youHps"></div>
+    <div id="youXMR"></div>
+</div>

@@ -423,6 +423,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CrowdMinerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocalizationController.cs" />
     <Compile Include="Controllers\LuckyGameController.cs" />
@@ -459,9 +460,11 @@
     </Compile>
     <Compile Include="HubPipelineModules\GroupMonitorPipelineModule.cs" />
     <Compile Include="Hubs\ServiceHub.cs" />
+    <Compile Include="Implementation\MiningRoomBasic.cs" />
     <Compile Include="Implementation\OrderProcessDrone.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
     <Compile Include="Implementation\ProductImportGoogleMerchantXML.cs" />
+    <Compile Include="Interfaces\IMiningRoom.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
@@ -470,6 +473,10 @@
     <Compile Include="Migrations\201806051103572_DbInit.Designer.cs">
       <DependentUpon>201806051103572_DbInit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806071246225_MiningRoom.cs" />
+    <Compile Include="Migrations\201806071246225_MiningRoom.Designer.cs">
+      <DependentUpon>201806071246225_MiningRoom.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
@@ -477,6 +484,7 @@
     <Compile Include="Models\LuckyGameSettingsModel.cs" />
     <Compile Include="Models\MinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
+    <Compile Include="Models\MiningRoomModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
     <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
@@ -517,6 +525,8 @@
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
+    <Compile Include="ViewModels\CrowdMinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\MiningRoomViewModel.cs" />
     <Compile Include="ViewModels\PositionTrackerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameSettingsViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
@@ -873,6 +883,8 @@
     <Content Include="Views\Miner\Index.cshtml" />
     <Content Include="Views\LuckyGame\Index.cshtml" />
     <Content Include="Views\PositionTracker\Index.cshtml" />
+    <Content Include="Views\CrowdMiner\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutCrowdMiner.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -900,6 +912,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201806051103572_DbInit.resx">
       <DependentUpon>201806051103572_DbInit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806071246225_MiningRoom.resx">
+      <DependentUpon>201806071246225_MiningRoom.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

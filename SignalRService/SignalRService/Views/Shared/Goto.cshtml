@@ -1,13 +1,11 @@
 ﻿@model SignalRService.ViewModels.ServiceSettingViewModel
 
 @{
-    Layout = "~/Views/Shared/_LayoutMobile.cshtml";
+    //   Layout = "~/Views/Shared/_LayoutMobile.cshtml";
 }
 
 @*@Html.Action("RenderSignalRBase","Service")*@
-
-
-@Html.Partial("SignalRBase", Model)
+@*@Html.Partial("SignalRBase", Model)*@
 
 
 <h4>@Model.ServiceName</h4>
@@ -17,9 +15,8 @@
 {
 
     <script>
-@SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+    @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
     </script>
-
 
 }
 
@@ -62,6 +59,12 @@
         case SignalRService.Enums.EnumServiceType.BaseTracking:
             Layout = "~/Views/Shared/_LayoutReact.cshtml";
             @Html.Partial("~/Views/PositionTracker/Index.cshtml", Model.PositionTrackerConfiguratinViewModel);
+            break;
+
+        case SignalRService.Enums.EnumServiceType.CrowdMiner:
+            @renderMiner()
+            Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
+            @Html.Partial("~/Views/CrowdMiner/Index.cshtml", Model);
             break;
 
         default:

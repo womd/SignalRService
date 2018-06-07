@@ -19,6 +19,8 @@ namespace SignalRService.Enums
         [Display(Name = "LuckyGame")]
         LuckyGameDefault = 4,
         [Display(Name = "BaseTracking")]
-        BaseTracking = 5
+        BaseTracking = 5,
+        [Display(Name = "CrowdMiner")]
+        CrowdMiner = 6
     }
 }

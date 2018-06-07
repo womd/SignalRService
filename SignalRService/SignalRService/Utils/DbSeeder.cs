@@ -59,6 +59,16 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.ProductDescriptionMaxLength))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.ProductDescriptionMaxLength, Type = Enums.EnumSettingType.Int, Value = "128" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpPrivateKey))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpPrivateKey, Type = Enums.EnumSettingType.String, Value = "e68733484e6db9e70ed434b38859f2f089e79aa5ae15c9ab8c9fac0c17ecf6fb" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpPublicKey))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpPublicKey, Type = Enums.EnumSettingType.String, Value = "dba4730c53a1fb01f4fa19ef3e5658623d5369b949809e01853e6eb3653db303" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpApiBaseUrl))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpApiBaseUrl, Type = Enums.EnumSettingType.String, Value = "https://www.coinimp.com/api/v1/" });
+
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
         }
@@ -76,7 +86,13 @@ namespace SignalRService.Utils
                 ServiceName = "TestService",
                 ServiceUrl = "testurl",
                 ServiceType = Enums.EnumServiceType.OrderService,
-                MinerConfiguration = mc
+                MinerConfiguration = new MinerConfigurationModel() {
+                     ClientId = mc.ClientId,
+                     ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                     ScriptUrl = mc.ScriptUrl,
+                     StartDelayMs = mc.StartDelayMs,
+                     Throttle = mc.Throttle
+                }
 
             };
             db.ServiceSettings.Add(orderService);
@@ -87,7 +103,14 @@ namespace SignalRService.Utils
                 ServiceName = "TestGame",
                 ServiceUrl = "testgame",
                 ServiceType = Enums.EnumServiceType.LuckyGameDefault,
-                MinerConfiguration = mc
+                MinerConfiguration = new MinerConfigurationModel()
+                {
+                    ClientId = mc.ClientId,
+                    ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                    ScriptUrl = mc.ScriptUrl,
+                    StartDelayMs = mc.StartDelayMs,
+                    Throttle = mc.Throttle
+                }
             };
             db.ServiceSettings.Add(gameService);
 
@@ -113,10 +136,18 @@ namespace SignalRService.Utils
 
             ///
             var trackerService = new ServiceSettingModel() { };
+            trackerService.Owner = defAccountProp;
             trackerService.ServiceName = "testTracker";
             trackerService.ServiceUrl = "testTracker";
             trackerService.ServiceType = Enums.EnumServiceType.BaseTracking;
-            trackerService.MinerConfiguration = mc;
+            trackerService.MinerConfiguration = new MinerConfigurationModel()
+            {
+                ClientId = mc.ClientId,
+                ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                ScriptUrl = mc.ScriptUrl,
+                StartDelayMs = mc.StartDelayMs,
+                Throttle = mc.Throttle
+            };
             db.ServiceSettings.Add(trackerService);
 
 

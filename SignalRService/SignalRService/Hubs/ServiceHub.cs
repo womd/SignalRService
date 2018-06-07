@@ -306,6 +306,19 @@ namespace SignalRService.Hubs
             return Utils.LuckyGameUtils.GetCards();
         }
 
+        public async Task<ViewModels.MiningRoomViewModel>getMiningRoomOverview(int Id)
+        {
+            return await Task.Run(() => _getMiningRoomOverView(Id));
+        }
+
+        private ViewModels.MiningRoomViewModel _getMiningRoomOverView(int Id)
+        {
+            Implementation.MiningRoomBasic mr = new Implementation.MiningRoomBasic();
+            var overviewData = mr.GetOverview(Id);
+
+            return overviewData;
+        }
+
         public async Task<double> getMoneyRoomTotal(string group)
         {
             return await Task.Run(() => _getMoneyRoomTotal(group));

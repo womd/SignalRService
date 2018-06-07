@@ -15,6 +15,10 @@ namespace SignalRService.Enums
         ProductPartNumberMinLength = 5,
         ProductPartNumberMaxLength = 6,
         ProductDescriptionMinLength = 7,
-        ProductDescriptionMaxLength = 8
+        ProductDescriptionMaxLength = 8,
+
+        CoinImpPrivateKey = 9,
+        CoinImpPublicKey = 10,
+        CoinImpApiBaseUrl = 118
     }
 }

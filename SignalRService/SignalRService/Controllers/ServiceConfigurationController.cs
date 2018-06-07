@@ -14,10 +14,15 @@ namespace SignalRService.Controllers
     [Authorize]
     public class ServiceConfigurationController : BaseController
     {
-        private DAL.ServiceContext db = new DAL.ServiceContext();
-       
+        private DAL.ServiceContext db;
+        private Repositories.MinerContext minerContext;
 
-     
+        public ServiceConfigurationController()
+        {
+            db = new DAL.ServiceContext();
+            minerContext = new Repositories.MinerContext(db);
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -90,6 +95,23 @@ namespace SignalRService.Controllers
                     dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
                 }
 
+                if(model.MinerClientId != string.Empty)
+                {
+                    var defaultConfig = minerContext.GetDefaultMinerConfig();
+                    dbobj.MinerConfiguration = new Models.MinerConfigurationModel()
+                    {
+                        ClientId = model.MinerClientId,
+                        ScriptUrl = defaultConfig.ScriptUrl,
+                        Throttle = defaultConfig.Throttle,
+                        StartDelayMs = defaultConfig.StartDelayMs,
+                        ReportStatusIntervalMs = defaultConfig.ReportStatusIntervalMs
+                    };
+                }
+                else
+                {
+                    dbobj.MinerConfiguration = minerContext.GetDefaultMinerConfig();
+                }
+
                 if(model.ServiceType == (int)Enums.EnumServiceType.LuckyGameDefault)
                 {
                //     var defRule0 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 2, WinFactor = 1.2f };
@@ -113,8 +135,16 @@ namespace SignalRService.Controllers
                     dbobj.LuckyGameSettings.Add(gsmodel);
                 }
 
-                Repositories.MinerContext minerContext = new Repositories.MinerContext(db);
-                dbobj.MinerConfiguration = minerContext.GetDefaultMinerConfig();
+                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMiner)
+                {
+                    if (dbobj.MiningRooms == null)
+                        dbobj.MiningRooms = new List<Models.MiningRoomModel>();
+
+                    dbobj.MiningRooms.Add( new Models.MiningRoomModel() {
+                             Name = model.ServiceName,
+                             Description = "-- -- --"
+                    });
+                }
                
                 db.SaveChanges();
 
@@ -185,6 +215,8 @@ namespace SignalRService.Controllers
                         db.StripeSettings.Remove(dbObj.StripeSettings.FirstOrDefault());
                     }
                 }
+
+                dbObj.MinerConfiguration.ClientId = model.MinerClientId;
 
                 db.SaveChanges();
 

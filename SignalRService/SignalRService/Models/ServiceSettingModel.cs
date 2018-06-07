@@ -26,6 +26,8 @@ namespace SignalRService.Models
 
         public virtual MinerConfigurationModel MinerConfiguration { get; set; }
 
+        public virtual ICollection<MiningRoomModel> MiningRooms { get; set; }
+
     }
 
    

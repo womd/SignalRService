@@ -31,7 +31,10 @@ namespace SignalRService.Utils
                 ServiceUrl = dbmodel.ServiceUrl,
                 ServiceType = (int)dbmodel.ServiceType,
                 EnumServiceTpe = dbmodel.ServiceType,
+
                 MinerConfigurationViewModel = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel(),
+                MinerClientId = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel().ClientId,
+
                 SiganlRBaseConfigurationVieModel = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
                 {
                     SinalRGroup = dbmodel.ServiceUrl.ToLower()
@@ -51,8 +54,9 @@ namespace SignalRService.Utils
                 StripeSecretKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "",
                 StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "",
                 LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() },
-                PositionTrackerConfiguratinViewModel = new PositionTrackerConfigurationViewModel() { Id = dbmodel.ID, SignalRGroup = dbmodel.ServiceUrl.ToLower() }
-                
+                PositionTrackerConfiguratinViewModel = new PositionTrackerConfigurationViewModel() { Id = dbmodel.ID, SignalRGroup = dbmodel.ServiceUrl.ToLower() },
+                CrowdMinerConfigurationViewModel = new CrowdMinerConfigurationViewModel() { Id = dbmodel.MiningRooms.FirstOrDefault() != null ? dbmodel.MiningRooms.FirstOrDefault().Id : 0, SignalRGroup = dbmodel.ServiceUrl.ToLower() }
+
             };
         }
 

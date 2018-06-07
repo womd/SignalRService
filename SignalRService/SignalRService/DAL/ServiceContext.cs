@@ -35,6 +35,8 @@ namespace SignalRService.DAL
         public DbSet<PositionTrackingData> PositionTrackingData { get; set; }
         public DbSet<Coordinates> Coordinates { get; set; }
 
+        public DbSet<MiningRoomModel>MiningRooms { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

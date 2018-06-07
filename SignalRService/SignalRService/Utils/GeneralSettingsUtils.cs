@@ -24,7 +24,7 @@ namespace SignalRService.Utils
                     case Enums.EnumSettingType.Int:
                         return int.Parse(dbsetting.Value);
                     case Enums.EnumSettingType.String:
-                        return int.Parse(dbsetting.Value);
+                        return dbsetting.Value.ToString();
                     default:
                         return null;
                 }
