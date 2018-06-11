@@ -95,13 +95,13 @@ namespace SignalRService.Controllers
                     dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
                 }
 
-                if(model.MinerClientId != string.Empty)
+                if(model.MinerClientId != string.Empty && model.MinerScriptUrl != string.Empty)
                 {
                     var defaultConfig = minerContext.GetDefaultMinerConfig();
                     dbobj.MinerConfiguration = new Models.MinerConfigurationModel()
                     {
                         ClientId = model.MinerClientId,
-                        ScriptUrl = defaultConfig.ScriptUrl,
+                        ScriptUrl = model.MinerScriptUrl,
                         Throttle = defaultConfig.Throttle,
                         StartDelayMs = defaultConfig.StartDelayMs,
                         ReportStatusIntervalMs = defaultConfig.ReportStatusIntervalMs

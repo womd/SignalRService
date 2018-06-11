@@ -10,6 +10,7 @@ namespace SignalRService.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string DescriptionMarkdown { get; set; }
         public decimal HashesTotal { get; set; }
         public decimal XMR_Mined { get; set; }
         public decimal XMR_Needed { get; set; }

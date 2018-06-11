@@ -26,6 +26,7 @@ namespace SignalRService.ViewModels
         public string StripeSecretKey { get; set; }
         public string StripePublishableKey { get; set; }
         public string MinerClientId { get; set; }
+        public string MinerScriptUrl { get; set; }
         
     }
 }

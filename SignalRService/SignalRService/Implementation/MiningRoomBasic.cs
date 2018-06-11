@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using Microsoft.AspNet.SignalR;
+using SignalRService.Hubs;
 using SignalRService.Interfaces;
 using SignalRService.ViewModels;
 
@@ -24,8 +26,17 @@ namespace SignalRService.Implementation
             cmpPublic = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPublicKey);
         }
 
+        #region interface methods
+
+        private static KeyValuePair<DateTime,ViewModels.MiningRoomViewModel>cachedVm;
         public ViewModels.MiningRoomViewModel GetOverview(int MiningRoomId)
         {
+            var refDate = cachedVm.Key.AddSeconds(60);
+            if(refDate > DateTime.Now)
+            {
+                return cachedVm.Value;
+            }
+           
             var dbRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
             if (dbRoom == null)
                 return new MiningRoomViewModel();
@@ -34,12 +45,43 @@ namespace SignalRService.Implementation
             var TotalHash = GetClientTotalHash(minerClientId);
             var TotalReward = GetClientReward(minerClientId);
 
-            return new MiningRoomViewModel() {
+            var md = new MarkdownDeep.Markdown();
+            
+            var returnVm = new MiningRoomViewModel()
+            {
+                Id = dbRoom.Id,
+                Name = dbRoom.Name,
+                Description = md.Transform(dbRoom.Description),
+                DescriptionMarkdown = dbRoom.Description,
                 HashesTotal = TotalHash,
                 XMR_Mined = TotalReward
             };
+
+            cachedVm = new KeyValuePair<DateTime, MiningRoomViewModel>(DateTime.Now, returnVm);
+            SendRoomInfoUpdateToClients(returnVm, dbRoom.ServiceSetting.ServiceUrl);
+            return returnVm;
         }
 
+        public ViewModels.MiningRoomUpdateResult UpdateDescription(int MiningRoomId, string Content)
+        {
+
+            var mr = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
+            if (mr == null)
+                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "invalid id" };
+
+            mr.Description = Content;
+            db.SaveChanges();
+            return new MiningRoomUpdateResult() { Success = true };
+        }
+
+        public void SendRoomInfoUpdateToClients(MiningRoomViewModel vm, string signalRGroup)
+        {
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(signalRGroup.ToLower()).updateMinigRoomOverView(vm);
+        }
+
+        #endregion
+
+       
         private int GetClientTotalHash(string MinerClientId)
         {
             string apiUrlComplete = apiUrl + "hashes?site-key=" + MinerClientId + "&public=" + cmpPublic + "&private=" + cmpPrivate;

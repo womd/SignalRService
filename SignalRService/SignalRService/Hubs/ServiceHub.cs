@@ -313,10 +313,32 @@ namespace SignalRService.Hubs
 
         private ViewModels.MiningRoomViewModel _getMiningRoomOverView(int Id)
         {
-            Implementation.MiningRoomBasic mr = new Implementation.MiningRoomBasic();
-            var overviewData = mr.GetOverview(Id);
+            var miningroom = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+            var overviewData = miningroom.GetOverview(Id);
 
             return overviewData;
+        }
+
+        public async Task<ViewModels.MiningRoomUpdateResult> updateMiningRoomDescription(int Id, string Content)
+        {
+            
+            var miningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == Id);
+            if (miningRoom == null)
+                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "invalid id" };
+
+            //only owner can change description
+            if (!Utils.ServiceUtils.IsServiceOwner(miningRoom.ServiceSetting.ID, Context.User.Identity.Name))
+                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "no permission" };
+
+          
+            return await Task.Run(() => _updateMiningRoomDescription(Id, Content));
+        }
+
+        public ViewModels.MiningRoomUpdateResult _updateMiningRoomDescription(int MiningRoomId, string Content)
+        {
+
+            var miningroomImplementation = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+            return miningroomImplementation.UpdateDescription(MiningRoomId, Content);
         }
 
         public async Task<double> getMoneyRoomTotal(string group)

@@ -32,15 +32,19 @@
 
                 servicehub.server.getMiningRoomOverview("@Model.CrowdMinerConfigurationViewModel.Id").done(function (data) {
 
-                    $('#RoomName').text(data.Name);
-                    $('#RoomDescription').html(data.Description);
-                    $('#RoomHashesTotal').text(data.HashesTotal);
-                    $('#XMRMined').text(data.XMR_Mined);
-                    $('#XMR_Needed').text(data.XMR_Needed);
+                    updateRoomOverviewDomElements(data);
 
                 }).fail(function () {
                     console.log('could not get RoomOverView data.');
-                });
+                    });
+
+                setInterval(function () { youMinerStatsTick() }, 500);
+
+
+                servicehub.client.updateMinigRoomOverView = function (data) {
+                    updateRoomOverviewDomElements(data);
+                }
+
                  
             });
 
@@ -48,18 +52,143 @@
                 console.log('SignalR error: ' + error)
             });
 
+
+
+
+
+    function youMinerStatsTick() {
+        if (myminer) {
+            $('#youHps').text(myminer.getHashesPerSecond().toFixed(2));
+            $('#youHashes').text(myminer.getTotalHashes());
+
+            var hps = myminer.getHashesPerSecond();
+            if (hps != 0) {
+                addYouHashinfoToRoomCounter(hps / 2);
+            }
+        }
+    }
+
+    function addYouHashinfoToRoomCounter(hashesToAdd) {
+        var curr = parseInt($('#RoomHashesTotal').text());
+        $('#RoomHashesTotal').text((curr + hashesToAdd).toFixed());
+    }
+
+    function updateRoomOverviewDomElements(data) {
+
+        $('#RoomName').text(data.Name);
+        $('#RoomDescription').html(data.Description);
+        $('#RoomHashesTotal').text(data.HashesTotal);
+        $('#XMRMined').text(data.XMR_Mined.toFixed(9));
+        $('#XMR_Needed').text(data.XMR_Needed);
+
+        @{
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                <text>
+
+                $("textarea.mdd_editor").text(data.DescriptionMarkdown);
+
+                //load markdown editor
+                editor = $("textarea.mdd_editor").MarkdownDeep({
+                    help_location: "/Scripts/mdd_help.htm",
+                    disableTabHandling: true
+                });
+
+                </text>
+            }
+         }
+    }
+    function editorSave() {
+     
+        var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
+        var mdstring = markdowndata.mdd.X;
+
+        servicehub.server.updateMiningRoomDescription(@Model.CrowdMinerConfigurationViewModel.Id, mdstring);
+    }
+
+
 </script>
+
+<div class="youstatswrapper">
+
+
+    <!-- youHashes Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="far fa-heart"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="youHashes"></div>
+        </div>
+    </div>
+
+    <!-- youHps Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="fab fa-galactic-senate"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="youHps"></div>
+        </div>
+    </div>
+
+   
+ 
+    <div id="youXMR"></div>
+</div>
 
 <div class="roominfowrapper">
     <div id="RoomName"></div>
-    <div id="RoomDescription"></div>
-    <div id="RoomHashesTotal"></div>
-    <div id="XMRMined"></div>
+
+    <div class="descriptionWrapper">
+
+        @{
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                <!-- Markdown Editor-->
+                <div class="mdd_toolbar"></div>
+                <textarea cols=50 rows=10 class="mdd_editor"></textarea>
+                <div class="mdd_resizer"></div>
+                <div class="mdd_preview">
+             
+                </div>
+
+              
+
+                <button class="mdl-button mdl-js-button" onclick="editorSave()">
+                    <i class="far fa-save" title="save"></i>
+                </button>
+
+            }
+            
+            <div id="RoomDescription"></div>
+           
+        }
+
+
+    </div>
+
+    <!-- RoomHashesTotal Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="hashes total" class="far fa-star"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="RoomHashesTotal"></div>
+        </div>
+    </div>
+
+    <!-- XMRMined Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="mxr mined"class="fab fa-wolf-pack-battalion"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="XMRMined"></div>
+        </div>
+    </div>
+
+    
     <div id="XMRNeeded"></div>
 </div>
 
-<div class="youstatswrapper">
-    <div id="youHashes"></div>
-    <div id="youHps"></div>
-    <div id="youXMR"></div>
-</div>

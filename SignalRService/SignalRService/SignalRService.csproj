@@ -77,6 +77,9 @@
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
     </Reference>
+    <Reference Include="MarkdownDeep, Version=1.5.4615.26275, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MarkdownDeep.Full.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
@@ -447,12 +450,14 @@
     <Compile Include="Enums\EnumOrderState.cs" />
     <Compile Include="Enums\EnumPaymentState.cs" />
     <Compile Include="Enums\EnumServiceHubMethods.cs" />
+    <Compile Include="Enums\EnumMiningRoomType.cs" />
     <Compile Include="Enums\EnumServiceType.cs" />
     <Compile Include="Enums\EnumSettingType.cs" />
     <Compile Include="Enums\EnumShippingState.cs" />
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
     <Compile Include="Exceptions\SettingNotFoundException.cs" />
+    <Compile Include="Factories\MiningRoomFactory.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
     <Compile Include="Factories\ProductImportFactory.cs" />
     <Compile Include="Global.asax.cs">
@@ -526,6 +531,7 @@
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\CrowdMinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\MiningRoomUpdateResult.cs" />
     <Compile Include="ViewModels\MiningRoomViewModel.cs" />
     <Compile Include="ViewModels\PositionTrackerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameSettingsViewModel.cs" />
@@ -763,6 +769,15 @@
     <Content Include="Scripts\jtable\themes\metro\red\jtable.css" />
     <Content Include="Scripts\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Scripts\jtable\themes\metro\red\loading.gif" />
+    <Content Include="Scripts\MarkdownDeep License.txt" />
+    <Content Include="Scripts\MarkdownDeep Quick Reference.txt" />
+    <Content Include="Scripts\MarkdownDeepLib.min.js" />
+    <Content Include="Scripts\mdd_ajax_loader.gif" />
+    <Content Include="Scripts\mdd_gripper.png" />
+    <Content Include="Scripts\mdd_help.htm" />
+    <Content Include="Scripts\mdd_modal_background.png" />
+    <Content Include="Scripts\mdd_styles.css" />
+    <Content Include="Scripts\mdd_toolbar.png" />
     <Content Include="Scripts\PositionTracker.jsx" />
     <Content Include="Scripts\LuckyGameWinningRules.jsx" />
     <Content Include="Scripts\MoneyOverview.jsx" />

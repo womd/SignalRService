@@ -34,6 +34,7 @@ namespace SignalRService.Utils
 
                 MinerConfigurationViewModel = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel(),
                 MinerClientId = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel().ClientId,
+                MinerScriptUrl = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel().ScriptUrl,
 
                 SiganlRBaseConfigurationVieModel = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
                 {
