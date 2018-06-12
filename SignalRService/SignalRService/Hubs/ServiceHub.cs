@@ -100,6 +100,22 @@ namespace SignalRService.Hubs
             var awaitableTask = Groups.Add(Context.ConnectionId, name.ToLower());
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(name.ToLower()).updateGroupConnections(dbGroup.Connections.Count);
 
+            //when its miningroom use its impelmentation
+            var dbservice = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == name);
+            if(dbservice != null)
+            {
+                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMiner)
+                {
+                    var mr = dbservice.MiningRooms.FirstOrDefault();
+                    if (mr != null)
+                    {
+                        var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                        var mr_vm = mri.GetOverview(mr.Id);
+                        mri.SendRoomInfoUpdateToClient(mr_vm, Context.ConnectionId);
+                    }
+                }
+            }
+
             //return Groups.Add(Context.ConnectionId, name.ToLower());
             return awaitableTask;
         }

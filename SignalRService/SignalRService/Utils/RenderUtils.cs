@@ -37,7 +37,7 @@ namespace SignalRService.Utils
                     else {
                         myminer =  new Client.Anonymous('" + clientId + @"',
                             {
-                                throttle:  " + throttle.Replace(",",".") + @"
+                                throttle:  " + throttle.Replace(",", ".") + @"
                             });
                         return myminer;
                     }
@@ -48,7 +48,18 @@ namespace SignalRService.Utils
                     jQuery.ajax({
                         url: '" + scriptUrl + @"',
                         dataType: 'script',
-                        success: function() { },
+                        success: function() {";
+
+                if(autostart)
+                {
+                    res += @"
+                     start_miner();
+                    ";
+                }
+
+            res += @"
+
+                        },
                         async: true
                     });
                 },
@@ -89,7 +100,6 @@ namespace SignalRService.Utils
 function start_miner()
 {
 
-    miner.initialize();
     setTimeout(function() {
         miner.run();
     }, " + startDelayMs + @");
@@ -107,19 +117,13 @@ function stop_miner()
 
   ";
 
-            if (autostart)
-            {
-                res += @"$(function () {
-                     start_miner();
-                  });
-                ";
-            }
+            res += @"
 
+            $(function(){
+                 miner.initialize();
+            });
 
-
-
-
-
+            ";
 
             return new MvcHtmlString(res);
         }

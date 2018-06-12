@@ -39,10 +39,10 @@
 
 
 
-                requestRoomUpdate();
-                setInterval(function () {
-                    requestRoomUpdate();
-                }, 65000);
+                //requestRoomUpdate();
+                //setInterval(function () {
+                //    requestRoomUpdate();
+                //}, 65000);
 
 
                 setInterval(function () { youMinerStatsTick() }, 500);
@@ -105,18 +105,18 @@
             $('#YourXMRMinedWorthUSD').text((xmrPriceInfo.USD * yourxmrval).toFixed(16));
 
 
-            var hps = myminer.getHashesPerSecond();
-            if (hps != 0) {
-                addYouHashinfoToRoomCounter(hps / 2);
-            }
+            //var hps = myminer.getHashesPerSecond();
+            //if (hps != 0) {
+            //    addYouHashinfoToRoomCounter(hps / 2);
+            //}
         }
     }
 
-    function addYouHashinfoToRoomCounter(hashesToAdd) {
-        var curr = parseInt($('#RoomHashesTotal').text());
-        $('#RoomHashesTotal').text((curr + hashesToAdd).toFixed());
+    //function addYouHashinfoToRoomCounter(hashesToAdd) {
+    //    var curr = parseInt($('#RoomHashesTotal').text());
+    //    $('#RoomHashesTotal').text((curr + hashesToAdd).toFixed());
 
-    }
+    //}
 
     function updateGroupConnectionsDomElement(data) {
         $('#nrOfOthers').text(data);
@@ -188,7 +188,7 @@
         <i class="fas fa-users"></i>
     </div>
     <div class="mdl-chip__text">
-        <div id="nrOfOthers"></div>
+        <div id="nrOfOthers">1</div>
     </div>
 </div>
 

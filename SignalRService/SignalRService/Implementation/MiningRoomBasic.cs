@@ -84,6 +84,11 @@ namespace SignalRService.Implementation
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(signalRGroup.ToLower()).updateMinigRoomOverView(vm);
         }
 
+        public void SendRoomInfoUpdateToClient(MiningRoomViewModel vm, string connectionId)
+        {
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).updateMinigRoomOverView(vm);
+        }
+    
         #endregion
 
        
