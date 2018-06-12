@@ -18,7 +18,7 @@ namespace SignalRService.Utils
                     case Enums.EnumSettingType.Bool:
                         return bool.Parse(dbsetting.Value);
                     case Enums.EnumSettingType.Decimal:
-                        return decimal.Parse(dbsetting.Value);
+                        return decimal.Parse(dbsetting.Value, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
                     case Enums.EnumSettingType.Float:
                         return float.Parse(dbsetting.Value);
                     case Enums.EnumSettingType.Int:

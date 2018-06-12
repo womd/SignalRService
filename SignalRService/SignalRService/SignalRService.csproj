@@ -482,6 +482,10 @@
     <Compile Include="Migrations\201806071246225_MiningRoom.Designer.cs">
       <DependentUpon>201806071246225_MiningRoom.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806121048258_SignalRGroups.cs" />
+    <Compile Include="Migrations\201806121048258_SignalRGroups.Designer.cs">
+      <DependentUpon>201806121048258_SignalRGroups.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
@@ -497,6 +501,7 @@
     <Compile Include="Models\ProductImportConfiguration.cs" />
     <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Models\SignalRGroupsModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
     <Compile Include="Repositories\GameSettingsContext.cs" />
     <Compile Include="Repositories\GameSettingsRepository.cs" />
@@ -522,6 +527,7 @@
     <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\LuckyGameUtils.cs" />
+    <Compile Include="Utils\MiningRoomInfoCache.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\RenderUtils.cs" />
@@ -930,6 +936,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806071246225_MiningRoom.resx">
       <DependentUpon>201806071246225_MiningRoom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806121048258_SignalRGroups.resx">
+      <DependentUpon>201806121048258_SignalRGroups.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

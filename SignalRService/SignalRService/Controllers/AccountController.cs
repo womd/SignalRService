@@ -399,7 +399,10 @@ namespace SignalRService.Controllers
             var toRemove = user.SignalRConnections.ToList();
             foreach(var item in toRemove)
             {
+                
                 var rm = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == item);
+                var ms = rm.MinerStatus;
+                db.MinerStatus.Remove(ms);
                 db.SignalRConnections.Remove(rm);
             }
             db.SaveChanges();

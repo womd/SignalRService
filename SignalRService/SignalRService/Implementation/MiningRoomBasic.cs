@@ -17,49 +17,54 @@ namespace SignalRService.Implementation
         string apiUrl;
         string cmpPrivate;
         string cmpPublic;
-
+       
         public MiningRoomBasic()
         {
             db = new DAL.ServiceContext();
             apiUrl = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiBaseUrl);
             cmpPrivate = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPrivateKey);
             cmpPublic = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPublicKey);
+
         }
 
         #region interface methods
 
-        private static KeyValuePair<DateTime,ViewModels.MiningRoomViewModel>cachedVm;
+        
         public ViewModels.MiningRoomViewModel GetOverview(int MiningRoomId)
         {
-            var refDate = cachedVm.Key.AddSeconds(60);
-            if(refDate > DateTime.Now)
-            {
-                return cachedVm.Value;
-            }
+            int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec);
+            ViewModels.MiningRoomViewModel result = new MiningRoomViewModel();
+
+
+            var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
+            if (cacheRes != null)
+                return cacheRes;
+
            
             var dbRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
             if (dbRoom == null)
-                return new MiningRoomViewModel();
+                return result;
 
             var minerClientId = dbRoom.ServiceSetting.MinerConfiguration.ClientId;
             var TotalHash = GetClientTotalHash(minerClientId);
             var TotalReward = GetClientReward(minerClientId);
 
             var md = new MarkdownDeep.Markdown();
-            
-            var returnVm = new MiningRoomViewModel()
-            {
-                Id = dbRoom.Id,
-                Name = dbRoom.Name,
-                Description = md.Transform(dbRoom.Description),
-                DescriptionMarkdown = dbRoom.Description,
-                HashesTotal = TotalHash,
-                XMR_Mined = TotalReward
-            };
 
-            cachedVm = new KeyValuePair<DateTime, MiningRoomViewModel>(DateTime.Now, returnVm);
-            SendRoomInfoUpdateToClients(returnVm, dbRoom.ServiceSetting.ServiceUrl);
-            return returnVm;
+
+            result.Id = dbRoom.Id;
+            result.Name = dbRoom.Name;
+            result.Description = md.Transform(dbRoom.Description);
+            result.DescriptionMarkdown = dbRoom.Description;
+            result.HashesTotal = TotalHash;
+            result.XMR_Mined = TotalReward;
+            result.DataSnapshot = DateTime.Now;
+
+            if(result.HashesTotal != 0)
+                Utils.MiningRoomInfoCache.AddItem(MiningRoomId, result);
+
+            SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl);
+            return result;
         }
 
         public ViewModels.MiningRoomUpdateResult UpdateDescription(int MiningRoomId, string Content)

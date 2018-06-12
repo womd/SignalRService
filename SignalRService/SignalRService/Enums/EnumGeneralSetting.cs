@@ -19,6 +19,8 @@ namespace SignalRService.Enums
 
         CoinImpPrivateKey = 9,
         CoinImpPublicKey = 10,
-        CoinImpApiBaseUrl = 118
+        CoinImpApiBaseUrl = 11,
+        CoinImpApiCallTresholdSec = 12, 
+        CoinImpXMRPayoutPer1MHashes = 13
     }
 }

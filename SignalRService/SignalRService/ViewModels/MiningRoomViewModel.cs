@@ -14,5 +14,6 @@ namespace SignalRService.ViewModels
         public decimal HashesTotal { get; set; }
         public decimal XMR_Mined { get; set; }
         public decimal XMR_Needed { get; set; }
+        public DateTime DataSnapshot { get; set; }
     }
 }

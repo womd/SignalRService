@@ -37,6 +37,8 @@ namespace SignalRService.DAL
 
         public DbSet<MiningRoomModel>MiningRooms { get; set; }
 
+        public DbSet<SignalRGroupsModel>SignalRGroups { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 

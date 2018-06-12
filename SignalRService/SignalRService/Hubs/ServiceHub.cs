@@ -74,7 +74,34 @@ namespace SignalRService.Hubs
 
         public Task JoinGroup(string name)
         {
-            return Groups.Add(Context.ConnectionId, name.ToLower());
+            var sconn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == Context.ConnectionId);
+            if(sconn == null)
+            {
+                SimpleLogger logger = new SimpleLogger();
+                logger.Debug("JoinGroup on unknownConnectionId...");
+            }
+
+            var dbGroup = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == name);
+            if(dbGroup == null)
+            {
+                dbGroup = new Models.SignalRGroupsModel();
+                dbGroup.Connections = new List<SignalRService.Models.SignalRConnectionModel>();
+                dbGroup.Connections.Add(sconn);
+                dbGroup.GroupName = name.ToLower();
+                db.SignalRGroups.Add(dbGroup);
+            }
+            else
+            {
+                dbGroup.Connections.Add(sconn);
+            }
+
+            db.SaveChanges();
+
+            var awaitableTask = Groups.Add(Context.ConnectionId, name.ToLower());
+            GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(name.ToLower()).updateGroupConnections(dbGroup.Connections.Count);
+
+            //return Groups.Add(Context.ConnectionId, name.ToLower());
+            return awaitableTask;
         }
 
         public Task LeaveGroup(string groupName)
