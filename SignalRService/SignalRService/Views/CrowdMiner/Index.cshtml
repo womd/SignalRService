@@ -187,8 +187,9 @@
             element.addClass("normalValueFontFast");
 
         }, 500);
-
     }
+
+   
 
     function updateRoomOverviewDomElements(data) {
 
@@ -209,14 +210,14 @@
         var worthBTC = xmrPriceInfo.BTC * data.XMR_Mined;
 
         toggle_update_styles($('#XMRMinedWorthBTC'));
-        $('#XMRMinedWorthBTC').text(worthBTC.toFixed(20));
+        $('#XMRMinedWorthBTC').text(worthBTC.toFixed(9));
 
 
         toggle_update_styles($('#XMRMinedWorthEUR'));
-        $('#XMRMinedWorthEUR').text(worthEUR.toFixed(16));
+        $('#XMRMinedWorthEUR').text(worthEUR.toFixed(9));
 
         toggle_update_styles($('#XMRMinedWorthUSD'));
-        $('#XMRMinedWorthUSD').text(worthUSD.toFixed(16));
+        $('#XMRMinedWorthUSD').text(worthUSD.toFixed(9));
 
         @{ 
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name)) {
