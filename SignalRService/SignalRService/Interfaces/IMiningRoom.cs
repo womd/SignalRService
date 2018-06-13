@@ -17,5 +17,6 @@ namespace SignalRService.Interfaces
 
         void SendRoomInfoUpdateToClients(ViewModels.MiningRoomViewModel vm, string signalRGroup);
         void SendRoomInfoUpdateToClient(ViewModels.MiningRoomViewModel vm, string connectionId);
+     
     }
 }

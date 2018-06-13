@@ -15,5 +15,6 @@ namespace SignalRService.ViewModels
         public decimal XMR_Mined { get; set; }
         public decimal XMR_Needed { get; set; }
         public DateTime DataSnapshot { get; set; }
+        public float HpsRoom { get; set; }
     }
 }

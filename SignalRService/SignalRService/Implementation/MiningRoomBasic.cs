@@ -36,14 +36,24 @@ namespace SignalRService.Implementation
             ViewModels.MiningRoomViewModel result = new MiningRoomViewModel();
 
 
-            var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
-            if (cacheRes != null)
-                return cacheRes;
+           
 
            
             var dbRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
             if (dbRoom == null)
                 return result;
+
+            var currGroup = dbRoom.ServiceSetting.ServiceUrl.ToLower();
+            var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
+            result.HpsRoom = currGroupDb.Connections.Sum(x => x.MinerStatus.Hps);
+            
+            var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
+            if (cacheRes != null)
+            {
+                cacheRes.HpsRoom = result.HpsRoom;
+                return cacheRes;
+            }
+
 
             var minerClientId = dbRoom.ServiceSetting.MinerConfiguration.ClientId;
             var TotalHash = GetClientTotalHash(minerClientId);
@@ -62,10 +72,10 @@ namespace SignalRService.Implementation
             result.XMR_Mined = TotalReward;
             result.DataSnapshot = DateTime.Now;
 
-            if(result.HashesTotal != 0)
+           // if(result.HashesTotal != 0)
                 Utils.MiningRoomInfoCache.AddItem(MiningRoomId, result);
 
-            SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl);
+            SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl.ToLower());
             return result;
         }
 
@@ -92,9 +102,10 @@ namespace SignalRService.Implementation
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).updateMinigRoomOverView(vm);
         }
     
+       
         #endregion
 
-       
+
         private int GetClientTotalHash(string MinerClientId)
         {
             string apiUrlComplete = apiUrl + "hashes?site-key=" + MinerClientId + "&public=" + cmpPublic + "&private=" + cmpPrivate;

@@ -143,7 +143,7 @@ namespace SignalRService.Utils
             var trackerService = new ServiceSettingModel() { };
             trackerService.Owner = defAccountProp;
             trackerService.ServiceName = "testTracker";
-            trackerService.ServiceUrl = "testTracker";
+            trackerService.ServiceUrl = "testtracker";
             trackerService.ServiceType = Enums.EnumServiceType.BaseTracking;
             trackerService.MinerConfiguration = new MinerConfigurationModel()
             {
@@ -159,7 +159,7 @@ namespace SignalRService.Utils
             var miningRoom0Service = new ServiceSettingModel() { };
             miningRoom0Service.Owner = defAccountProp;
             miningRoom0Service.ServiceName = "testMiningRoom0";
-            miningRoom0Service.ServiceUrl = "testMiningRoom0";
+            miningRoom0Service.ServiceUrl = "testminingroom0";
             miningRoom0Service.ServiceType = Enums.EnumServiceType.CrowdMiner;
             miningRoom0Service.MinerConfiguration = new MinerConfigurationModel()
             {
@@ -177,7 +177,7 @@ namespace SignalRService.Utils
             var miningRoom1 = new ServiceSettingModel() { };
             miningRoom1.Owner = defAccountProp;
             miningRoom1.ServiceName = "testMiningRoom1";
-            miningRoom1.ServiceUrl = "testMiningRoom1";
+            miningRoom1.ServiceUrl = "testminingroom1";
             miningRoom1.ServiceType = Enums.EnumServiceType.CrowdMiner;
             miningRoom1.MinerConfiguration = new MinerConfigurationModel()
             {

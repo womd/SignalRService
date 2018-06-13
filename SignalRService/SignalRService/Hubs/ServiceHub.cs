@@ -597,6 +597,25 @@ namespace SignalRService.Hubs
             {
                 var user = userRepository.GetUserFromSignalR(Context.ConnectionId);
                 var newtotal = userRepository.DepositMoneyToUser(user.Id, data.hps);
+
+                var conn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == Context.ConnectionId);
+                if(conn != null)
+                {
+                    var miningrooms = db.MiningRooms.Where(ln => ln.ServiceSetting.ServiceType == Enums.EnumServiceType.CrowdMiner).ToList();
+                    foreach(var group in conn.Groups)
+                    {
+                        var roomsToUpdate = miningrooms.Where(ln => ln.ServiceSetting.ServiceUrl == group.GroupName).ToList();
+                        if (roomsToUpdate.Count > 0)
+                        {
+                            foreach (var room in roomsToUpdate)
+                            {
+                                var mrb = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                                var vm = mrb.GetOverview(room.Id);
+                                mrb.SendRoomInfoUpdateToClients(vm, room.ServiceSetting.ServiceUrl.ToLower());
+                            }
+                        }
+                    }
+                }
             }
         }
 

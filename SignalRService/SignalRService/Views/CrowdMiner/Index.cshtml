@@ -99,6 +99,8 @@
         updateGroupConnectionsDomElement(data);
     }
 
+    
+
 
             $.connection.hub.error(function (error) {
                 console.log('SignalR error: ' + error)
@@ -190,11 +192,15 @@
     }
 
    
-
+    var currentRoomOverViewData;
     function updateRoomOverviewDomElements(data) {
-
+        currentRoomOverViewData = data;
         $('#RoomName').text(data.Name);
         $('#RoomDescription').html(data.Description);
+
+        
+        toggle_update_styles($('#RoomHps'));
+        $('#RoomHps').text(data.HpsRoom.toFixed(2));
 
         toggle_update_styles($('#RoomHashesTotal'));
         $('#RoomHashesTotal').text(data.HashesTotal);
@@ -375,6 +381,16 @@
         }
 
 
+    </div>
+
+    <!-- RoomHps Chip -->
+    <div class="mdl-chip mdl-chip--contact">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="fab fa-galactic-senate"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="RoomHps">0</div>
+        </div>
     </div>
 
     <!-- RoomHashesTotal Chip -->
