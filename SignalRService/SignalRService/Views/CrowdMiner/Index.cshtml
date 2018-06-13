@@ -47,7 +47,20 @@
         loadXMRPrices();
         setInterval(function () { loadXMRPrices() }, 54000);
 
-    });
+          @{
+              if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+              {
+                <text>
+                //load markdown editor
+                editor = $("textarea.mdd_editor").MarkdownDeep({
+                    help_location: "/Scripts/mdd_help.htm",
+                    disableTabHandling: true
+                });
+                </text>
+              }
+           }
+
+              });
 
     servicehub = null;
 
@@ -187,7 +200,7 @@
 
         toggle_update_styles($('#XMRMined'));
         $('#XMRMined').text(data.XMR_Mined.toFixed(9));
-        
+
         toggle_update_styles($('#XMR_Needed'));
         $('#XMR_Needed').text(data.XMR_Needed);
 
@@ -197,27 +210,31 @@
 
         toggle_update_styles($('#XMRMinedWorthBTC'));
         $('#XMRMinedWorthBTC').text(worthBTC.toFixed(20));
-        
+
 
         toggle_update_styles($('#XMRMinedWorthEUR'));
         $('#XMRMinedWorthEUR').text(worthEUR.toFixed(16));
 
         toggle_update_styles($('#XMRMinedWorthUSD'));
         $('#XMRMinedWorthUSD').text(worthUSD.toFixed(16));
-       
+
+        @{ 
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name)) {
+            <text>
+             $("textarea.mdd_editor").text(data.DescriptionMarkdown);
+            </text>
+            }
+         }
+    }
 
         @{
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
             {
                 <text>
 
-                $("textarea.mdd_editor").text(data.DescriptionMarkdown);
+               
 
-                //load markdown editor
-                editor = $("textarea.mdd_editor").MarkdownDeep({
-                    help_location: "/Scripts/mdd_help.htm",
-                    disableTabHandling: true
-                });
+              
 
             function editorSave() {
                 var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
@@ -230,7 +247,7 @@
                 </text>
             }
          }
-    }
+    
    
 
     var xmrPriceInfo = { "BTC": 0.0, "USD": 0.0, "EUR": 0.0 };
@@ -250,7 +267,7 @@
 </script>
 
 
-
+<div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
 
 <!-- other users Chip -->
 <div class="mdl-chip mdl-chip--contact">
@@ -289,7 +306,7 @@
     <!-- XMRMined Chip -->
     <div class="mdl-chip mdl-chip--contact">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="mxr mined" class="fas fa-align-justify"></i>
+            <i title="mxr mined" class="fab fa-monero"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="YouXMRMined">0</div>
@@ -372,7 +389,7 @@
     <!-- XMRMined Chip -->
     <div class="mdl-chip mdl-chip--contact">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="mxr mined" class="fas fa-align-justify"></i>
+            <i title="mxr mined" class="fab fa-monero"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="XMRMined">0</div>

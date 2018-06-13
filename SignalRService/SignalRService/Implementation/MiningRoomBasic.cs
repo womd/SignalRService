@@ -50,7 +50,9 @@ namespace SignalRService.Implementation
             var TotalReward = GetClientReward(minerClientId);
 
             var md = new MarkdownDeep.Markdown();
-
+            md.NewWindowForExternalLinks = true;
+            md.NewWindowForLocalLinks = true;
+            md.SafeMode = true;
 
             result.Id = dbRoom.Id;
             result.Name = dbRoom.Name;
@@ -70,6 +72,7 @@ namespace SignalRService.Implementation
         public ViewModels.MiningRoomUpdateResult UpdateDescription(int MiningRoomId, string Content)
         {
 
+         
             var mr = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
             if (mr == null)
                 return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "invalid id" };

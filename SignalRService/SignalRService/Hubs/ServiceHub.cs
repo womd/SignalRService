@@ -374,6 +374,7 @@ namespace SignalRService.Hubs
                 return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "no permission" };
 
           
+           
             return await Task.Run(() => _updateMiningRoomDescription(Id, Content));
         }
 
