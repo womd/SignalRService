@@ -510,6 +510,7 @@
     <Compile Include="Repositories\MinerRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
+    <Compile Include="Repositories\SignalRConnectionContext.cs" />
     <Compile Include="Repositories\ProductContext.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\ServiceSettingContext.cs" />

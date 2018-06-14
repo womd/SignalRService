@@ -40,23 +40,9 @@ namespace SignalRService.Utils
             var deadConnections = db.SignalRConnections.Where(x => !conns.Contains(x.SignalRConnectionId)).ToList();
             rmcnt = deadConnections.Count;
 
-            var dependentMinerstati = new List<Models.MinerStatusModel>();
-            var dependentGroups = new List<Models.SignalRGroupsModel>();
-            foreach(var ditem in deadConnections)
-            {
-                if (ditem.MinerStatus != null)
-                    dependentMinerstati.Add(ditem.MinerStatus);
+            Repositories.SignalRConnectionContext sigContext = new Repositories.SignalRConnectionContext(db);
+            sigContext.RemoveConnections(deadConnections);
 
-                if (ditem.Groups != null)
-                    dependentGroups.AddRange(ditem.Groups);
-
-            }
-
-
-            db.SignalRGroups.RemoveRange(dependentGroups);
-            db.MinerStatus.RemoveRange(dependentMinerstati);
-            db.SignalRConnections.RemoveRange(deadConnections);
-            db.SaveChanges();
             return rmcnt;
         }
 
