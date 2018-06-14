@@ -16,5 +16,7 @@ namespace SignalRService.Models
         [ForeignKey("ServiceSetting")]
         public int ServiceSettingId { get; set; }
         public virtual ServiceSettingModel ServiceSetting { get; set; }
+
+        public bool ShowControls { get; set; }
     }
 }

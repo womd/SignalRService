@@ -37,10 +37,13 @@ namespace SignalRService.Implementation
             int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec);
             ViewModels.MiningRoomViewModel result = new MiningRoomViewModel();
 
+            var md = new MarkdownDeep.Markdown();
+            md.NewWindowForExternalLinks = true;
+            md.NewWindowForLocalLinks = true;
+            md.SafeMode = true;
 
-           
 
-           
+
             var dbRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
             if (dbRoom == null)
                 return result;
@@ -48,11 +51,17 @@ namespace SignalRService.Implementation
             var currGroup = dbRoom.ServiceSetting.ServiceUrl.ToLower();
             var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
             result.HpsRoom = currGroupDb.Connections.Sum(x => x.MinerStatus.Hps);
-            
+            result.ShowControls = dbRoom.ShowControls;
+            result.Description = md.Transform(dbRoom.Description);
+            result.DescriptionMarkdown = dbRoom.Description;
+
             var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
             if (cacheRes != null)
             {
                 cacheRes.HpsRoom = result.HpsRoom;
+                cacheRes.ShowControls = result.ShowControls;
+                cacheRes.Description = result.Description;
+                cacheRes.DescriptionMarkdown = result.DescriptionMarkdown;
                 return cacheRes;
             }
 
@@ -61,23 +70,20 @@ namespace SignalRService.Implementation
             var TotalHash = GetClientTotalHash(minerClientId);
             var TotalReward = GetClientReward(minerClientId);
 
-            var md = new MarkdownDeep.Markdown();
-            md.NewWindowForExternalLinks = true;
-            md.NewWindowForLocalLinks = true;
-            md.SafeMode = true;
+           
 
             result.Id = dbRoom.Id;
             result.Name = dbRoom.Name;
-            result.Description = md.Transform(dbRoom.Description);
-            result.DescriptionMarkdown = dbRoom.Description;
+          
             result.HashesTotal = TotalHash;
             result.XMR_Mined = TotalReward;
             result.DataSnapshot = DateTime.Now;
+      
 
            // if(result.HashesTotal != 0)
-                Utils.MiningRoomInfoCache.AddItem(MiningRoomId, result);
+            Utils.MiningRoomInfoCache.AddItem(MiningRoomId, result);
 
-            SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl.ToLower());
+          //  SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl.ToLower());
             return result;
         }
 
@@ -109,15 +115,15 @@ namespace SignalRService.Implementation
             GeneralHubResponseObject result = new GeneralHubResponseObject();
 
             var jconf = JsonConvert.SerializeObject(Request.RequestData);
-            var mrRequest = JsonConvert.DeserializeObject<MiningRoomRequesObject>(jconf); 
-          
+            var mrRequest = JsonConvert.DeserializeObject<MiningRoomRequesObject>(jconf);
+           
 
 
             switch (mrRequest.Command)
             {
                 case "MinerSetThrottleForRoom":
                     var dbMiningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
-                    if(dbMiningRoom.ServiceSetting.Owner == User || User.IsInRole("Admin"))
+                    if (dbMiningRoom.ServiceSetting.Owner == User || User.IsInRole("Admin"))
                     {
                         var nxString = mrRequest.CommandData.ToString().Replace(".",",");
 
@@ -134,7 +140,19 @@ namespace SignalRService.Implementation
                         result.ErrorMessage = "no permission";
                     }
 
-                   
+                    break;
+
+                case "ToggleControls":
+                    var dbMiningRoomx = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
+                    if (dbMiningRoomx.ServiceSetting.Owner == User || User.IsInRole("Admin"))
+                    {
+                        bool isOn = bool.Parse(mrRequest.CommandData.ToString());
+                        dbMiningRoomx.ShowControls = isOn;
+                        db.SaveChanges();
+
+                        var vm = GetOverview(mrRequest.MiningRoomId);
+                        SendRoomInfoUpdateToClients(vm, dbMiningRoomx.ServiceSetting.ServiceUrl.ToLower());
+                    }
                     break;
 
                 default:

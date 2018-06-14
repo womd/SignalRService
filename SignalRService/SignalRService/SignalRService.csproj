@@ -489,6 +489,10 @@
     <Compile Include="Migrations\201806121048258_SignalRGroups.Designer.cs">
       <DependentUpon>201806121048258_SignalRGroups.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806141212563_AddShowControlsField.cs" />
+    <Compile Include="Migrations\201806141212563_AddShowControlsField.Designer.cs">
+      <DependentUpon>201806141212563_AddShowControlsField.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
@@ -944,6 +948,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806121048258_SignalRGroups.resx">
       <DependentUpon>201806121048258_SignalRGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806141212563_AddShowControlsField.resx">
+      <DependentUpon>201806141212563_AddShowControlsField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
