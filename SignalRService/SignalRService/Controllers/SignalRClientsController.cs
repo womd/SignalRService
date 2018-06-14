@@ -80,6 +80,9 @@ namespace SignalRService.Controllers
         {
             try
             {
+                if(!User.IsInRole("Admin")){
+                    return Json(new { Result = "ERROR", Message = "no permission" });
+                }
 
                 var dbConn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == model.ConnectionId);
                 var minerstat = dbConn.MinerStatus;
@@ -87,7 +90,7 @@ namespace SignalRService.Controllers
                 {
                     if (minerstat.Running && model.MinerIsRunning)
                     {
-                        Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(model.ConnectionId).miner_setThrottle(model.MinerThrottle);
+                        Utils.SignalRMinerUtils.SetThrottleForClient(model.MinerThrottle, model.ConnectionId);
                         return Json(new { Result = "OK", Message = "throttle update sent.." });
                     }
                     else

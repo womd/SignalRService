@@ -45,6 +45,33 @@ namespace SignalRService.Hubs
 
         }
 
+        public Task<DTOs.GeneralHubResponseObject> GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData)
+        {
+            return Task.Run(() => GeneralHubIncoming(RequestData, Context.ConnectionId));
+        }
+
+        public DTOs.GeneralHubResponseObject GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData, string ConnectionId)
+        {
+            DTOs.GeneralHubResponseObject result = new DTOs.GeneralHubResponseObject();
+            Repositories.ServiceSettingContext sc = new Repositories.ServiceSettingContext(db);
+            var service = sc.GetServiceById(RequestData.ServiceId);
+
+            if(service != null)
+            {
+                switch(service.ServiceType)
+                {
+                    case Enums.EnumServiceType.CrowdMiner:
+                        var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                        mrp.ProcessIncoming( RequestData, Context.User);
+                        break;
+                    default:
+                        return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
+                }
+            }
+
+            return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "undefined ingoming..." };
+        }
+
         public override Task OnConnected()
         {
             Utils.SignalRServiceUtils.RemoveDeadConnections();

@@ -27,7 +27,7 @@ namespace SignalRService.Utils
         {
             string res = @"
 
-              var myminer;
+             var myminer;
 
              var miner = {
 

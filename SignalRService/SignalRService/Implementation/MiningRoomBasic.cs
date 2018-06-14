@@ -8,6 +8,8 @@ using Microsoft.AspNet.SignalR;
 using SignalRService.Hubs;
 using SignalRService.Interfaces;
 using SignalRService.ViewModels;
+using SignalRService.DTOs;
+using Newtonsoft.Json;
 
 namespace SignalRService.Implementation
 {
@@ -102,7 +104,46 @@ namespace SignalRService.Implementation
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).updateMinigRoomOverView(vm);
         }
     
-       
+        public DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request, System.Security.Principal.IPrincipal User)
+        {
+            GeneralHubResponseObject result = new GeneralHubResponseObject();
+
+            var jconf = JsonConvert.SerializeObject(Request.RequestData);
+            var mrRequest = JsonConvert.DeserializeObject<MiningRoomRequesObject>(jconf); 
+          
+
+
+            switch (mrRequest.Command)
+            {
+                case "MinerSetThrottleForRoom":
+                    var dbMiningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
+                    if(dbMiningRoom.ServiceSetting.Owner == User || User.IsInRole("Admin"))
+                    {
+                        var nxString = mrRequest.CommandData.ToString().Replace(".",",");
+
+                        float throttle = float.Parse(nxString);
+                      
+                        dbMiningRoom.ServiceSetting.MinerConfiguration.Throttle = throttle;
+                        db.SaveChanges();
+
+                        Utils.SignalRMinerUtils.SetThrottleForGroup(throttle, dbMiningRoom.ServiceSetting.ServiceUrl.ToLower());
+                    }
+                    else
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = "no permission";
+                    }
+
+                   
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
         #endregion
 
 

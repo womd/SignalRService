@@ -17,6 +17,11 @@ namespace SignalRService.Repositories
         {
             return _db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == url);
         }
+
+        public Models.ServiceSettingModel GetServiceById(int Id)
+        {
+            return _db.ServiceSettings.FirstOrDefault(ln => ln.ID == Id);
+        }
         
     }
 }

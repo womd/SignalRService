@@ -441,6 +441,9 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
+    <Compile Include="DTOs\GeneralHubRequestObject.cs" />
+    <Compile Include="DTOs\GeneralHubResponseObject.cs" />
+    <Compile Include="DTOs\MiningRoomRequesObject.cs" />
     <Compile Include="Enums\EnumGeneralSetting.cs" />
     <Compile Include="Enums\EnumImportType.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
@@ -533,6 +536,7 @@
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\RenderUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
+    <Compile Include="Utils\SignalRMinerUtils.cs" />
     <Compile Include="Utils\UserHelper.cs" />
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />

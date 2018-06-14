@@ -99,6 +99,11 @@
         updateGroupConnectionsDomElement(data);
     }
 
+    servicehub.client.minerRoomSetMinerThrottle = function (data) {
+        miner.client().setThrottle(data);
+        $('#sliderCpu')[0].value = (data * 100).toFixed();
+    }
+
     
 
 
@@ -270,6 +275,40 @@
 
     }
 
+    function cpuSliderChanged(e) {
+
+        var dataval = parseFloat(e.value / 100);
+        @{
+            if(SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name) )
+            {
+                <text>
+
+       
+
+         var RequestData = {
+                MiningRoomId : @Model.CrowdMinerConfigurationViewModel.Id,
+                Command : "MinerSetThrottleForRoom",
+                CommandData : dataval
+         };
+
+        var request = {
+                RequestData: RequestData,
+                ServiceId : @Model.Id
+                };
+
+                 servicehub.server.generalHubIncoming(request);
+                </text>
+            }
+            else
+            {
+                <text>
+                miner.client().setThrottle(dataval);
+                </text>
+            }
+        }
+
+    }
+
 
 </script>
 
@@ -288,6 +327,17 @@
 
 
 <div class="youstatswrapper">
+
+
+    @{ 
+        var thrtl = float.Parse(Model.MinerConfigurationViewModel.Throttle);
+        var usagep = thrtl * 100;
+    }
+
+    <div class="ui-field-contain">
+        <label for="sliderCpu">Cpu usage:</label>
+        <input type="range" name="sliderCpu" id="sliderCpu" min="0" max="100" value="@usagep" onchange="cpuSliderChanged(this)">
+    </div>
 
 
     <!-- youHps Chip -->
