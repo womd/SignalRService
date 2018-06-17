@@ -9,5 +9,8 @@ namespace SignalRService.DTOs
     {
         public object RequestData { get; set; }
         public int ServiceId { get; set; }
+        public string ConnectionId { get; set; }
+        public System.Security.Principal.IPrincipal User { get; set; }
+
     }
 }

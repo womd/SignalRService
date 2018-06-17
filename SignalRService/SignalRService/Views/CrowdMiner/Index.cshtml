@@ -42,6 +42,7 @@
     .showControls {
         display: none;
     }
+
     .culturewrapper {
         float: right;
     }
@@ -50,8 +51,9 @@
         min-width: 300px;
     }
 
-
-
+    .addRoomCntrl {
+        visibility: hidden;
+    }
 </style>
 
 <script>
@@ -119,7 +121,7 @@
         $("#sliderCpu").slider("refresh");
     }
 
-    
+
 
 
             $.connection.hub.error(function (error) {
@@ -178,7 +180,7 @@
         }
     }
 
-    
+
     function updateGroupConnectionsDomElement(data) {
         toggle_update_styles_fast($('#nrOfOthers'));
         $('#nrOfOthers').text(data);
@@ -195,11 +197,11 @@
             element.addClass("normalValueFont");
 
         }, 1000);
-        
+
     }
 
     function toggle_update_styles_fast(element) {
-        
+
         element.removeClass("normalValueFontFast");
         element.addClass("updateValueFontFast");
 
@@ -211,11 +213,11 @@
         }, 500);
     }
 
-   
+
     var currentRoomOverViewData;
     function updateRoomOverviewDomElements(data) {
 
-        @{ 
+        @{
             if(SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id,User.Identity.Name) || User.IsInRole("Admin"))
             {
                 <text>
@@ -243,18 +245,18 @@
                 </text>
             }
 
-        
-        }
-       
 
-      
+        }
+
+
+
 
 
         currentRoomOverViewData = data;
         $('#RoomName').text(data.Name);
         $('#RoomDescription').html(data.Description);
 
-        
+
         toggle_update_styles($('#RoomHps'));
         $('#RoomHps').text(data.HpsRoom.toFixed(2));
 
@@ -281,7 +283,7 @@
         toggle_update_styles($('#XMRMinedWorthUSD'));
         $('#XMRMinedWorthUSD').text(worthUSD.toFixed(9));
 
-        @{ 
+        @{
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name)) {
             <text>
              $("textarea.mdd_editor").text(data.DescriptionMarkdown);
@@ -295,9 +297,9 @@
             {
                 <text>
 
-               
 
-              
+
+
 
             function editorSave() {
                 var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
@@ -310,8 +312,8 @@
                 </text>
             }
          }
-    
-   
+
+
 
     var xmrPriceInfo = { "BTC": 0.0, "USD": 0.0, "EUR": 0.0 };
     function loadXMRPrices() {
@@ -355,18 +357,8 @@
             {
                 <text>
 
-       
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "MinerSetThrottleForRoom", dataval);
 
-         var RequestData = {
-                MiningRoomId : @Model.CrowdMinerConfigurationViewModel.Id,
-                Command : "MinerSetThrottleForRoom",
-                CommandData : dataval
-         };
-
-        var request = {
-                RequestData: RequestData,
-                ServiceId : @Model.Id
-                };
 
                  servicehub.server.generalHubIncoming(request);
                 </text>
@@ -381,11 +373,50 @@
 
     }
 
+    function CreateRoomBtnClicked() {
+        $("#addRoomCtrl").css('visibility', 'visible');
+        componentHandler.upgradeDom();
+
+    }
+
+    function BtnSaveMiningRoomClicked() {
+        var name = $('#InputRoomName')[0].value;
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name });
+
+        servicehub.server.generalHubIncoming(request).success(function (responseData) {
+            alert("createroom answered: " + responseData);
+        }).fail(function () {
+            alert("createroom request failed....");
+        });
+    }
+
+    function CreateRequest(serviceId, roomId, command, data)
+    {
+
+        var RequestData = {
+            MiningRoomId: roomId,
+            Command: command,
+            CommandData: data
+        };
+
+        var request = {
+            RequestData: RequestData,
+            ServiceId: serviceId
+        };
+
+        return request;
+    }
+
 
 </script>
 
 
 <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+
+
+
+
+
 
 <!-- other users Chip -->
 <div class="mdl-chip mdl-chip--contact showControls">
@@ -486,101 +517,121 @@
 
 </div>
 
-    <div class="roominfowrapper">
-        <div class="showControls" id="RoomName"></div>
+<div class="roominfowrapper">
+    <div class="showControls" id="RoomName"></div>
 
-        <div class="descriptionWrapper">
+    <div class="descriptionWrapper">
 
-            @{
-                if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
-                {
-                    <!-- Markdown Editor-->
-                    <div class="mdd_toolbar"></div>
-                    <textarea cols=50 rows=10 class="mdd_editor"></textarea>
-                    <div class="mdd_resizer"></div>
-                    <div class="mdd_preview">
+        @{
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                <!-- Markdown Editor-->
+                <div class="mdd_toolbar"></div>
+                <textarea cols=50 rows=10 class="mdd_editor"></textarea>
+                <div class="mdd_resizer"></div>
+                <div class="mdd_preview">
 
-                    </div>
+                </div>
 
 
 
-                    <button class="mdl-button mdl-js-button" onclick="editorSave()">
-                        <i class="far fa-save" title="save"></i>
-                    </button>
-
-                }
-
-                <div id="RoomDescription"></div>
+                <button class="mdl-button mdl-js-button" onclick="editorSave()">
+                    <i class="far fa-save" title="save"></i>
+                </button>
 
             }
 
+            <div id="RoomDescription"></div>
 
-        </div>
-
-        <!-- RoomHps Chip -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i class="fab fa-galactic-senate"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div id="RoomHps">0</div>
-            </div>
-        </div>
-
-        <!-- RoomHashesTotal Chip -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i title="hashes total" class="far fa-heart"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div class="normalValueFont" id="RoomHashesTotal">0</div>
-            </div>
-        </div>
-
-        <!-- XMRMined Chip -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i title="mxr mined" class="fab fa-monero"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div class="normalValueFont" id="XMRMined">0</div>
-            </div>
-        </div>
+        }
 
 
-        <!-- XMR worth BTC -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i title="worth in BTC" class="fab fa-bitcoin"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div class="normalValueFont" id="XMRMinedWorthBTC">0</div>
-            </div>
-        </div>
-
-        <!-- XMR worth EUR -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i title="worth in EUR" class="fas fa-euro-sign"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div class="normalValueFont" id="XMRMinedWorthEUR">0</div>
-            </div>
-        </div>
-
-
-
-        <!-- XMR worth USD -->
-        <div class="mdl-chip mdl-chip--contact showControls">
-            <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-                <i title="worth in USD" class="fas fa-dollar-sign"></i>
-            </div>
-            <div class="mdl-chip__text">
-                <div class="normalValueFont" id="XMRMinedWorthUSD"></div>
-            </div>
-        </div>
-
-
-        <div id="XMRNeeded"></div>
     </div>
 
+    <!-- RoomHps Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="fab fa-galactic-senate"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="RoomHps">0</div>
+        </div>
+    </div>
+
+    <!-- RoomHashesTotal Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="hashes total" class="far fa-heart"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="RoomHashesTotal">0</div>
+        </div>
+    </div>
+
+    <!-- XMRMined Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="mxr mined" class="fab fa-monero"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMined">0</div>
+        </div>
+    </div>
+
+
+    <!-- XMR worth BTC -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in BTC" class="fab fa-bitcoin"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthBTC">0</div>
+        </div>
+    </div>
+
+    <!-- XMR worth EUR -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in EUR" class="fas fa-euro-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthEUR">0</div>
+        </div>
+    </div>
+
+
+
+    <!-- XMR worth USD -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="worth in USD" class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthUSD"></div>
+        </div>
+    </div>
+
+
+    <div id="XMRNeeded"></div>
+
+    <!-- create room Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls" onclick="CreateRoomBtnClicked()">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i class="far fa-plus-square"></i>
+        </div>
+        <div class="mdl-chip__text">
+            @BaseResource.Get("TextAddMiningRoom")
+        </div>
+    </div>
+
+</div>
+
+<div id="addRoomCtrl" class="addRoomCntrl">
+
+   <div class="ui-field-contain">
+       <label for="InputRoomName">Name</label>
+       <input type="text" id="InputRoomName">
+       <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()" >@BaseResource.Get("BtnSaveMiningRoomText")</button>
+   </div>
+
+</div>

@@ -142,7 +142,8 @@ namespace SignalRService.Controllers
 
                     dbobj.MiningRooms.Add( new Models.MiningRoomModel() {
                              Name = model.ServiceName,
-                             Description = "-- -- --"
+                             Description = "-- -- --",
+                             ShowControls = true
                     });
                 }
                

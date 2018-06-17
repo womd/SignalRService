@@ -513,7 +513,9 @@
     <Compile Include="Repositories\GameSettingsContext.cs" />
     <Compile Include="Repositories\GameSettingsRepository.cs" />
     <Compile Include="Repositories\GeneralSettingsRepository.cs" />
+    <Compile Include="Repositories\MinerRoomContext.cs" />
     <Compile Include="Repositories\MinerContext.cs" />
+    <Compile Include="Repositories\MinerRoomRepository.cs" />
     <Compile Include="Repositories\MinerRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
@@ -538,6 +540,7 @@
     <Compile Include="Utils\MiningRoomInfoCache.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
+    <Compile Include="Utils\RandomUtils.cs" />
     <Compile Include="Utils\RenderUtils.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\SignalRMinerUtils.cs" />

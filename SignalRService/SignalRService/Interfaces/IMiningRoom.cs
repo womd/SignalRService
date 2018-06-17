@@ -18,6 +18,6 @@ namespace SignalRService.Interfaces
         void SendRoomInfoUpdateToClients(ViewModels.MiningRoomViewModel vm, string signalRGroup);
         void SendRoomInfoUpdateToClient(ViewModels.MiningRoomViewModel vm, string connectionId);
 
-        DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request, System.Security.Principal.IPrincipal User);
+        DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request);
     }
 }

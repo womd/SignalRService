@@ -19,14 +19,22 @@ namespace SignalRService.Implementation
         string apiUrl;
         string cmpPrivate;
         string cmpPublic;
-       
+        private Repositories.MinerRoomRepository miningRoomRepo;
+        private Repositories.UserRepository userRepo;
+        private Repositories.ServiceSettingRepositorie serviceRepo;
+        private Repositories.MinerRepository minerRepo;
+
+
         public MiningRoomBasic()
         {
             db = new DAL.ServiceContext();
             apiUrl = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiBaseUrl);
             cmpPrivate = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPrivateKey);
             cmpPublic = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPublicKey);
-
+            miningRoomRepo = new Repositories.MinerRoomRepository(db);
+            userRepo = new Repositories.UserRepository(db);
+            serviceRepo = new Repositories.ServiceSettingRepositorie(db);
+            minerRepo = new Repositories.MinerRepository(db);
         }
 
         #region interface methods
@@ -110,7 +118,7 @@ namespace SignalRService.Implementation
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).updateMinigRoomOverView(vm);
         }
     
-        public DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request, System.Security.Principal.IPrincipal User)
+        public DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request)
         {
             GeneralHubResponseObject result = new GeneralHubResponseObject();
 
@@ -118,12 +126,11 @@ namespace SignalRService.Implementation
             var mrRequest = JsonConvert.DeserializeObject<MiningRoomRequesObject>(jconf);
            
 
-
             switch (mrRequest.Command)
             {
                 case "MinerSetThrottleForRoom":
                     var dbMiningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
-                    if (dbMiningRoom.ServiceSetting.Owner == User || User.IsInRole("Admin"))
+                    if (dbMiningRoom.ServiceSetting.Owner == Request.User || Request.User.IsInRole("Admin"))
                     {
                         var nxString = mrRequest.CommandData.ToString().Replace(".",",");
 
@@ -144,7 +151,7 @@ namespace SignalRService.Implementation
 
                 case "ToggleControls":
                     var dbMiningRoomx = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
-                    if (dbMiningRoomx.ServiceSetting.Owner == User || User.IsInRole("Admin"))
+                    if (dbMiningRoomx.ServiceSetting.Owner == Request.User || Request.User.IsInRole("Admin"))
                     {
                         bool isOn = bool.Parse(mrRequest.CommandData.ToString());
                         dbMiningRoomx.ShowControls = isOn;
@@ -153,6 +160,27 @@ namespace SignalRService.Implementation
                         var vm = GetOverview(mrRequest.MiningRoomId);
                         SendRoomInfoUpdateToClients(vm, dbMiningRoomx.ServiceSetting.ServiceUrl.ToLower());
                     }
+                    break;
+
+                case "CreateRoom":
+                   
+                    string roomName =  ((dynamic)mrRequest.CommandData).RoomName;
+                    bool isDangerous = Utils.ValidationUtils.IsDangerousString(roomName, out int badIdx);
+
+                    if (isDangerous)
+                    {
+                        result.ErrorMessage = "Dangerous character in Name";
+                        result.Success = false;
+                        break;
+                    }
+
+                    var user = userRepo.GetDbUser(Request.User.Identity.Name);
+                    var newService = serviceRepo.CreateService(Enums.EnumServiceType.CrowdMiner, user, roomName);
+
+                    var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
+                    var newMinerConf = minerRepo.CreateMinerConfig(newService, defaultMinerConf.ClientId, defaultMinerConf.ScriptUrl, float.Parse( defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
+                        
+                    miningRoomRepo.CreateRoom(newService);
                     break;
 
                 default:

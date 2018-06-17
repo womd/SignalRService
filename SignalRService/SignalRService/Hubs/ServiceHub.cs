@@ -47,10 +47,12 @@ namespace SignalRService.Hubs
 
         public Task<DTOs.GeneralHubResponseObject> GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData)
         {
-            return Task.Run(() => GeneralHubIncoming(RequestData, Context.ConnectionId));
+            RequestData.ConnectionId = Context.ConnectionId;
+            RequestData.User = Context.User;
+            return Task.Run(() => _GeneralHubIncoming(RequestData));
         }
 
-        public DTOs.GeneralHubResponseObject GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData, string ConnectionId)
+        public DTOs.GeneralHubResponseObject _GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData)
         {
             DTOs.GeneralHubResponseObject result = new DTOs.GeneralHubResponseObject();
             Repositories.ServiceSettingContext sc = new Repositories.ServiceSettingContext(db);
@@ -62,7 +64,7 @@ namespace SignalRService.Hubs
                 {
                     case Enums.EnumServiceType.CrowdMiner:
                         var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
-                        mrp.ProcessIncoming( RequestData, Context.User);
+                        mrp.ProcessIncoming(RequestData);
                         break;
                     default:
                         return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
