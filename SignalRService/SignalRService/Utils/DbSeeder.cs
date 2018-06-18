@@ -74,6 +74,12 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes, Type = Enums.EnumSettingType.Decimal, Value = "0.00009467" });
 
+            if (!db.GeneralSettings.All(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.MiningRoomNameMaxLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.MiningRoomNameMaxLength, Type = Enums.EnumSettingType.Int, Value = "30" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.MiningRoomNameMinLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.MiningRoomNameMinLength, Type = Enums.EnumSettingType.Int, Value = "3" });
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
         }

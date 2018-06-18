@@ -64,7 +64,7 @@ namespace SignalRService.Hubs
                 {
                     case Enums.EnumServiceType.CrowdMiner:
                         var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
-                        mrp.ProcessIncoming(RequestData);
+                        return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = mrp.ProcessIncoming(RequestData) };
                         break;
                     default:
                         return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
@@ -378,18 +378,18 @@ namespace SignalRService.Hubs
             return Utils.LuckyGameUtils.GetCards();
         }
 
-        public async Task<ViewModels.MiningRoomViewModel>getMiningRoomOverview(int Id)
-        {
-            return await Task.Run(() => _getMiningRoomOverView(Id));
-        }
+        //public async Task<ViewModels.MiningRoomViewModel>getMiningRoomOverview(int Id)
+        //{
+        //    return await Task.Run(() => _getMiningRoomOverView(Id));
+        //}
 
-        private ViewModels.MiningRoomViewModel _getMiningRoomOverView(int Id)
-        {
-            var miningroom = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
-            var overviewData = miningroom.GetOverview(Id);
+        //private ViewModels.MiningRoomViewModel _getMiningRoomOverView(int Id)
+        //{
+        //    var miningroom = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+        //    var overviewData = miningroom.GetOverview(Id);
 
-            return overviewData;
-        }
+        //    return overviewData;
+        //}
 
         public async Task<ViewModels.MiningRoomUpdateResult> updateMiningRoomDescription(int Id, string Content)
         {

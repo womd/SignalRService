@@ -383,8 +383,17 @@
         var name = $('#InputRoomName')[0].value;
         var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name });
 
-        servicehub.server.generalHubIncoming(request).success(function (responseData) {
-            alert("createroom answered: " + responseData);
+        servicehub.server.generalHubIncoming(request).done(function (responseData) {
+
+            if (responseData.ResponseData.Success == true) {
+
+                $('#addRoomResult').html("Url: " + responseData.ResponseData.ResponseData);
+
+            }
+            else {
+                $('#addRoomResult').html(responseData.ResponseData.ErrorMessage);
+            }
+
         }).fail(function () {
             alert("createroom request failed....");
         });
@@ -633,5 +642,8 @@
        <input type="text" id="InputRoomName">
        <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()" >@BaseResource.Get("BtnSaveMiningRoomText")</button>
    </div>
+    <div class="addRoomResult" id="addRoomResult">
+
+    </div>
 
 </div>

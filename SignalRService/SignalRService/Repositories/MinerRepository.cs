@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SignalRService.Utils;
 
 namespace SignalRService.Repositories
 {
@@ -19,12 +20,11 @@ namespace SignalRService.Repositories
 
         public ViewModels.MinerConfigurationViewModel GetDefaultMinerConfig()
         {
-            //var dbconf = context.GetDefaultMinerConfig();
-            //dbconf.to
-            return new ViewModels.MinerConfigurationViewModel();
+            var dbconf = minerContext.GetDefaultMinerConfig();
+            return dbconf.ToMinerConfigurationViewModel();
         }
 
-        public Models.MinerConfigurationModel CreateMinerConfig(Models.ServiceSettingModel parentService, string MinerClientId, string MinerScriptUrl, float MinerThrottle, int MinerStartDelayMs, int MinerReportStatusIntervalMs)
+        public Models.MinerConfigurationModel GetNewMinerConfig(string MinerClientId, string MinerScriptUrl, float MinerThrottle, int MinerStartDelayMs, int MinerReportStatusIntervalMs)
         {
             var minerConfiguration = new Models.MinerConfigurationModel()
             {
@@ -34,9 +34,6 @@ namespace SignalRService.Repositories
                 StartDelayMs = MinerStartDelayMs,
                 ReportStatusIntervalMs = MinerReportStatusIntervalMs,
             };
-
-            parentService.MinerConfiguration = minerConfiguration;
-            _db.SaveChanges();
 
             return minerConfiguration;
 

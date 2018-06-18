@@ -10,23 +10,23 @@ namespace SignalRService.Repositories
         private Repositories.ServiceSettingContext context;
         private DAL.ServiceContext db;
 
-        public ServiceSettingRepositorie(DAL.ServiceContext db)
+        public ServiceSettingRepositorie(DAL.ServiceContext _db)
         {
             context = new ServiceSettingContext(db);
-            db = new DAL.ServiceContext();
+            db = _db;
         }
 
-        public Models.ServiceSettingModel CreateService(Enums.EnumServiceType ServiceType, Models.UserDataModel User, string Name)
+        public Models.ServiceSettingModel GetNewService(Enums.EnumServiceType ServiceType, Models.UserDataModel User, string Name)
         {
 
-            var dbobj = db.ServiceSettings.Add(new Models.ServiceSettingModel()
+            var dbobj = new Models.ServiceSettingModel()
             {
                 Owner = User,
                 ServiceName = Name,
                 ServiceUrl = GetUnusedUrlString(6),
                 ServiceType = (Enums.EnumServiceType) ServiceType
-            });
-            db.SaveChanges();
+            };
+          
             return dbobj;
         }
 

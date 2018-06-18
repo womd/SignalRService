@@ -18,76 +18,91 @@
     function init_ServiceTalbe() {
          $('#ServiceConfigurationTable').jtable({
                 title: '@BaseResource.Get("TableTitleServices")',
-                actions: {
-                    listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "ServiceConfiguration", "List") },
-                    createAction: function (postData) { return jtable_datasource.create(postData, "ServiceConfiguration", "Create") },
-                    updateAction: function (postData) { return jtable_datasource.update(postData, "ServiceConfiguration", "Update") },
-                    deleteAction: function (postData) { return jtable_datasource.delete(postData, "ServiceConfiguration", "Delete") }
-                },
+             actions: {
+
+                      @{
+                          if (User.IsInRole("Admin"))
+                          {
+                          <text>
+                 listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "ServiceConfiguration", "List") },
+                 createAction: function (postData) { return jtable_datasource.create(postData, "ServiceConfiguration", "Create") },
+                 updateAction: function (postData) { return jtable_datasource.update(postData, "ServiceConfiguration", "Update") },
+                 deleteAction: function (postData) { return jtable_datasource.delete(postData, "ServiceConfiguration", "Delete") }
+                          </text>
+                          }
+                          else {
+                           <text>
+                           listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "ServiceConfiguration", "List") }
+                          </text>
+                                      }
+                                  }
+             },
                 fields: {
-                    Id: {
-                        key: true,
+                          Id: {
+                              key: true,
                         list: false
-                    },
+                          },
                     ServiceName: {
-                        title: 'Name',
+                              title: 'Name',
                         width: '40%',
                         create: true,
                         edit: true
                     },
                     ServiceUrl: {
-                        title: 'Url',
+                              title: 'Url',
                         create: true,
                         edit: true,
                         display: function (data) {
-                            return "<a href=\"/GoTo/" + data.record.ServiceUrl + "\">" + data.record.ServiceUrl + "</a>";
-                        }
-                    },
+                              return "<a href=\"/GoTo/" + data.record.ServiceUrl + "\">" + data.record.ServiceUrl + "</a>";
+                          }
+                          },
                     ServiceType: {
-                        title: 'ServiceType',
+                              title: 'ServiceType',
                         create: true,
                         edit: true,
                         options: {
-                            @SignalRService.Utils.JTableHelper.Get_Options_ServiceType()
+                                  @SignalRService.Utils.JTableHelper.Get_Options_ServiceType()
                         }
-                    },
+                          },
 
                     @if (User.IsInRole("Admin"))
                     {
                         <text>
                         User:
                         {
-                            title: 'OwnerName',
+                                  title: 'OwnerName',
                         create: false,
                         edit: false,
                         display: function(data) { return data.record.User.Name }
-                        },
-                        </text>
+                              },
 
-                    }
 
-                    
+
                     StripeSecretKey: {
-                        title: 'StripeSecretKey',
+                                  title: 'StripeSecretKey',
                         create: true,
                         edit: true
                     },
                     StripePublishableKey: {
-                        title: 'StripePublishableKey',
+                                  title: 'StripePublishableKey',
                         create: true,
                         edit: true
                     },
                     MinerClientId: {
-                        title: 'MinerClientId',
+                                  title: 'MinerClientId',
                         create: true,
                         edit: true
                     },
                     MinerScriptUrl: {
-                        title: 'MinerScriptUrl',
+                                  title: 'MinerScriptUrl',
                         create: true,
                         edit: true
                     }
-                }
+
+                        </text>
+
+                    }
+                      }
             });
     }
 

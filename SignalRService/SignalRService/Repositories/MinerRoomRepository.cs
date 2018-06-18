@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SignalRService.Localization;
 
 namespace SignalRService.Repositories
 {
@@ -25,11 +26,12 @@ namespace SignalRService.Repositories
             var newRoom = new Models.MiningRoomModel()
             {
                 Name = parentService.ServiceName,
-                Description = "*** Welcome to your new Room ***",
+                Description = SignalRService.Localization.BaseResource.Get("NewMiningRoomDefaultDescription"),
                 ShowControls = true
             };
 
             parentService.MiningRooms.Add(newRoom);
+            _db.ServiceSettings.Add(parentService);
             _db.SaveChanges();
 
             return newRoom;

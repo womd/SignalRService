@@ -21,6 +21,9 @@ namespace SignalRService.Enums
         CoinImpPublicKey = 10,
         CoinImpApiBaseUrl = 11,
         CoinImpApiCallTresholdSec = 12, 
-        CoinImpXMRPayoutPer1MHashes = 13
+        CoinImpXMRPayoutPer1MHashes = 13,
+
+        MiningRoomNameMinLength = 1,
+        MiningRoomNameMaxLength = 30
     }
 }
