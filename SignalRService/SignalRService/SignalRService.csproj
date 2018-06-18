@@ -435,6 +435,7 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PositionTrackerController.cs" />
+    <Compile Include="Controllers\PreDefinedMinerClientController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ServiceConfigurationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
@@ -493,6 +494,10 @@
     <Compile Include="Migrations\201806141212563_AddShowControlsField.Designer.cs">
       <DependentUpon>201806141212563_AddShowControlsField.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806181146001_PredefClientList.cs" />
+    <Compile Include="Migrations\201806181146001_PredefClientList.Designer.cs">
+      <DependentUpon>201806181146001_PredefClientList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
@@ -505,6 +510,7 @@
     <Compile Include="Models\OrderJournalModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\PositionTrackingData.cs" />
+    <Compile Include="Models\PredefinedMinerClientModel.cs" />
     <Compile Include="Models\ProductImportConfiguration.cs" />
     <Compile Include="Models\ProductImportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
@@ -556,6 +562,7 @@
     <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
     <Compile Include="ViewModels\OrderItemViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="ViewModels\PredefinedMinerClientViewModel.cs" />
     <Compile Include="ViewModels\ProductImportConfigurationViewModel.cs" />
     <Compile Include="ViewModels\ProductViewModel.cs" />
     <Compile Include="ViewModels\RoleViewModel.cs" />
@@ -918,6 +925,7 @@
     <Content Include="Views\PositionTracker\Index.cshtml" />
     <Content Include="Views\CrowdMiner\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutCrowdMiner.cshtml" />
+    <Content Include="Views\PreDefinedMinerClient\Index.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -954,6 +962,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806141212563_AddShowControlsField.resx">
       <DependentUpon>201806141212563_AddShowControlsField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806181146001_PredefClientList.resx">
+      <DependentUpon>201806181146001_PredefClientList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

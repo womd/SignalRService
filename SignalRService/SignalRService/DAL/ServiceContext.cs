@@ -34,6 +34,7 @@ namespace SignalRService.DAL
         public DbSet<LuckyGameWinningRule>LuckyGameWinningRules { get; set; }
         public DbSet<PositionTrackingData> PositionTrackingData { get; set; }
         public DbSet<Coordinates> Coordinates { get; set; }
+        public DbSet<PredefinedMinerClientModel>PredefinedMinerClients { get; set; }
 
         public DbSet<MiningRoomModel>MiningRooms { get; set; }
 

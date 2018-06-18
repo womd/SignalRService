@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@{
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+    }
+}
+
+<div id="PredefinedMinerClientsTable"></div>
+
+<script>
+
+
+    function init_ServiceTalbe() {
+        $('#PredefinedMinerClientsTable').jtable({
+                title: '@BaseResource.Get("TableTitlePredefMinerClients")',
+             actions: {
+
+                      @{
+                          if (User.IsInRole("Admin"))
+                          {
+                          <text>
+                 listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "PreDefinedMinerClient", "List") },
+                 createAction: function (postData) { return jtable_datasource.create(postData, "PreDefinedMinerClient", "Create") },
+                 updateAction: function (postData) { return jtable_datasource.update(postData, "PreDefinedMinerClient", "Update") },
+                 deleteAction: function (postData) { return jtable_datasource.delete(postData, "PreDefinedMinerClient", "Delete") }
+                          </text>
+                          }
+                          else {
+                           <text>
+                           listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "PreDefinedMinerClient", "List") }
+                          </text>
+                                      }
+                                  }
+             },
+                fields: {
+                          Id: {
+                              key: true,
+                        list: false
+                          },
+                    ScriptUrl: {
+                              title: 'ScriptUrl',
+                        width: '40%',
+                        create: true,
+                        edit: true
+                    },
+                    ClientId: {
+                        title: 'ClientId',
+                        create: true,
+                        edit: true,
+                    }
+                }
+            });
+    }
+
+
+    $(function () {
+
+        init_ServiceTalbe();
+        $('#PredefinedMinerClientsTable').jtable('load');
+
+    });
+
+</script>

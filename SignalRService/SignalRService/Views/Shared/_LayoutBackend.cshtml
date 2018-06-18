@@ -42,28 +42,36 @@
 
      <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
 
-<ul id="adminmenu">
-    <li>
-        @BaseResource.Get("MenuBaseSettings")
-        <ul>
-            <li>@Html.ActionLink(@BaseResource.Get("MenuSeeding"), "Seeding", "Home", null, null)</li>
-            <li>@Html.ActionLink(@BaseResource.Get("MenuLocalization"), "Index", "Localization", new { id = 1 }, null)</li>
-        </ul>
-    </li>
+     <ul id="adminmenu">
+         <li>
+             @BaseResource.Get("MenuBaseSettings")
+             <ul>
+                 <li>@Html.ActionLink(@BaseResource.Get("MenuSeeding"), "Seeding", "Home", null, null)</li>
+                 <li>@Html.ActionLink(@BaseResource.Get("MenuLocalization"), "Index", "Localization", new { id = 1 }, null)</li>
+             </ul>
+         </li>
 
-    <li>
-        @BaseResource.Get("MenuOrderProcess")
-        <ul>
-            <li>@Html.ActionLink(@BaseResource.Get("MenuProducts"), "Index", "Product", null, null)</li>
-            <li>@Html.ActionLink(@BaseResource.Get("MenuOrders"), "Index", "Order", null, null)</li>
-        </ul>
-    </li>
+         <li>
+             @BaseResource.Get("MenuOrderProcess")
+             <ul>
+                 <li>@Html.ActionLink(@BaseResource.Get("MenuProducts"), "Index", "Product", null, null)</li>
+                 <li>@Html.ActionLink(@BaseResource.Get("MenuOrders"), "Index", "Order", null, null)</li>
+             </ul>
+         </li>
 
-    <li>@Html.ActionLink(@BaseResource.Get("MenuUserRoles"), "Index", "UserRoles", null, null )</li>
-    <li>@Html.ActionLink(@BaseResource.Get("MenuSignalRClients"), "Index", "SignalRClients", null, null)</li>
-    <li>@Html.ActionLink(@BaseResource.Get("MenuServices"), "Index", "ServiceConfiguration", null, null)</li>
+         <li>@Html.ActionLink(@BaseResource.Get("MenuUserRoles"), "Index", "UserRoles", null, null)</li>
+         <li>@Html.ActionLink(@BaseResource.Get("MenuSignalRClients"), "Index", "SignalRClients", null, null)</li>
+         <li>@Html.ActionLink(@BaseResource.Get("MenuServices"), "Index", "ServiceConfiguration", null, null)</li>
 
-</ul>
+         @{
+             if (User.IsInRole("Admin"))
+             {
+                 <li>@Html.ActionLink(@BaseResource.Get("MenuPredefClients"), "Index", "PreDefinedMinerClient", null, null)</li>
+             }
+         }
+
+
+     </ul>
 
         <script>
 

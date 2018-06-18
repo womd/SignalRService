@@ -198,18 +198,28 @@ namespace SignalRService.Implementation
                         break;
                     }
 
-                  
+                    if(db.PredefinedMinerClients.Count() == 0)
+                    {
+                        result.ErrorMessage = "No more slots open, please come back later.";
+                        result.Success = false;
+                        break;
+                    }
+
+                    var predefClient = db.PredefinedMinerClients.FirstOrDefault();
 
                     var user = userRepo.GetDbUser(Request.User.Identity.Name);
                     
                     var newService = serviceRepo.GetNewService(Enums.EnumServiceType.CrowdMiner, user, roomName);
 
                     var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
-                    var newMinerConf = minerRepo.GetNewMinerConfig(defaultMinerConf.ClientId, defaultMinerConf.ScriptUrl, float.Parse( defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
+                    var newMinerConf = minerRepo.GetNewMinerConfig(predefClient.ClientId, predefClient.ScriptUrl, float.Parse( defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
 
                     newService.MinerConfiguration = newMinerConf;
 
                     var theRoom = miningRoomRepo.CreateRoom(newService);
+
+                    db.PredefinedMinerClients.Remove(predefClient);
+                    db.SaveChanges();
 
                     result.Success = true;
                     result.ResponseData = theRoom.ServiceSetting.ServiceUrl;

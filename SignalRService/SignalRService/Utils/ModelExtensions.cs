@@ -238,7 +238,15 @@ namespace SignalRService.Utils
             };
         }
 
-       
+       public static ViewModels.PredefinedMinerClientViewModel ToPreDefinedMinerClientViewModel(this Models.PredefinedMinerClientModel model)
+        {
+            return new PredefinedMinerClientViewModel()
+            {
+                Id = model.Id,
+                ClientId = model.ClientId,
+                ScriptUrl = model.ScriptUrl
+            };
+        }
 
     }
 }
