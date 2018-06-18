@@ -23,7 +23,7 @@ namespace SignalRService.Enums
         CoinImpApiCallTresholdSec = 12, 
         CoinImpXMRPayoutPer1MHashes = 13,
 
-        MiningRoomNameMinLength = 1,
-        MiningRoomNameMaxLength = 30
+        MiningRoomNameMinLength = 14,
+        MiningRoomNameMaxLength = 15
     }
 }
