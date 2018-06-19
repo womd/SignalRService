@@ -394,8 +394,8 @@
                 $('#addRoomResult').html(responseData.ResponseData.ErrorMessage);
             }
 
-        }).fail(function () {
-            alert("createroom request failed....");
+        }).fail(function (err) {
+            alert("createroom request failed...." + err);
         });
     }
 
@@ -430,7 +430,7 @@
 <!-- other users Chip -->
 <div class="mdl-chip mdl-chip--contact showControls">
     <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-        <i class="fas fa-users"></i>
+        <i title="@BaseResource.Get("TitleOtherUsersinRoom")" class="fas fa-users"></i>
     </div>
     <div class="mdl-chip__text">
         <div id="nrOfOthers">1</div>
@@ -447,8 +447,8 @@
     }
 
     <div class="ui-field-contain showControls controlelement">
-        <label for="sliderCpu">Cpu usage:</label>
-        <input type="range" name="sliderCpu" id="sliderCpu" min="0" max="100" value="@usagep" onchange="cpuSliderChanged(this)">
+        <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage"):</label>
+        <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@usagep" onchange="cpuSliderChanged(this)">
     </div>
 
     @{
@@ -456,7 +456,7 @@
         {
             <text>
                 <div class="ui-field-contain showControls controlelement">
-                    <label for="flipControls">show controls:</label>
+                    <label for="flipControls">@BaseResource.Get("LabelFlipSwitchShowControls"):</label>
                     <input type="checkbox" data-role="flipswitch" name="flipControls" id="flipControls" onchange="controlsFlipSwitchChanged(this)">
                 </div>
             </text>
@@ -467,7 +467,7 @@
     <!-- youHps Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i class="fab fa-galactic-senate"></i>
+            <i title="@BaseResource.Get("TitleYouHps")" class="fab fa-galactic-senate"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="youHps">0</div>
@@ -477,27 +477,27 @@
     <!-- youHashes Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i class="far fa-heart"></i>
+            <i title="@BaseResource.Get("TitleYouHashes")" class="far fa-heart"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="youHashes">0</div>
         </div>
     </div>
 
-    <!-- XMRMined Chip -->
+    <!-- YouXMRMined Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="mxr mined" class="fab fa-monero"></i>
+            <i title="@BaseResource.Get("TitleYouXMRMined")" class="fab fa-monero"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="YouXMRMined">0</div>
         </div>
     </div>
 
-    <!-- XMR worth BTC -->
+    <!-- You XMR worth BTC -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in BTC" class="fab fa-bitcoin"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthBitcoin")" class="fab fa-bitcoin"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="YourXMRMinedWorthBTC">0</div>
@@ -507,7 +507,7 @@
     <!-- your ~XMR worth EUR -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in EUR" class="fas fa-euro-sign"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthEUR")" class="fas fa-euro-sign"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="YourXMRMinedWorthEUR">0</div>
@@ -517,7 +517,7 @@
     <!-- XMR worth USD -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in USD" class="fas fa-dollar-sign"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthUSD")" class="fas fa-dollar-sign"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="YourXMRMinedWorthUSD">0</div>
@@ -560,7 +560,7 @@
     <!-- RoomHps Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i class="fab fa-galactic-senate"></i>
+            <i title="@BaseResource.Get("TitleRoomHps")"class="fab fa-galactic-senate"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="RoomHps">0</div>
@@ -570,7 +570,7 @@
     <!-- RoomHashesTotal Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="hashes total" class="far fa-heart"></i>
+            <i title="@BaseResource.Get("TítleRoomHashesTotal")" class="far fa-heart"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="RoomHashesTotal">0</div>
@@ -580,7 +580,7 @@
     <!-- XMRMined Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="mxr mined" class="fab fa-monero"></i>
+            <i title="@BaseResource.Get("TitleRoomXMRMined")" class="fab fa-monero"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="XMRMined">0</div>
@@ -591,7 +591,7 @@
     <!-- XMR worth BTC -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in BTC" class="fab fa-bitcoin"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthBitcoin")" class="fab fa-bitcoin"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="XMRMinedWorthBTC">0</div>
@@ -601,7 +601,7 @@
     <!-- XMR worth EUR -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in EUR" class="fas fa-euro-sign"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthEUR")" class="fas fa-euro-sign"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="XMRMinedWorthEUR">0</div>
@@ -613,7 +613,7 @@
     <!-- XMR worth USD -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="worth in USD" class="fas fa-dollar-sign"></i>
+            <i title="@BaseResource.Get("TitleXMRWorthUSD")" class="fas fa-dollar-sign"></i>
         </div>
         <div class="mdl-chip__text">
             <div class="normalValueFont" id="XMRMinedWorthUSD"></div>
@@ -626,7 +626,7 @@
     <!-- create room Chip -->
     <div class="mdl-chip mdl-chip--contact showControls" onclick="CreateRoomBtnClicked()">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i class="far fa-plus-square"></i>
+            <i title="@BaseResource.Get("TitleAddMiningRoom") "class="far fa-plus-square"></i>
         </div>
         <div class="mdl-chip__text">
             @BaseResource.Get("TextAddMiningRoom")
