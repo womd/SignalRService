@@ -445,6 +445,7 @@
     <Compile Include="DTOs\GeneralHubRequestObject.cs" />
     <Compile Include="DTOs\GeneralHubResponseObject.cs" />
     <Compile Include="DTOs\MiningRoomRequesObject.cs" />
+    <Compile Include="DTOs\ServicesExportDTO.cs" />
     <Compile Include="Enums\EnumGeneralSetting.cs" />
     <Compile Include="Enums\EnumImportType.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
@@ -476,6 +477,7 @@
     <Compile Include="Interfaces\IMiningRoom.cs" />
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Interfaces\IProductImport.cs" />
+    <Compile Include="Interfaces\IServiceImport.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
     <Compile Include="Migrations\201806051103572_DbInit.cs" />

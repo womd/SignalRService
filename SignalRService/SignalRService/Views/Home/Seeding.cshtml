@@ -18,9 +18,55 @@
 @Ajax.ActionLink("Optimize Lucene-Index", "OptimizeLuceneIndex", null, new AjaxOptions() { OnSuccess = "onSuccess", HttpMethod = "GET" }, new { id = "cuabtn", @class = "btn btn-primary" })
 
 
+<ul>Data
+    <li><a href="@Url.Content("~/ServiceConfiguration/DownloadServiceXML")">download ServicesData</a></li>
+</ul>
+
+<style>
+    .serviceimportarea {
+        background-color:green;
+        width: 350px;
+        height: 50px;
+    }
+</style>
+<div class="serviceimportarea" id="serviceimport" ondrop="serviceImportDrop(event)" ondragover="serviceImportAllowDrop(event)">
+    Drop Service-xml here.
+</div>
+
+
 <script>
     function onSuccess() {
         alert("success called...");
+    }
+
+    function serviceImportAllowDrop(e) {
+        e.preventDefault();
+    }
+
+    function serviceImportDrop(e) {
+        console.log('File(s) dropped');
+        e.preventDefault();
+
+        var datafiles = Array();
+        for (var i = 0; i < e.dataTransfer.items.length; i++) {
+            // If dropped items aren't files, reject them
+            if (e.dataTransfer.items[i].kind === 'file') {
+                var file = e.dataTransfer.items[i].getAsFile();
+                console.log('... file[' + i + '].name = ' + file.name);
+                datafiles.push(file);
+            }
+        }
+
+        $.ajax({
+            url: '@Url.Content("~/ServiceConfiguration/ImportServiceXML")',
+            type: 'post',
+            data: datafiles,
+            dataType: "xml",
+            success: function (data) {
+                alert("file uploaded...");
+            },
+            error: function () { alert("Error: Something went wrong"); }
+        });
     }
 
 </script>

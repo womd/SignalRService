@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,11 +17,13 @@ namespace SignalRService.Controllers
     {
         private DAL.ServiceContext db;
         private Repositories.MinerContext minerContext;
+        private Repositories.ServiceSettingRepositorie serviceSettingRepo;
 
         public ServiceConfigurationController()
         {
             db = new DAL.ServiceContext();
             minerContext = new Repositories.MinerContext(db);
+            serviceSettingRepo = new Repositories.ServiceSettingRepositorie(db);
         }
 
         public ActionResult Index()
@@ -245,6 +248,20 @@ namespace SignalRService.Controllers
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
             }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public FileResult DownloadServiceXML()
+        {
+            var xmldata = serviceSettingRepo.GetAllServiceDataAsXML();
+            string filename = "Services_Export_" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".xml";
+            return File(Encoding.ASCII.GetBytes(xmldata), "text/plain", filename);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public bool ImportServiceXML(HttpPostedFileBase file)
+        {
+            return false;
         }
     }
 }

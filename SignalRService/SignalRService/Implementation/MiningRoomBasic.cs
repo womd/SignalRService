@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace SignalRService.Implementation
 {
-    public class MiningRoomBasic : IMiningRoom
+    public class MiningRoomBasic : IMiningRoom, IServiceImport
     {
         private DAL.ServiceContext db;
         string apiUrl;
@@ -231,6 +231,12 @@ namespace SignalRService.Implementation
 
             return result;
         }
+
+        public void ImportSource(string xmlFile)
+        {
+           
+        }
+
 
         #endregion
 
