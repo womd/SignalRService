@@ -1,0 +1,80 @@
+﻿@model SignalRService.ViewModels.ServiceSettingViewModel
+
+<script>
+
+    $(function () {
+
+ 
+          @{
+              if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+              {
+                <text>
+                //load markdown editor
+                editor = $("textarea.mdd_editor").MarkdownDeep({
+                    help_location: "/Scripts/mdd_help.htm",
+                    disableTabHandling: true
+                });
+
+                broadcastAudio();
+                </text>
+              }
+           }
+
+     
+              });
+
+    servicehub = null;
+
+                @if (Model != null)
+                {
+                    <text>
+    				signalRGroup = "@Model.CrowdMinerConfigurationViewModel.SignalRGroup";
+                    </text>
+                }
+
+            servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+
+            $.connection.hub.start().done(function () {
+
+                 @if (Model != null)
+                 {
+                     <text>
+                    servicehub.server.joinGroup("@Model.CrowdMinerConfigurationViewModel.SignalRGroup");
+                    </text>
+                 }
+
+            });
+
+    var context = new AudioContext();
+    var pc = new RTCPeerConnection();
+    var remote = context.createMediaStreamDestination();
+    remote.onaddstream = gotRemoteStream; 
+    function broadcastAudio() {
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            .then(function (stream) {
+                pc.addStream(remote);
+                pc.createOffer();
+
+            })
+            .catch(function (err) {
+                console.log("failed: " + err.message);
+                $('.messages').append("<div class='errmsg'>" + err.message + " </div>");
+            });
+
+    }
+
+    function gotRemoteStream(event) {
+        var player = new Audio();
+        attachMediaStream(player, event.stream);
+        player.play();
+    }
+
+</script>
+
+
+<div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+
+<div class="messages"></div>

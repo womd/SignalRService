@@ -141,7 +141,7 @@ namespace SignalRService.Controllers
                     dbobj.LuckyGameSettings.Add(gsmodel);
                 }
 
-                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMiner)
+                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMiner || model.ServiceType == (int)Enums.EnumServiceType.DJRoom)
                 {
                     if (dbobj.MiningRooms == null)
                         dbobj.MiningRooms = new List<Models.MiningRoomModel>();

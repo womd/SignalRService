@@ -427,6 +427,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CrowdMinerController.cs" />
+    <Compile Include="Controllers\DJRoomController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocalizationController.cs" />
     <Compile Include="Controllers\LuckyGameController.cs" />
@@ -928,6 +929,8 @@
     <Content Include="Views\CrowdMiner\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutCrowdMiner.cshtml" />
     <Content Include="Views\PreDefinedMinerClient\Index.cshtml" />
+    <Content Include="Views\DJRoom\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutDJRoom.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

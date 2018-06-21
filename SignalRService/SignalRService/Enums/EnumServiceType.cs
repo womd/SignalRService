@@ -21,6 +21,8 @@ namespace SignalRService.Enums
         [Display(Name = "BaseTracking")]
         BaseTracking = 5,
         [Display(Name = "CrowdMiner")]
-        CrowdMiner = 6
+        CrowdMiner = 6,
+        [Display(Name = "DJRoom")]
+        DJRoom = 7
     }
 }

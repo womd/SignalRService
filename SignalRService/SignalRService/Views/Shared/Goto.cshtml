@@ -67,6 +67,12 @@
             @Html.Partial("~/Views/CrowdMiner/Index.cshtml", Model);
             break;
 
+        case SignalRService.Enums.EnumServiceType.DJRoom:
+            @renderMiner()
+            Layout = "~/Views/Shared/_LayoutDJRoom.cshtml";
+            @Html.Partial("~/Views/DJRoom/Index.cshtml", Model);
+            break;
+
         default:
             break;
     }
