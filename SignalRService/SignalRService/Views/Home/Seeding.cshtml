@@ -47,26 +47,16 @@
         console.log('File(s) dropped');
         e.preventDefault();
 
-        var datafiles = Array();
-        for (var i = 0; i < e.dataTransfer.items.length; i++) {
-            // If dropped items aren't files, reject them
-            if (e.dataTransfer.items[i].kind === 'file') {
-                var file = e.dataTransfer.items[i].getAsFile();
-                console.log('... file[' + i + '].name = ' + file.name);
-                datafiles.push(file);
-            }
+        var selectedFiles = e.dataTransfer.files;
+        var fdata = new FormData();
+        for (var i = 0; i < selectedFiles.length; i++) {
+            fdata.append(selectedFiles[i].name, selectedFiles[i]);
         }
 
-        $.ajax({
-            url: '@Url.Content("~/ServiceConfiguration/ImportServiceXML")',
-            type: 'post',
-            data: datafiles,
-            dataType: "xml",
-            success: function (data) {
-                alert("file uploaded...");
-            },
-            error: function () { alert("Error: Something went wrong"); }
-        });
+        var request = new XMLHttpRequest();
+        request.open("POST", "@Url.Content("~/ServiceConfiguration/ImportServiceXML")");
+        request.send(fdata);
+
     }
 
 </script>

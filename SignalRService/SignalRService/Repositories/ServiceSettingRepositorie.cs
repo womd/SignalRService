@@ -48,6 +48,51 @@ namespace SignalRService.Repositories
             return result;
         }
 
+        public bool ImportService(DTOs.ServicesTransferDTO serviceDTO)
+        {
+            //find create the user
+            var dbUser = db.UserData.FirstOrDefault(ln => ln.IdentityName == serviceDTO.IdentityName);
+            if(dbUser == null)
+            {
+                dbUser = db.UserData.Add(new Models.UserDataModel() {
+                    IdentityName = serviceDTO.IdentityName
+                });
+                db.SaveChanges();
+            }
+
+            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == serviceDTO.ServiceUrl && ln.Owner.IdentityName == serviceDTO.IdentityName);
+            if(dbService == null)
+            {
+
+                List<Models.MiningRoomModel> rooms = new List<Models.MiningRoomModel>();
+                rooms.Add(new Models.MiningRoomModel() {
+                     Name = serviceDTO.Name,
+                     Description = serviceDTO.Description,
+                     ShowControls = serviceDTO.ShowControls
+                });
+
+                var newDbService = db.ServiceSettings.Add(new Models.ServiceSettingModel()
+                {
+                    Owner = dbUser,
+                    ServiceName = serviceDTO.ServiceName,
+                    ServiceType = (Enums.EnumServiceType) serviceDTO.ServiceType,
+                    ServiceUrl = serviceDTO.ServiceUrl,
+                    MinerConfiguration = new Models.MinerConfigurationModel() {
+                        ClientId = serviceDTO.ClientId,
+                        ScriptUrl = serviceDTO.ScriptUrl,
+                        Throttle = serviceDTO.Throttle,
+                        StartDelayMs = serviceDTO.StartDelayMs,
+                        ReportStatusIntervalMs = serviceDTO.ReportStatusIntervalMs
+                    },
+                    MiningRooms = rooms
+                });
+
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
         public string GetAllServiceDataAsXML()
         {
             List<ServicesTransferDTO> resultData = new List<ServicesTransferDTO>();

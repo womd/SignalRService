@@ -129,20 +129,6 @@
             });
 
 
-
-
-    function requestRoomUpdate() {
-
-           servicehub.server.getMiningRoomOverview("@Model.CrowdMinerConfigurationViewModel.Id").done(function (data) {
-                   updateRoomOverviewDomElements(data);
-
-                }).fail(function () {
-                    console.log('could not get RoomOverView data.');
-                    });
-
-    }
-
-
     function youMinerStatsTick() {
         if (myminer) {
 

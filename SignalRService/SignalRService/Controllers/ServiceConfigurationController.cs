@@ -1,4 +1,5 @@
-﻿using SignalRService.Localization;
+﻿using SignalRService.DTOs;
+using SignalRService.Localization;
 using SignalRService.Utils;
 using SignalRService.ViewModels;
 using System;
@@ -9,6 +10,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SignalRService.Controllers
 {
@@ -258,10 +261,31 @@ namespace SignalRService.Controllers
             return File(Encoding.ASCII.GetBytes(xmldata), "text/plain", filename);
         }
 
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public bool ImportServiceXML(HttpPostedFileBase file)
+        public bool ImportServiceXML()
         {
-            return false;
+
+            List<ServicesTransferDTO> xmlxontents = new List<ServicesTransferDTO>();
+            XmlSerializer serializer = new XmlSerializer(typeof(List<ServicesTransferDTO>));
+            foreach (string pfile in Request.Files)
+            {
+                HttpPostedFileBase file = Request.Files[pfile];
+                string fileName = file.FileName;
+                fileName = Server.MapPath("~/uploads/" + fileName);
+                // file.InputStream .SaveAs(fileName);
+                using (XmlReader reader = XmlReader.Create(file.InputStream))
+                {
+                    xmlxontents.AddRange(((List<ServicesTransferDTO>) serializer.Deserialize(reader)));
+                }
+            }
+
+            foreach(var item in xmlxontents)
+            {
+                serviceSettingRepo.ImportService(item);
+            }
+
+            return true;
         }
     }
 }
