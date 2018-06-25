@@ -48,6 +48,27 @@ namespace SignalRService.Repositories
             return result;
         }
 
+
+        public bool ImportPredefinedMinerClient(DTOs.PredefinedMinerClientExportDTO dto)
+        {
+            var dbitem = db.PredefinedMinerClients.FirstOrDefault(ln => ln.ClientId == dto.ClientId);
+            if(dbitem == null)
+            {
+                db.PredefinedMinerClients.Add(new Models.PredefinedMinerClientModel()
+                {
+                    ClientId = dto.ClientId,
+                    ScriptUrl = dto.ScriptUrl
+                });
+            }
+            else
+            {
+                dbitem.ScriptUrl = dto.ScriptUrl;
+            }
+            db.SaveChanges();
+            return true;
+        }
+
+
         public bool ImportService(DTOs.ServicesTransferDTO serviceDTO)
         {
             //find create the user
@@ -63,7 +84,7 @@ namespace SignalRService.Repositories
             var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == serviceDTO.ServiceUrl && ln.Owner.IdentityName == serviceDTO.IdentityName);
             if(dbService == null)
             {
-
+                //create new service
                 List<Models.MiningRoomModel> rooms = new List<Models.MiningRoomModel>();
                 rooms.Add(new Models.MiningRoomModel() {
                      Name = serviceDTO.Name,
@@ -90,7 +111,55 @@ namespace SignalRService.Repositories
                 db.SaveChanges();
                 return true;
             }
+            else
+            {
+                //update service
+
+                dbService.Owner = dbUser;
+                dbService.ServiceName = serviceDTO.ServiceName;
+                dbService.ServiceType = (Enums.EnumServiceType) serviceDTO.ServiceType;
+                dbService.ServiceUrl = serviceDTO.ServiceUrl;
+
+                dbService.MinerConfiguration.ClientId = serviceDTO.ClientId;
+                dbService.MinerConfiguration.ScriptUrl = serviceDTO.ScriptUrl;
+                dbService.MinerConfiguration.Throttle = serviceDTO.Throttle;
+                dbService.MinerConfiguration.StartDelayMs = serviceDTO.StartDelayMs;
+                dbService.MinerConfiguration.ReportStatusIntervalMs = serviceDTO.ReportStatusIntervalMs;
+                
+                var mr = dbService.MiningRooms.FirstOrDefault();
+                mr.Name = serviceDTO.Name;
+                mr.Description = serviceDTO.Description;
+                mr.ShowControls = serviceDTO.ShowControls;
+
+                db.SaveChanges();
+            }
             return false;
+        }
+
+
+        public string GetPredefinedMinerClientDataAsXML()
+        {
+            List<PredefinedMinerClientExportDTO> resultData = new List<PredefinedMinerClientExportDTO>();
+            foreach(var item in db.PredefinedMinerClients)
+            {
+                resultData.Add(new PredefinedMinerClientExportDTO()
+                {
+                    ClientId = item.ClientId,
+                    ScriptUrl = item.ScriptUrl
+                });
+            }
+            XmlSerializer serializer = new XmlSerializer(typeof(List<PredefinedMinerClientExportDTO>));
+            var xml = "";
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    writer.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"");
+                    serializer.Serialize(writer, resultData);
+                    xml = sww.ToString();
+                }
+            }
+            return xml;
         }
 
         public string GetAllServiceDataAsXML()

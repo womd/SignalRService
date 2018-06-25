@@ -254,11 +254,45 @@ namespace SignalRService.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        public FileResult DownloadPredefinedMinerClientXML()
+        {
+            var xmldata = serviceSettingRepo.GetPredefinedMinerClientDataAsXML();
+            string filename = "PredefinedMinerClient_Export" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".xml";
+            return File(Encoding.ASCII.GetBytes(xmldata), "text/plain", filename);
+        }
+
+        [Authorize(Roles = "Admin")]
         public FileResult DownloadServiceXML()
         {
             var xmldata = serviceSettingRepo.GetAllServiceDataAsXML();
             string filename = "Services_Export_" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".xml";
             return File(Encoding.ASCII.GetBytes(xmldata), "text/plain", filename);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public bool ImportPredefinedMinerClientXML()
+        {
+            List<PredefinedMinerClientExportDTO> xmlxontents = new List<PredefinedMinerClientExportDTO>();
+            XmlSerializer serializer = new XmlSerializer(typeof(List<PredefinedMinerClientExportDTO>));
+            foreach (string pfile in Request.Files)
+            {
+                HttpPostedFileBase file = Request.Files[pfile];
+                string fileName = file.FileName;
+                fileName = Server.MapPath("~/uploads/" + fileName);
+                // file.InputStream .SaveAs(fileName);
+                using (XmlReader reader = XmlReader.Create(file.InputStream))
+                {
+                    xmlxontents.AddRange(((List<PredefinedMinerClientExportDTO>) serializer.Deserialize(reader)));
+                }
+            }
+
+            foreach (var item in xmlxontents)
+            {
+                serviceSettingRepo.ImportPredefinedMinerClient(item);
+            }
+
+            return true;
         }
 
         [HttpPost]

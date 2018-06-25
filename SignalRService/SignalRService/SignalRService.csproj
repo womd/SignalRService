@@ -446,6 +446,7 @@
     <Compile Include="DTOs\GeneralHubRequestObject.cs" />
     <Compile Include="DTOs\GeneralHubResponseObject.cs" />
     <Compile Include="DTOs\MiningRoomRequesObject.cs" />
+    <Compile Include="DTOs\PredefinedMinerClientExportDTO.cs" />
     <Compile Include="DTOs\ServicesExportDTO.cs" />
     <Compile Include="Enums\EnumGeneralSetting.cs" />
     <Compile Include="Enums\EnumImportType.cs" />
