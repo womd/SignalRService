@@ -117,7 +117,10 @@
 
     servicehub.client.minerRoomSetMinerThrottle = function (data) {
         miner.client().setThrottle(data);
-        $('#sliderCpu')[0].value = (data * 100).toFixed();
+        var throttlePercent = (data * 100).toFixed();
+        var cpuPower = (100 - throttlePercent).toFixed();
+
+        $('#sliderCpu')[0].value = cpuPower;
         $("#sliderCpu").slider("refresh");
     }
 
@@ -337,7 +340,7 @@
 
     function cpuSliderChanged(e) {
 
-        var dataval = parseFloat(e.value / 100);
+        var dataval = parseFloat(  ((100 - e.value) / 100) );
         @{
             if(SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name) )
             {
