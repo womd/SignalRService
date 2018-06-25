@@ -433,11 +433,12 @@
     @{
         var thrtl = float.Parse(Model.MinerConfigurationViewModel.Throttle);
         var usagep = thrtl * 100;
+        var cpuPower = (100 - usagep);
     }
 
     <div class="ui-field-contain showControls controlelement">
         <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage"):</label>
-        <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@usagep" onchange="cpuSliderChanged(this)">
+        <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@cpuPower" onchange="cpuSliderChanged(this)">
     </div>
 
     @{
