@@ -81,7 +81,7 @@ namespace SignalRService.Repositories
                 db.SaveChanges();
             }
 
-            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == serviceDTO.ServiceUrl && ln.Owner.IdentityName == serviceDTO.IdentityName);
+            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == serviceDTO.ServiceUrl);
             if(dbService == null)
             {
                 //create new service
