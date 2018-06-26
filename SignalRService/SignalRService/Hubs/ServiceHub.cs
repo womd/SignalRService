@@ -405,10 +405,11 @@ namespace SignalRService.Hubs
                 };
             }
             else {
-                dblang.Value = Content;
+                var freshdbobj = db.Localization.FirstOrDefault(ln => ln.ID == dblang.ID);
+                freshdbobj.Value = Content;
                 db.SaveChanges();
 
-                Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
+              //  Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
 
                 return new DTOs.GeneralHubResponseObject()
                 {
