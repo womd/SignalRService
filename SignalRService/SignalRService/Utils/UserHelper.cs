@@ -18,5 +18,15 @@ namespace SignalRService.Utils
             }
             return users;
         }
+
+        public static string GetXMRWalletAddressFor(string IdentityName)
+        {
+            DAL.ServiceContext db = new DAL.ServiceContext();
+            var dbuser = db.UserData.FirstOrDefault(ln => ln.IdentityName == IdentityName);
+            if (dbuser == null)
+                return null;
+
+            return dbuser.XMRWalletAddress;
+        }
     }
 }

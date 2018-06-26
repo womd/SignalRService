@@ -39,6 +39,11 @@ namespace SignalRService.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class ChangeXMRWalletViewModel
+    {
+        public string XMRAddress { get; set; }
+    }
+
     public class ChangePasswordViewModel
     {
         [Required]

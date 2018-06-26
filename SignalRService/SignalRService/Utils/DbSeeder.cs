@@ -80,6 +80,9 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.MiningRoomNameMinLength))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.MiningRoomNameMinLength, Type = Enums.EnumSettingType.Int, Value = "3" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs, Type = Enums.EnumSettingType.Int, Value = "54000" });
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
         }

@@ -64,6 +64,14 @@ namespace SignalRService.Localization
             return resourceValue;
         }
 
+        public Models.LocalizationModel GetDbObjectForKey(string sKey)
+        {
+            Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key.Equals(sKey) && l.Culture.Equals(CultureInfo.CurrentCulture.Name));
+            return localization;
+        }
+
+        
+
         public void removeFromCache(string key, string culture)
         {
             if (cache.ContainsKey(buildCacheKey(key, culture)))

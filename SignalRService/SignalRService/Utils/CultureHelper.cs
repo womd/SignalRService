@@ -117,5 +117,29 @@ namespace SignalRService.Utils
         {
             return !name.Contains("-") ? name : name.Split('-')[1];
         }
+
+        public static ViewModels.DropDownViewModel get_cultureDropDownData()
+        {
+            ViewModels.DropDownViewModel res = new ViewModels.DropDownViewModel();
+            bool selected = false;
+            res.SelectedItemId = CultureHelper.GetCurrentCulture();
+            res.Items = new List<System.Web.Mvc.SelectListItem>();
+            foreach (var item in CultureHelper.Cultures)
+            {
+                if (item == res.SelectedItemId)
+                    selected = true;
+                else
+                    selected = false;
+
+                res.Items.Add(new System.Web.Mvc.SelectListItem()
+                {
+                    Disabled = false,
+                    Text = item,
+                    Value = item,
+                    Selected = selected
+                });
+            }
+            return res;
+        }
     }
 }

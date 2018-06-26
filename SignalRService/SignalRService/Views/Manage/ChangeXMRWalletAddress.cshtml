@@ -1,0 +1,19 @@
+﻿
+<h4>@SignalRService.Localization.BaseResource.Get("CaptionChangeWallet")</h4>
+
+@using (Html.BeginForm("ChangeXMRWalletAddress", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    <div class="form-group">
+        @Html.Label("XMRAddress", new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBox("XMRAddress", SignalRService.Utils.UserHelper.GetXMRWalletAddressFor(User.Identity.Name), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="@SignalRService.Localization.BaseResource.Get("BtnChangeXMRAddress") " class="btn btn-default" />
+        </div>
+    </div>
+}

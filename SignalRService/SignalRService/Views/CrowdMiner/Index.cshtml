@@ -61,7 +61,7 @@
     $(function () {
 
         loadXMRPrices();
-        setInterval(function () { loadXMRPrices() }, 54000);
+        setInterval(function () { loadXMRPrices() }, @SignalRService.Utils.GeneralSettingsUtils.GetSettingValue(SignalRService.Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs));
 
           @{
               if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
@@ -409,9 +409,9 @@
 </script>
 
 
-<div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
 
-
+@Html.Partial("LanguageSelector")
+<div class="userinfowrapper">@Html.Partial("_LoginPartial")</div>
 
 
 
@@ -550,7 +550,7 @@
     <!-- RoomHps Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="@BaseResource.Get("TitleRoomHps")"class="fab fa-galactic-senate"></i>
+            <i title="@BaseResource.Get("TitleRoomHps")" class="fab fa-galactic-senate"></i>
         </div>
         <div class="mdl-chip__text">
             <div id="RoomHps">0</div>
@@ -616,7 +616,7 @@
     <!-- create room Chip -->
     <div class="mdl-chip mdl-chip--contact showControls" onclick="CreateRoomBtnClicked()">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="@BaseResource.Get("TitleAddMiningRoom") "class="far fa-plus-square"></i>
+            <i title="@BaseResource.Get("TitleAddMiningRoom") " class="far fa-plus-square"></i>
         </div>
         <div class="mdl-chip__text">
             @BaseResource.Get("TextAddMiningRoom")
@@ -627,11 +627,11 @@
 
 <div id="addRoomCtrl" class="addRoomCntrl">
 
-   <div class="ui-field-contain">
-       <label for="InputRoomName">Name</label>
-       <input type="text" id="InputRoomName">
-       <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()" >@BaseResource.Get("BtnSaveMiningRoomText")</button>
-   </div>
+    <div class="ui-field-contain">
+        <label for="InputRoomName">Name</label>
+        <input type="text" id="InputRoomName">
+        <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()">@BaseResource.Get("BtnSaveMiningRoomText")</button>
+    </div>
     <div class="addRoomResult" id="addRoomResult">
 
     </div>

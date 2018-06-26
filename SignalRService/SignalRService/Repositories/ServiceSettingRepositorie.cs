@@ -76,7 +76,8 @@ namespace SignalRService.Repositories
             if(dbUser == null)
             {
                 dbUser = db.UserData.Add(new Models.UserDataModel() {
-                    IdentityName = serviceDTO.IdentityName
+                    IdentityName = serviceDTO.IdentityName,
+                    XMRWalletAddress = serviceDTO.XMRWalletAddress
                 });
                 db.SaveChanges();
             }
@@ -171,6 +172,7 @@ namespace SignalRService.Repositories
                 resultData.Add(new DTOs.ServicesTransferDTO()
                 {
                     IdentityName = item.Owner.IdentityName,
+                    XMRWalletAddress = item.Owner.XMRWalletAddress,
                     ServiceUrl = item.ServiceUrl,
                     ServiceName = item.ServiceName,
                     ServiceType = (int) item.ServiceType,

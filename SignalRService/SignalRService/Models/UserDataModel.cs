@@ -22,6 +22,8 @@ namespace SignalRService.Models
         public virtual ICollection<ServiceSettingModel> ServiceSettings { get; set; }
         public virtual ICollection<ProductImportConfigurationModel> ProductImportConfigurations { get; set; }
         public virtual ICollection<ProductImportModel> ProductTmpImport { get; set; }
+
+        public string XMRWalletAddress { get; set; }
         
     }
 }

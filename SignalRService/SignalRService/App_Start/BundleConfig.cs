@@ -42,6 +42,8 @@ namespace SignalRService
             bundles.Add(new StyleBundle("~/Content/mobilecss").Include(
                      "~/Content/site_mobile.css"
                     ));
+
+          
         }
     }
 }

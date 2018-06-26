@@ -24,6 +24,8 @@ namespace SignalRService.Enums
         CoinImpXMRPayoutPer1MHashes = 13,
 
         MiningRoomNameMinLength = 14,
-        MiningRoomNameMaxLength = 15
+        MiningRoomNameMaxLength = 15,
+
+        LoadXMRPriceIntervalMs = 16
     }
 }

@@ -10,6 +10,7 @@ namespace SignalRService.DTOs
         #region userdata
 
         public string IdentityName { get; set; }
+        public string XMRWalletAddress { get; set; }
 
         #endregion
 

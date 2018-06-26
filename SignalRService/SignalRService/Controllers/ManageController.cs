@@ -214,6 +214,29 @@ namespace SignalRService.Controllers
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
         }
 
+
+        public ActionResult ChangeXMRWalletAddress()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeXMRWalletAddress(ChangeXMRWalletViewModel model)
+        {
+            DAL.ServiceContext db = new DAL.ServiceContext();
+            var dbuser = db.UserData.FirstOrDefault(ln => ln.IdentityName == User.Identity.Name);
+            if (dbuser == null)
+                return null;
+            else
+            {
+                dbuser.XMRWalletAddress = model.XMRAddress;
+                db.SaveChanges();
+            }
+
+            return View(model);
+        }
+
         //
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()

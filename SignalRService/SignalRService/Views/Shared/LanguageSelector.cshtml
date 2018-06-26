@@ -1,0 +1,89 @@
+﻿@using SignalRService.Utils
+
+@{
+    var csmodel = CultureHelper.get_cultureDropDownData();
+    var currentlang = csmodel.SelectedItemId.Substring(0,2);
+}
+
+<div class="cselectionbox">
+    <div class="culturewrapper currentlang" onclick="show_cultureselector()">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+    <div class="cultureselector_wrapper">
+
+        <select id="cultureselect_listbox" onchange="culture_change(this)" onselect="culture_select(this)" style="width: 80px;" class="f32">
+            @foreach (var item in csmodel.Items)
+            {
+                <option class="f32 @currentlang" value="@item.Value" selected="@item.Selected">@item.Text</option>
+            }
+        </select>
+
+        @*@(Html.Kendo().ComboBox()
+                                        .Name("cultureselect")
+                                        .BindTo(csmodel)
+                                        .DataTextField("Text")
+                                        .DataValueField("Value")
+                                        .Filter("startswith")
+                                        .Template("<ul class=\"f32\"><li class=\"flag #:data.Text#\"></li>#:data.Text#</ul>")
+                                        .HtmlAttributes(new { style = "width: 80px", @class = "f32" })
+                                        .Events(ev => ev.Select("culture_select").Change("culture_change"))
+            )*@
+    </div>
+</div>
+
+<script>
+
+    $(function() {
+
+     });
+
+    function set_culture(culture)
+    {
+        $.ajax({
+            url: "@Url.Action("SetCulture","Home")",
+            data: { Culture : culture}
+        }).done(function () {
+            location.reload();
+        });
+    }
+
+    function show_cultureselector()
+    {
+        $('.cultureselector_wrapper').show();
+    }
+    function culture_select(e)
+    {
+        console.log("selected culture...");
+        if (e.dataItem != null) {
+            set_culture(e.dataItem.Value);
+        }
+        else {
+            var doi = $(e.item).parent().parent()[0].dataset.offsetIndex;
+            var data = e.sender.dataSource._data[doi];
+            set_culture(data.Value);
+        }
+        this.close();
+        $('.cultureselector_wrapper').hide();
+    }
+
+    function culture_change(e)
+    {
+
+    }
+
+</script>
+<style>
+    .cultureselector_wrapper {
+        display: none;
+    }
+
+    .cselectionbox {
+        width: 120px;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        z-index: 1;
+    }
+
+    #cultureselect_listbox  {
+       
+    }
+</style>

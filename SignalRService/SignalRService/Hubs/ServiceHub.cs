@@ -378,18 +378,44 @@ namespace SignalRService.Hubs
             return Utils.LuckyGameUtils.GetCards();
         }
 
-        //public async Task<ViewModels.MiningRoomViewModel>getMiningRoomOverview(int Id)
-        //{
-        //    return await Task.Run(() => _getMiningRoomOverView(Id));
-        //}
+       
+        public async Task<DTOs.GeneralHubResponseObject> updateLocalizationProperty(string PropertyName, string Content)
+        {
+            if(!Context.User.IsInRole("Admin"))
+            {
+                return new DTOs.GeneralHubResponseObject()
+                {
+                    ErrorMessage = "no permission",
+                    Success = false
+                };
+            }
 
-        //private ViewModels.MiningRoomViewModel _getMiningRoomOverView(int Id)
-        //{
-        //    var miningroom = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
-        //    var overviewData = miningroom.GetOverview(Id);
+            return await Task.Run(() => _updateLocalizationProperty(PropertyName, Content));
+        }
 
-        //    return overviewData;
-        //}
+        private DTOs.GeneralHubResponseObject _updateLocalizationProperty(string PropertyName, string Content)
+        {
+            var dblang = Localization.UiResources.Instance.GetDbObjectForKey(PropertyName);
+            if(dblang == null)
+            {
+                return new DTOs.GeneralHubResponseObject()
+                {
+                    Success = false,
+                    ErrorMessage = "Property " + PropertyName + " does not exist..."
+                };
+            }
+            else {
+                dblang.Value = Content;
+                db.SaveChanges();
+
+                return new DTOs.GeneralHubResponseObject()
+                {
+                    Success = true,
+                    Message = "Data sucessfuly saved."
+                };
+            }
+            
+        }
 
         public async Task<ViewModels.MiningRoomUpdateResult> updateMiningRoomDescription(int Id, string Content)
         {
@@ -407,7 +433,7 @@ namespace SignalRService.Hubs
             return await Task.Run(() => _updateMiningRoomDescription(Id, Content));
         }
 
-        public ViewModels.MiningRoomUpdateResult _updateMiningRoomDescription(int MiningRoomId, string Content)
+        private ViewModels.MiningRoomUpdateResult _updateMiningRoomDescription(int MiningRoomId, string Content)
         {
 
             var miningroomImplementation = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);

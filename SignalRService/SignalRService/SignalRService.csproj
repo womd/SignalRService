@@ -502,6 +502,10 @@
     <Compile Include="Migrations\201806181146001_PredefClientList.Designer.cs">
       <DependentUpon>201806181146001_PredefClientList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806260706048_AddWalletAddressToUserData.cs" />
+    <Compile Include="Migrations\201806260706048_AddWalletAddressToUserData.Designer.cs">
+      <DependentUpon>201806260706048_AddWalletAddressToUserData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
@@ -555,6 +559,7 @@
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\SignalRMinerUtils.cs" />
     <Compile Include="Utils\UserHelper.cs" />
+    <Compile Include="ViewModels\DropDownViewModel.cs" />
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
@@ -602,6 +607,8 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\flags32.css" />
+    <Content Include="Content\flags32.png" />
     <Content Include="Content\site_mobile.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -932,6 +939,8 @@
     <Content Include="Views\PreDefinedMinerClient\Index.cshtml" />
     <Content Include="Views\DJRoom\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutDJRoom.cshtml" />
+    <Content Include="Views\Manage\ChangeXMRWalletAddress.cshtml" />
+    <Content Include="Views\Shared\LanguageSelector.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -971,6 +980,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806181146001_PredefClientList.resx">
       <DependentUpon>201806181146001_PredefClientList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806260706048_AddWalletAddressToUserData.resx">
+      <DependentUpon>201806260706048_AddWalletAddressToUserData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

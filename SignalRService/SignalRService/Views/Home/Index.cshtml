@@ -7,12 +7,92 @@
     if (User.IsInRole("Admin"))
     {
         Layout = "~/Views/Shared/_LayoutBackend.cshtml";
+
     }
 }
 
 <div class="jumbotron">
-    <h1>SRService</h1>
-    <p class="lead">this is a protptype implementation for testing purpose only....</p>
 
-</div>
+    @{
+        if (User.IsInRole("Admin"))
+        {
+            <!-- Markdown Editor-->
+            <div class="mdd_toolbar"></div>
+            <textarea cols=50 rows=10 class="mdd_editor">@SignalRService.Localization.BaseResource.Get("MainPageMarkDown")</textarea>
+            <div class="mdd_resizer"></div>
+            <div class="mdd_preview">
+            </div>
+        }
+    }
+
+
+    @{
+        var md = new MarkdownDeep.Markdown();
+        md.NewWindowForExternalLinks = true;
+        md.NewWindowForLocalLinks = true;
+        md.SafeMode = true;
+        string htmlContent = md.Transform(@SignalRService.Localization.BaseResource.Get("MainPageMarkDown"));
+    }
+
+     @{
+        if (User.IsInRole("Admin"))
+        {
+            <button class="ui-button ui-widget ui-corner-all" onclick="editorSave()">
+                <i class="far fa-save" title="@BaseResource.Get("TitleSave")"></i>
+            </button>
+        }
+      }
+            <div class="contentwrapper">
+                @Html.Raw( htmlContent )
+            </div>
+
+        </div>
+
+<script>
+
+        @{
+            if (User.IsInRole("Admin"))
+            {
+                <text>
+
+               function editorSave() {
+                        var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
+                        var mdstring = markdowndata.mdd.X;
+                   servicehub.server.updateLocalizationProperty("MainPageMarkDown", mdstring)
+                       .done(function (data) {
+                           if (data.Success == false) {
+                               alert(data.ErrorMessage);
+                           }
+                           else {
+                               console.log(data.Message);
+                           }
+                       })
+                       .fail(function (data) {
+                           alert.log("saving failed...");
+                       })
+                }
+              </text>
+            }
+        }
+
+    $(function () {
+
+        @{ 
+            if (User.IsInRole("Admin"))
+            {
+                <text>
+        //load markdown editor
+        editor = $("textarea.mdd_editor").MarkdownDeep({
+            help_location: "/Scripts/mdd_help.htm",
+            disableTabHandling: true
+        });
+
+                </text>
+            }
+        }
+
+
+    });
+
+</script>
 
