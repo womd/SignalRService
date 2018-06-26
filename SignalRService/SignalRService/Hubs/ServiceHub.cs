@@ -408,6 +408,8 @@ namespace SignalRService.Hubs
                 dblang.Value = Content;
                 db.SaveChanges();
 
+                Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
+
                 return new DTOs.GeneralHubResponseObject()
                 {
                     Success = true,
