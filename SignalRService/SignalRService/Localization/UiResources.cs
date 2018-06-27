@@ -9,13 +9,14 @@ namespace SignalRService.Localization
 {
     public class UiResources
     {
-        private readonly DAL.ServiceContext db = new DAL.ServiceContext();
+        private DAL.ServiceContext db;
         private Dictionary<string, string> cache;
         private static readonly object lockobj = new object();
         private static UiResources instance;
         public UiResources()
         {
             cache = new Dictionary<string, string>();
+            db = db = new DAL.ServiceContext();
         }
 
         private string buildCacheKey(string key, string culture)
@@ -51,6 +52,7 @@ namespace SignalRService.Localization
                 cache.TryGetValue(buildCacheKey(sKey, CultureInfo.CurrentCulture.Name), out resourceValue);
             else
             {
+                db = new DAL.ServiceContext();
                 Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key.Equals(sKey) && l.Culture.Equals(CultureInfo.CurrentCulture.Name));
                 resourceValue = localization != null ? localization.Value : string.Format("{0}(!!)", sKey);
                 cache.Add(buildCacheKey(sKey, CultureInfo.CurrentCulture.Name), resourceValue);

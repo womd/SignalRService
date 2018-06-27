@@ -13,20 +13,17 @@ namespace SignalRService.Localization
     {
         public static string Get(string key)
         {
-            UiResources ui = new UiResources();
-            return ui.GetResourceValueFromDb(key);
+            return UiResources.Instance.GetResourceValueFromDb(key);
         }
 
         public static void removeFromCache(string key, string culture)
         {
-            UiResources ui = new UiResources();
-            ui.removeFromCache(key, culture);
+            UiResources.Instance.removeFromCache(key, culture);
         }
 
         public static void clearCache()
         {
-            UiResources ui = new UiResources();
-            ui.clearCache();
+            UiResources.Instance.clearCache();
         }
         public static string CreateLocalizationSrc(DAL.ServiceContext dbcontext, string filePath)
         {

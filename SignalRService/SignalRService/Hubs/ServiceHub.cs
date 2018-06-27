@@ -409,7 +409,7 @@ namespace SignalRService.Hubs
                 freshdbobj.Value = Content;
                 db.SaveChanges();
 
-              //  Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
+                Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
 
                 return new DTOs.GeneralHubResponseObject()
                 {

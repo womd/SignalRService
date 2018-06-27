@@ -33,11 +33,11 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
                     @{
-        if (User != null && User.Identity.IsAuthenticated)
-        {
-                <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
-               
-        }
+                        if (User != null && User.Identity.IsAuthenticated)
+                        {
+                            <li>@Html.ActionLink("Services", "Index", "ServiceConfiguration")</li>
+
+                        }
                     }
 
                 </ul>
@@ -48,12 +48,10 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-          
-        </footer>
+        <footer></footer>
     </div>
 
- 
+
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/jtable")
     @Scripts.Render("~/bundles/bootstrap")

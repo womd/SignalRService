@@ -9,7 +9,7 @@
     <div class="culturewrapper currentlang" onclick="show_cultureselector()">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
     <div class="cultureselector_wrapper">
 
-        <select id="cultureselect_listbox" onchange="culture_change(this)" onselect="culture_select(this)" style="width: 80px;" class="f32">
+        <select id="cultureselect_listbox" onchange="culture_change(this)" onselect="culture_select()" style="width: 80px;" class="f32">
             @foreach (var item in csmodel.Items)
             {
                 <option class="f32 @currentlang" value="@item.Value" selected="@item.Selected">@item.Text</option>
@@ -49,7 +49,7 @@
     {
         $('.cultureselector_wrapper').show();
     }
-    function culture_select(e)
+    function culture_select()
     {
         console.log("selected culture...");
         if (e.dataItem != null) {
@@ -66,7 +66,9 @@
 
     function culture_change(e)
     {
-
+        var culture = $(e).val();
+        set_culture(culture);
+        
     }
 
 </script>
