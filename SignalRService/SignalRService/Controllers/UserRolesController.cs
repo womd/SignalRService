@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SignalRService.Controllers
 {
@@ -15,11 +17,13 @@ namespace SignalRService.Controllers
         private Models.ApplicationDbContext appDbContext = new Models.ApplicationDbContext();
         private UserManager<Models.ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
+        private Repositories.UserRepository _userRepository;
 
         public UserRolesController()
         {
             _userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
+            _userRepository = new Repositories.UserRepository(new DAL.ServiceContext());
         }
 
         public ActionResult Index()
@@ -197,5 +201,29 @@ namespace SignalRService.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public bool ImportAspNetUserXML()
+        {
+            DTOs.AspNetUserDataDTO xmlxontents = new DTOs.AspNetUserDataDTO();
+            XmlSerializer serializer = new XmlSerializer(typeof(List<DTOs.AspNetUserDataDTO>));
+            foreach (string pfile in Request.Files)
+            {
+                HttpPostedFileBase file = Request.Files[pfile];
+                string fileName = file.FileName;
+                fileName = Server.MapPath("~/uploads/" + fileName);
+                // file.InputStream .SaveAs(fileName);
+                using (XmlReader reader = XmlReader.Create(file.InputStream))
+                {
+                    xmlxontents = (DTOs.AspNetUserDataDTO) serializer.Deserialize(reader);
+                }
+            }
+
+              _userRepository.ImportAspNetUserXML(xmlcontents);
+            
+
+            return true;
+        }
     }
 }

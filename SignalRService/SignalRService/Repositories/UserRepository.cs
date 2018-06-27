@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using SignalRService.Utils;
 
 namespace SignalRService.Repositories
@@ -59,6 +64,90 @@ namespace SignalRService.Repositories
         {
             return userContext.GetUser("Anonymous");
         }
+
+        public string GetAspNetUsersXML()
+        {
+            var appDbContext = new Models.ApplicationDbContext();
+           
+            DTOs.AspNetUserDataDTO theTransferObject = new DTOs.AspNetUserDataDTO();
+            theTransferObject.Users = new List<DTOs.AspNetUsersDTO>();
+            theTransferObject.Roles = new List<DTOs.AspNetRolesDTO>();
+            theTransferObject.UserLogins = new List<DTOs.AspNetUserLoginsDTO>();
+            theTransferObject.UserRoles = new List<DTOs.AspNetUserRolesDTO>();
+
+            var userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
+            foreach (var item in appDbContext.Users.ToList())
+            {
+                theTransferObject.Users.Add(new DTOs.AspNetUsersDTO() {
+                     Id = item.Id,
+                     Email = item.Email,
+                     EmailConfirmed = item.EmailConfirmed,
+                     PasswordHash = item.PasswordHash,
+                     SecurityStamp = item.SecurityStamp,
+                     PhoneNumber = item.PhoneNumber,
+                     PhoneNumberConfirmed = item.PhoneNumberConfirmed,
+                     TwoFactorEnabled = item.TwoFactorEnabled,
+                     LockoutEndDateUtc = item.LockoutEndDateUtc.HasValue ? item.LockoutEndDateUtc.Value : (DateTime?) null,
+                     LockoutEnabled = item.LockoutEnabled,
+                     AcccessFailedCount = item.AccessFailedCount,
+                     UserName = item.UserName
+                });
+
+                foreach(var login in item.Logins.ToList())
+                {
+                    theTransferObject.UserLogins.Add(new DTOs.AspNetUserLoginsDTO()
+                    {
+                         UserId = login.UserId,
+                         LoginProvider = login.LoginProvider,
+                         ProviderKey = login.ProviderKey
+                    });
+                }
+            }
+
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
+            foreach(var item in roleManager.Roles.ToList())
+            {
+                theTransferObject.Roles.Add(new DTOs.AspNetRolesDTO()
+                {
+                    Id = item.Id,
+                    Name = item.Name
+                });
+
+                foreach(var ruser in item.Users)
+                {
+                    theTransferObject.UserRoles.Add(new DTOs.AspNetUserRolesDTO()
+                    {
+                        UserId = ruser.UserId,
+                        RoleId = ruser.RoleId
+                    });
+                }
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<DTOs.AspNetUsersDTO>));
+            var xml = "";
+            using (var sww = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(sww))
+                {
+                    writer.WriteProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"");
+                    serializer.Serialize(writer, theTransferObject);
+                    xml = sww.ToString();
+                }
+            }
+            return xml;
+        }
+
+        public bool ImportAspNetUserXML(DTOs.AspNetUserDataDTO content)
+        {
+            //var userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
+            //var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
+
+            //foreach(var role in content.Roles)
+            //{
+            //    if(!roleManager.RoleExists(role.Name))
+
+            //}
+            return false;
     }
 
    

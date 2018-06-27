@@ -443,6 +443,7 @@
     <Compile Include="Controllers\SignalRClientsController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="DAL\ServiceContext.cs" />
+    <Compile Include="DTOs\AspNetUserDTOs.cs" />
     <Compile Include="DTOs\GeneralHubRequestObject.cs" />
     <Compile Include="DTOs\GeneralHubResponseObject.cs" />
     <Compile Include="DTOs\MiningRoomRequesObject.cs" />
