@@ -19,6 +19,7 @@
 
 
 <ul>
+    <li><a href="@Url.Content("~/UserRoles/ExportAspNetUserXML")">download AspNetUserData</a></li>
     <li><a href="@Url.Content("~/ServiceConfiguration/DownloadServiceXML")">download ServicesData</a></li>
     <li><a href="@Url.Content("~/ServiceConfiguration/DownloadPredefinedMinerClientXML")">download PredefinedMinerClientData</a></li>
 </ul>
@@ -36,7 +37,18 @@
         height: 50px;
         margin: 2px;
     }
+    .userdataimportarea {
+        background-color: green;
+        width: 350px;
+        height: 50px;
+        margin: 2px;
+    }
+
 </style>
+
+<div class="userdataimportarea" id="userdataimportarea" ondrop="userImportDrop(event)" ondragover="userImportAllowDrop(event)">
+    Drop UserData here.
+</div>
 <div class="serviceimportarea" id="serviceimport" ondrop="serviceImportDrop(event)" ondragover="serviceImportAllowDrop(event)">
     Drop Service-xml here.
 </div>
@@ -54,6 +66,9 @@
         e.preventDefault();
     }
     function serviceImportAllowDrop(e) {
+        e.preventDefault();
+    }
+    function userImportAllowDrop(e) {
         e.preventDefault();
     }
 
@@ -77,6 +92,28 @@
         }
         request.send(fdata);
     }
+
+    function userImportDrop(e) {
+        console.log('File(s) dropped');
+        e.preventDefault();
+
+        var selectedFiles = e.dataTransfer.files;
+        var fdata = new FormData();
+        for (var i = 0; i < selectedFiles.length; i++) {
+            fdata.append(selectedFiles[i].name, selectedFiles[i]);
+        }
+
+        var request = new XMLHttpRequest();
+        request.open("POST", "@Url.Content("~/UserRoles/ImportAspNetUserXML")");
+        request.onload = function () {
+            console.log("request success: " + request.response);
+        };
+        request.onerror = function () {
+            console.log("error in request");
+        }
+        request.send(fdata);
+    }
+
 
     function serviceImportDrop(e) {
         console.log('File(s) dropped');

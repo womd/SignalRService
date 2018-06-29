@@ -123,7 +123,7 @@ namespace SignalRService.Repositories
                 }
             }
 
-            XmlSerializer serializer = new XmlSerializer(typeof(List<DTOs.AspNetUsersDTO>));
+            XmlSerializer serializer = new XmlSerializer(typeof(DTOs.AspNetUserDataDTO));
             var xml = "";
             using (var sww = new StringWriter())
             {
@@ -139,15 +139,73 @@ namespace SignalRService.Repositories
 
         public bool ImportAspNetUserXML(DTOs.AspNetUserDataDTO content)
         {
-            //var userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
-            //var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
+            var appDbContext = new Models.ApplicationDbContext();
+            var userManager = new UserManager<Models.ApplicationUser>(new UserStore<Models.ApplicationUser>(appDbContext));
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(appDbContext));
 
-            //foreach(var role in content.Roles)
-            //{
-            //    if(!roleManager.RoleExists(role.Name))
+            foreach (var role in content.Roles)
+            {
+                if (!roleManager.RoleExists(role.Name))
+                {
+                    roleManager.Create(new IdentityRole() { Name = role.Name });
+                }
+            }
 
-            //}
+            foreach (var user in content.Users)
+            {
+                var existingUser = userManager.FindById(user.Id);
+                if (existingUser == null)
+                {
+                    var createRes = userManager.Create(new Models.ApplicationUser()
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        EmailConfirmed = user.EmailConfirmed,
+                        LockoutEnabled = user.LockoutEnabled,
+                        AccessFailedCount = user.AcccessFailedCount,
+                        LockoutEndDateUtc = user.LockoutEndDateUtc.HasValue ? user.LockoutEndDateUtc : null,
+                        PasswordHash = user.PasswordHash,
+                        PhoneNumber = user.PhoneNumber,
+                        PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                        TwoFactorEnabled = user.TwoFactorEnabled,
+                        UserName = user.UserName
+                    });
+
+                    if (createRes.Succeeded)
+                    {
+
+                    }
+                }
+                else
+                {
+                    existingUser.Email = user.Email;
+                    existingUser.EmailConfirmed = user.EmailConfirmed;
+                    existingUser.LockoutEnabled = user.LockoutEnabled;
+                    existingUser.AccessFailedCount = user.AcccessFailedCount;
+                    existingUser.LockoutEnabled = user.LockoutEnabled;
+                    existingUser.LockoutEndDateUtc = user.LockoutEndDateUtc.HasValue ? user.LockoutEndDateUtc : null;
+                    existingUser.PasswordHash = user.PasswordHash;
+                    existingUser.PhoneNumber = user.PhoneNumber;
+                    existingUser.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+                    existingUser.TwoFactorEnabled = user.TwoFactorEnabled;
+                    existingUser.UserName = user.UserName;
+                    
+                }
+            }
+
+            List<IdentityUserLogin> userlogins = new List<IdentityUserLogin>();
+            foreach (var login in content.UserLogins)
+            {
+                userlogins.Add(new IdentityUserLogin()
+                {
+                    LoginProvider = login.LoginProvider,
+                    ProviderKey = login.ProviderKey,
+                    UserId = login.UserId
+                });
+            }
+
             return false;
+        }
     }
 
    

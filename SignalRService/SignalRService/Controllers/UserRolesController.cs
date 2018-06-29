@@ -4,6 +4,7 @@ using SignalRService.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -206,17 +207,17 @@ namespace SignalRService.Controllers
         [Authorize(Roles = "Admin")]
         public bool ImportAspNetUserXML()
         {
-            DTOs.AspNetUserDataDTO xmlxontents = new DTOs.AspNetUserDataDTO();
-            XmlSerializer serializer = new XmlSerializer(typeof(List<DTOs.AspNetUserDataDTO>));
+            DTOs.AspNetUserDataDTO xmlcontents = new DTOs.AspNetUserDataDTO();
+            XmlSerializer serializer = new XmlSerializer(typeof(DTOs.AspNetUserDataDTO));
             foreach (string pfile in Request.Files)
             {
                 HttpPostedFileBase file = Request.Files[pfile];
-                string fileName = file.FileName;
-                fileName = Server.MapPath("~/uploads/" + fileName);
+               // string fileName = file.FileName;
+               // fileName = Server.MapPath("~/uploads/" + fileName);
                 // file.InputStream .SaveAs(fileName);
                 using (XmlReader reader = XmlReader.Create(file.InputStream))
                 {
-                    xmlxontents = (DTOs.AspNetUserDataDTO) serializer.Deserialize(reader);
+                    xmlcontents = (DTOs.AspNetUserDataDTO) serializer.Deserialize(reader);
                 }
             }
 
@@ -224,6 +225,14 @@ namespace SignalRService.Controllers
             
 
             return true;
+        }
+
+        [Authorize(Roles = "Admin")]
+        public FileResult ExportAspNetUserXML()
+        {
+            var xmldata = _userRepository.GetAspNetUsersXML();
+            string filename = "AspNetUsers_Export_" + DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToLongTimeString() + ".xml";
+            return File(Encoding.ASCII.GetBytes(xmldata), "text/plain", filename);
         }
     }
 }
