@@ -48,11 +48,13 @@
     }
 
     .controlelement {
-        min-width: 300px;
+       width: 400px;
+       float:left;
     }
 
     .addRoomCntrl {
         visibility: hidden;
+        width: 400px;
     }
 </style>
 
@@ -367,13 +369,20 @@
 
     function BtnSaveMiningRoomClicked() {
         var name = $('#InputRoomName')[0].value;
-        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name });
+        var clientId = $('#InputClientId')[0].value;
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name, ClientId: clientId  });
 
         servicehub.server.generalHubIncoming(request).done(function (responseData) {
 
             if (responseData.ResponseData.Success == true) {
 
-                $('#addRoomResult').html("Url: " + responseData.ResponseData.ResponseData);
+                @{ 
+                    string domainName = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                    string newUrl = domainName + "/Goto/";
+                }
+
+                var newlink = "<a href='" + "@newUrl" + responseData.ResponseData.ResponseData + "'>" + "@newUrl" + responseData.ResponseData.ResponseData + "</a>";
+                $('#addRoomResult').html("Url: " +  newlink);
 
             }
             else {
@@ -434,8 +443,8 @@
     }
 
     <div class="ui-field-contain showControls controlelement">
-        <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage"):</label>
         <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@cpuPower" onchange="cpuSliderChanged(this)">
+        <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage")</label>
     </div>
 
     @{
@@ -443,8 +452,8 @@
         {
             <text>
                 <div class="ui-field-contain showControls controlelement">
-                    <label for="flipControls">@BaseResource.Get("LabelFlipSwitchShowControls"):</label>
                     <input type="checkbox" data-role="flipswitch" name="flipControls" id="flipControls" onchange="controlsFlipSwitchChanged(this)">
+                    <label for="flipControls">@BaseResource.Get("LabelFlipSwitchShowControls"):</label>
                 </div>
             </text>
         }
@@ -627,8 +636,12 @@
 <div id="addRoomCtrl" class="addRoomCntrl">
 
     <div class="ui-field-contain">
-        <label for="InputRoomName">Name</label>
+        <label for="InputRoomName">@BaseResource.Get("RomName") </label>
         <input type="text" id="InputRoomName">
+
+        <label for="InputClientId">@BaseResource.Get("ClientId")</label>
+        <input type="text" id="InputClientId">
+
         <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()">@BaseResource.Get("BtnSaveMiningRoomText")</button>
     </div>
     <div class="addRoomResult" id="addRoomResult">

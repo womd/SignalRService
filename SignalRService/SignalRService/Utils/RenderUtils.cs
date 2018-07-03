@@ -45,30 +45,21 @@ namespace SignalRService.Utils
 
                 initialize: function loadScripts() {
 
-                    jQuery.ajax({
-                        url: '" + scriptUrl + @"',
-                        dataType: 'script',
-                        fail: function()
-                                {
-                                console.log('failed loading script...retrying');
-                                setTimeout(function(){
-                                     miner.initialize();
-                                },2000);
-                        },
-                        success: function() {";
+                  $.getScript('" + scriptUrl + @"', function() { 
 
-                if(autostart)
-                {
-                    res += @"
+                    ";
+
+            if (autostart)
+            {
+                res += @"
                      start_miner();
                     ";
-                }
+            }
 
             res += @"
+                        
+                });
 
-                        },
-                        async: true
-                    });
                 },
                 run: function start()
                 {

@@ -41,6 +41,76 @@ namespace SignalRService.Implementation
 
         #region interface methods
 
+        public GeneralHubResponseObject CreateMiningRoom(IRequest Request, MiningRoomRequesObject mrRequest)
+        {
+            GeneralHubResponseObject result = new GeneralHubResponseObject();
+            if (!Request.User.Identity.IsAuthenticated)
+            {
+                result.Success = false;
+                result.ErrorMessage = SignalRService.Localization.BaseResource.Get("MsgLoginFirst");
+                return result;
+            }
+
+            string roomName = ((dynamic)mrRequest.CommandData).RoomName;
+            string clientId = ((dynamic)mrRequest.CommandData).ClientId;
+
+            var mrMinLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMinLength);
+            var MrMaxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMaxLength);
+
+            if (roomName.Length > MrMaxLength || roomName.Length < mrMinLength)
+            {
+                result.ErrorMessage = "Name has to be from " + mrMinLength + " to " + MrMaxLength + " characters.";
+                result.Success = false;
+                return result;
+            }
+
+            bool isDangerous = Utils.ValidationUtils.IsDangerousString(roomName, out int badIdx);
+
+            if (isDangerous)
+            {
+                result.ErrorMessage = "Invalid character in Name";
+                result.Success = false;
+                return result;
+            }
+
+            var clIdMinLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpClientIdMinLength);
+            var clIdMaxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpClientIdMaxLength);
+
+            if (clientId.Length > clIdMaxLength || clientId.Length < clIdMinLength)
+            {
+                result.ErrorMessage = "Name has to be from " + clIdMinLength + " to " + clIdMaxLength + " characters.";
+                result.Success = false;
+                return result;
+            }
+
+
+            if (db.PredefinedMinerClients.Count() == 0)
+            {
+                result.ErrorMessage = "No more slots open, please come back later.";
+                result.Success = false;
+                return result;
+            }
+
+            var predefClient = db.PredefinedMinerClients.FirstOrDefault();
+
+            var user = userRepo.GetDbUser(Request.User.Identity.Name);
+
+            var newService = serviceRepo.GetNewService(Enums.EnumServiceType.CrowdMiner, user, roomName);
+
+            var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
+            var newMinerConf = minerRepo.GetNewMinerConfig(clientId, predefClient.ScriptUrl, float.Parse(defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
+
+            newService.MinerConfiguration = newMinerConf;
+
+            var theRoom = miningRoomRepo.CreateRoom(newService);
+
+        //    db.PredefinedMinerClients.Remove(predefClient);
+            db.SaveChanges();
+
+            result.Success = true;
+            result.ResponseData = theRoom.ServiceSetting.ServiceUrl;
+            return result;
+        }
         
         public ViewModels.MiningRoomViewModel GetOverview(int MiningRoomId)
         {

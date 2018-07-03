@@ -83,6 +83,13 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs, Type = Enums.EnumSettingType.Int, Value = "54000" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpClientIdMinLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpClientIdMinLength, Type = Enums.EnumSettingType.Int, Value = "12" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpClientIdMaxLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpClientIdMaxLength, Type = Enums.EnumSettingType.Int, Value = "128" });
+
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
         }
