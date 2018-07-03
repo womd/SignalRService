@@ -44,18 +44,31 @@ namespace SignalRService.Localization
             }
         }
 
+        public bool KeyExists(string skey)
+        {
+            return db.Localization.Any(ln => ln.Key == skey);
+        }
+
+        public bool KeyExists(string Key, string CultueName)
+        {
+            return db.Localization.Any(ln => ln.Key == Key && ln.Culture == CultueName);
+        }
+
+      
+
         public string GetResourceValueFromDb(string sKey)
         {
             string resourceValue = string.Empty;
+            string culture = Utils.CultureHelper.GetImplementedCulture(CultureInfo.CurrentCulture.Name);
 
-            if (cache.ContainsKey(buildCacheKey(sKey, CultureInfo.CurrentCulture.Name)))
-                cache.TryGetValue(buildCacheKey(sKey, CultureInfo.CurrentCulture.Name), out resourceValue);
+            if (cache.ContainsKey(buildCacheKey(sKey, culture)))
+                cache.TryGetValue(buildCacheKey(sKey, culture), out resourceValue);
             else
             {
                 db = new DAL.ServiceContext();
-                Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key.Equals(sKey) && l.Culture.Equals(CultureInfo.CurrentCulture.Name));
+                Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key == sKey && l.Culture == CultureInfo.CurrentCulture.Name);
                 resourceValue = localization != null ? localization.Value : string.Format("{0}(!!)", sKey);
-                cache.Add(buildCacheKey(sKey, CultureInfo.CurrentCulture.Name), resourceValue);
+                cache.Add(buildCacheKey(sKey, culture), resourceValue);
 
                 if (localization != null && localization.WasHit == false)
                 {
@@ -66,23 +79,15 @@ namespace SignalRService.Localization
             return resourceValue;
         }
 
-        public Models.LocalizationModel GetDbObjectForKey(string sKey)
-        {
-            Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key.Equals(sKey) && l.Culture.Equals(CultureInfo.CurrentCulture.Name));
-            return localization;
-        }
-
-        
-
         public void removeFromCache(string key, string culture)
         {
-            if (cache.ContainsKey(buildCacheKey(key, culture)))
-                cache.Remove(buildCacheKey(key, CultureInfo.CurrentCulture.Name));
+            if (Instance.cache.ContainsKey(buildCacheKey(key, culture)))
+                Instance.cache.Remove(buildCacheKey(key, culture));
         }
 
         public void clearCache()
         {
-            cache = new Dictionary<string, string>();
+            Instance.cache = new Dictionary<string, string>();
         }
 
     }

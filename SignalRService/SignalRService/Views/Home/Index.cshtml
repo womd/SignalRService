@@ -58,7 +58,7 @@
                function editorSave() {
                         var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
                         var mdstring = markdowndata.mdd.X;
-                   servicehub.server.updateLocalizationProperty("MainPageMarkDown", mdstring)
+                   servicehub.server.updateLocalizationProperty("MainPageMarkDown", mdstring, "@SignalRService.Utils.CultureHelper.GetCurrentCulture()" )
                        .done(function (data) {
                            if (data.Success == false) {
                                alert(data.ErrorMessage);

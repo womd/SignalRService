@@ -153,7 +153,7 @@ namespace SignalRService.Repositories
 
             foreach (var user in content.Users)
             {
-                var existingUser = userManager.FindById(user.Id);
+                var existingUser = userManager.FindByEmail(user.Email);
                 if (existingUser == null)
                 {
                     var createRes = userManager.Create(new Models.ApplicationUser()

@@ -10,6 +10,8 @@ using SignalRService.Interfaces;
 using SignalRService.ViewModels;
 using SignalRService.DTOs;
 using Newtonsoft.Json;
+using SignalRService.Localization;
+using System.Globalization;
 
 namespace SignalRService.Implementation
 {
@@ -60,8 +62,11 @@ namespace SignalRService.Implementation
             var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
             result.HpsRoom = currGroupDb.Connections.Sum(x => x.MinerStatus.Hps);
             result.ShowControls = dbRoom.ShowControls;
-            result.Description = md.Transform(dbRoom.Description);
-            result.DescriptionMarkdown = dbRoom.Description;
+
+            var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
+
+            result.Description = md.Transform(description);
+            result.DescriptionMarkdown = description;
 
             var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
             if (cacheRes != null)
@@ -95,18 +100,7 @@ namespace SignalRService.Implementation
             return result;
         }
 
-        public ViewModels.MiningRoomUpdateResult UpdateDescription(int MiningRoomId, string Content)
-        {
-
-         
-            var mr = db.MiningRooms.FirstOrDefault(ln => ln.Id == MiningRoomId);
-            if (mr == null)
-                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "invalid id" };
-
-            mr.Description = Content;
-            db.SaveChanges();
-            return new MiningRoomUpdateResult() { Success = true };
-        }
+       
 
         public void SendRoomInfoUpdateToClients(MiningRoomViewModel vm, string signalRGroup)
         {
@@ -225,11 +219,76 @@ namespace SignalRService.Implementation
                     result.ResponseData = theRoom.ServiceSetting.ServiceUrl;
                     break;
 
+                case "UpdateDescription":
+                    if (!Request.User.Identity.IsAuthenticated)
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = SignalRService.Localization.BaseResource.Get("MsgLoginFirst");
+                        break;
+                    }
+
+                    var dbRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
+                    if(dbRoom == null)
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = "Invalid RoomId";
+                    }
+
+                    if (!Utils.ServiceUtils.IsServiceOwner(dbRoom.ServiceSetting.ID, Request.User.Identity.Name))
+                    {
+                        if (!Request.User.IsInRole("Admin"))
+                        {
+                            result.Success = false;
+                            result.ErrorMessage = "No Permission";
+                            break;
+                        }
+                    }
+
+                    string contentData = ((dynamic)mrRequest.CommandData).Content;
+                    string cultureName = ((dynamic)mrRequest.CommandData).Culture;
+
+                    var localizationKey = GetDescriptionKeyForRoom(dbRoom.Id);
+                    Repositories.LocalizationRepository localizationRepo = new Repositories.LocalizationRepository(db);
+                    if(localizationRepo.Exists(localizationKey, cultureName))
+                    {
+                        var dbItem = localizationRepo.Get(localizationKey, cultureName);
+                        dbItem.Value = contentData;
+                        localizationRepo.Update(dbItem, Request.User.Identity.Name);
+
+                        Localization.UiResources.Instance.removeFromCache(localizationKey, cultureName);
+
+                        result.Success = true;
+                        result.Message = "description updated successfuly";
+                    }
+                    else
+                    {
+                        localizationRepo.Create(new Models.LocalizationModel() {
+                             CreationDate = DateTime.Now,
+                             Archived = false,
+                             Culture = cultureName,
+                             Key = localizationKey,
+                             LastModDate = DateTime.Now,
+                             ModUser = Request.User.Identity.Name,
+                             TranslationStatus = Enums.EnumTranslationStatus.Undefined,
+                             Value = contentData,
+                             WasHit = false
+                        }, Request.User.Identity.Name);
+
+                        result.Success = true;
+                        result.Message = "creating localizationItem success.";
+                    }
+
+                    break;
                 default:
                     break;
             }
 
             return result;
+        }
+
+        private string GetDescriptionKeyForRoom(int Id)
+        {
+            return "MiningRoomRoomId_" + Id + "_description";
         }
 
         public void ImportSource(string xmlFile)
@@ -304,6 +363,8 @@ namespace SignalRService.Implementation
             }
             return 0;
         }
+
+       
 
     }
 }

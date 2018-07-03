@@ -16,16 +16,6 @@
             }
         </select>
 
-        @*@(Html.Kendo().ComboBox()
-                                        .Name("cultureselect")
-                                        .BindTo(csmodel)
-                                        .DataTextField("Text")
-                                        .DataValueField("Value")
-                                        .Filter("startswith")
-                                        .Template("<ul class=\"f32\"><li class=\"flag #:data.Text#\"></li>#:data.Text#</ul>")
-                                        .HtmlAttributes(new { style = "width: 80px", @class = "f32" })
-                                        .Events(ev => ev.Select("culture_select").Change("culture_change"))
-            )*@
     </div>
 </div>
 

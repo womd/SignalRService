@@ -58,7 +58,7 @@ namespace SignalRService.Controllers
                 cookie = new HttpCookie("_culture") { Value = culture, Expires = DateTime.Now.AddYears(1) };
             }
             Response.Cookies.Add(cookie);
-
+            
             if (Request.UrlReferrer == null)
                 return RedirectToAction("Index", "Home");
 

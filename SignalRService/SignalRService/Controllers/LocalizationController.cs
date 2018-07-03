@@ -14,8 +14,15 @@ namespace SignalRService.Controllers
     [Authorize(Roles = "Admin")]
     public class LocalizationController : BaseController
     {
-        private DAL.ServiceContext db = new DAL.ServiceContext();
-        
+        private DAL.ServiceContext db;
+        private Repositories.LocalizationRepository localizationRepository;
+
+        public LocalizationController()
+        {
+            db = new DAL.ServiceContext();
+            localizationRepository = new Repositories.LocalizationRepository(db);
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -45,17 +52,20 @@ namespace SignalRService.Controllers
             if(!ModelState.IsValid)
                 return Json(new { Result = "ERROR",  Message = BaseResource.Get("InvalidData") });
 
+            var toCreate = new Models.LocalizationModel()
+            {
+                Key = model.Key,
+                Value = model.Value,
+                Culture = model.Culture,
+                LastModDate = DateTime.Now,
+                ModUser = User.Identity.Name,
+                TranslationStatus = Enums.EnumTranslationStatus.Undefined,
+                WasHit = false
+            };
+
             try
             {
-                var dbobj = db.Localization.Add(new Models.LocalizationModel() {
-                    Key = model.Key,
-                    Value = model.Value,
-                    Culture = model.Culture,
-                    LastModDate = DateTime.Now,
-                    ModUser = User.Identity.Name,
-                    TranslationStatus = Enums.EnumTranslationStatus.Undefined,
-                    WasHit = false
-                });
+                var dbobj = localizationRepository.Create(toCreate, User.Identity.Name);
                 db.SaveChanges();
                 return Json(new { Result = "OK", Record = dbobj.ToLocalizationViewModel() });
             }
@@ -71,15 +81,7 @@ namespace SignalRService.Controllers
 
             try
             {
-                var dbObj = db.Localization.FirstOrDefault(ln => ln.ID == model.Id);
-                dbObj.Culture = model.Culture;
-                dbObj.Key = model.Key;
-                dbObj.Value = model.Value;
-                dbObj.LastModDate = DateTime.Now;
-                dbObj.ModUser = User.Identity.Name;
-                dbObj.TranslationStatus = Enums.EnumTranslationStatus.Approved;
-                dbObj.WasHit = false;
-                db.SaveChanges();
+                var dbObj = localizationRepository.Update(model.ToLocalizationModel(), User.Identity.Name);
                 return Json(new { Result = "OK", Record = dbObj.ToLocalizationViewModel() });
 
             }
@@ -92,9 +94,7 @@ namespace SignalRService.Controllers
         {
             try
             {
-                var rmObj = db.Localization.FirstOrDefault(ln => ln.ID == Id);
-                db.Localization.Remove(rmObj);
-                db.SaveChanges();
+                localizationRepository.Delete(Id);
                 return Json(new { Result = "OK" });
             }
             catch (Exception ex)

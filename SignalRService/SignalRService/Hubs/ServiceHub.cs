@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -21,6 +23,7 @@ namespace SignalRService.Hubs
         private Repositories.UserRepository userRepository;
         private Repositories.GameSettingsRepository gameSettingsRepository;
         private Repositories.ServiceSettingRepositorie serviceSettingsRepository;
+        private Repositories.LocalizationRepository localizationRepository;
 
         public ServiceHub()
         {
@@ -29,6 +32,31 @@ namespace SignalRService.Hubs
             userRepository = new Repositories.UserRepository(db);
             gameSettingsRepository = new Repositories.GameSettingsRepository(db);
             serviceSettingsRepository = new Repositories.ServiceSettingRepositorie(db);
+            localizationRepository = new Repositories.LocalizationRepository(db);
+        }
+
+       
+        private void InitializeCulture(IRequest Request)
+        {
+            string cultureName;
+            // Attempt to read the culture cookie from Request
+            if (Request.Cookies.Any(ln => ln.Key == "_culture"))
+            {
+                var cultureCookie = Request.Cookies["_culture"];
+                cultureName = cultureCookie.Value;
+            }
+            else
+                cultureName = Utils.CultureHelper.GetCurrentCulture();
+            //    cultureName = requestBase.UserLanguages != null && requestBase.UserLanguages.Length > 0
+            //        ? requestBase.UserLanguages[0]
+            //        : // obtain it from HTTP header AcceptLanguages
+            //        null;
+            //// Validate culture name
+            cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
+
+            // Modify current thread's cultures           
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
         }
 
         private void  addConnection(string refererUrl, string remoteIP)
@@ -49,11 +77,15 @@ namespace SignalRService.Hubs
         {
             RequestData.ConnectionId = Context.ConnectionId;
             RequestData.User = Context.User;
+            InitializeCulture(Context.Request);
             return Task.Run(() => _GeneralHubIncoming(RequestData));
         }
 
         public DTOs.GeneralHubResponseObject _GeneralHubIncoming(DTOs.GeneralHubRequestObject RequestData)
         {
+
+
+
             DTOs.GeneralHubResponseObject result = new DTOs.GeneralHubResponseObject();
             Repositories.ServiceSettingContext sc = new Repositories.ServiceSettingContext(db);
             var service = sc.GetServiceById(RequestData.ServiceId);
@@ -138,6 +170,7 @@ namespace SignalRService.Hubs
                     var mr = dbservice.MiningRooms.FirstOrDefault();
                     if (mr != null)
                     {
+                        InitializeCulture(Context.Request);
                         var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
                         var mr_vm = mri.GetOverview(mr.Id);
                         mri.SendRoomInfoUpdateToClient(mr_vm, Context.ConnectionId);
@@ -379,7 +412,7 @@ namespace SignalRService.Hubs
         }
 
        
-        public async Task<DTOs.GeneralHubResponseObject> updateLocalizationProperty(string PropertyName, string Content)
+        public async Task<DTOs.GeneralHubResponseObject> updateLocalizationProperty(string PropertyName, string Content, string Culture)
         {
             if(!Context.User.IsInRole("Admin"))
             {
@@ -390,13 +423,27 @@ namespace SignalRService.Hubs
                 };
             }
 
-            return await Task.Run(() => _updateLocalizationProperty(PropertyName, Content));
+            return await Task.Run(() => _updateLocalizationProperty(PropertyName, Content, Culture));
         }
 
-        private DTOs.GeneralHubResponseObject _updateLocalizationProperty(string PropertyName, string Content)
+        private DTOs.GeneralHubResponseObject _updateLocalizationProperty(string PropertyName, string Content, string Culture)
         {
-            var dblang = Localization.UiResources.Instance.GetDbObjectForKey(PropertyName);
-            if(dblang == null)
+            
+            if(localizationRepository.Exists(PropertyName, Culture))
+            {
+                var dbItem = localizationRepository.Get(PropertyName, Culture);
+                dbItem.Value = Content;
+                localizationRepository.Update(dbItem, Context.Request.User.Identity.Name);
+
+                Localization.UiResources.Instance.removeFromCache(dbItem.Key, dbItem.Culture);
+                return new DTOs.GeneralHubResponseObject()
+                {
+                    Success = true,
+                    Message = "Data sucessfuly saved."
+                };
+
+            }
+            else
             {
                 return new DTOs.GeneralHubResponseObject()
                 {
@@ -404,44 +451,9 @@ namespace SignalRService.Hubs
                     ErrorMessage = "Property " + PropertyName + " does not exist..."
                 };
             }
-            else {
-                var freshdbobj = db.Localization.FirstOrDefault(ln => ln.ID == dblang.ID);
-                freshdbobj.Value = Content;
-                db.SaveChanges();
 
-                Localization.BaseResource.removeFromCache(PropertyName, Utils.CultureHelper.GetCurrentCulture());
-
-                return new DTOs.GeneralHubResponseObject()
-                {
-                    Success = true,
-                    Message = "Data sucessfuly saved."
-                };
-            }
-            
         }
 
-        public async Task<ViewModels.MiningRoomUpdateResult> updateMiningRoomDescription(int Id, string Content)
-        {
-            
-            var miningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == Id);
-            if (miningRoom == null)
-                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "invalid id" };
-
-            //only owner can change description
-            if (!Utils.ServiceUtils.IsServiceOwner(miningRoom.ServiceSetting.ID, Context.User.Identity.Name))
-                return new ViewModels.MiningRoomUpdateResult() { Success = false, Message = "no permission" };
-
-          
-           
-            return await Task.Run(() => _updateMiningRoomDescription(Id, Content));
-        }
-
-        private ViewModels.MiningRoomUpdateResult _updateMiningRoomDescription(int MiningRoomId, string Content)
-        {
-
-            var miningroomImplementation = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
-            return miningroomImplementation.UpdateDescription(MiningRoomId, Content);
-        }
 
         public async Task<double> getMoneyRoomTotal(string group)
         {

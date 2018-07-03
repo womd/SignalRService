@@ -205,6 +205,21 @@ namespace SignalRService.Utils
             };
         }
 
+        public static Models.LocalizationModel ToLocalizationModel(this ViewModels.LocalizationViewModel viewModel)
+        {
+            return new LocalizationModel()
+            {
+                ID = viewModel.Id,
+                Culture = viewModel.Culture,
+                Key = viewModel.Key,
+                LastModDate = viewModel.LastModDate,
+                ModUser = viewModel.ModUser,
+                TranslationStatus = viewModel.TranslationStatus,
+                Value = viewModel.Value,
+                WasHit = viewModel.WasHit
+            };
+        }
+
         public static ViewModels.ProductImportConfigurationViewModel ToProductImportConfigurationViewModel(this Models.ProductImportConfigurationModel model)
         {
             return new ProductImportConfigurationViewModel()

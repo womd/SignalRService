@@ -42,106 +42,116 @@
 </html>
 
 @helper AdminMenu()
-    {
+{
 
-     <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+    <div class="culturewrapper">@SignalRService.Utils.CultureHelper.GetCurrentCulture()</div>
+    @Html.Partial("LanguageSelector")
 
-     <ul id="adminmenu">
-         <li>
-             @BaseResource.Get("MenuBaseSettings")
-             <ul>
-                 <li>@Html.ActionLink(@BaseResource.Get("MenuSeeding"), "Seeding", "Home", null, null)</li>
-                 <li>@Html.ActionLink(@BaseResource.Get("MenuLocalization"), "Index", "Localization", new { id = 1 }, null)</li>
-             </ul>
-         </li>
+    <ul id="adminmenu">
+        <li>
+            @BaseResource.Get("MenuBaseSettings")
+            <ul>
+                <li>@Html.ActionLink(@BaseResource.Get("MenuSeeding"), "Seeding", "Home", null, null)</li>
+                <li>@Html.ActionLink(@BaseResource.Get("MenuLocalization"), "Index", "Localization", new { id = 1 }, null)</li>
+            </ul>
+        </li>
 
-         <li>
-             @BaseResource.Get("MenuOrderProcess")
-             <ul>
-                 <li>@Html.ActionLink(@BaseResource.Get("MenuProducts"), "Index", "Product", null, null)</li>
-                 <li>@Html.ActionLink(@BaseResource.Get("MenuOrders"), "Index", "Order", null, null)</li>
-             </ul>
-         </li>
+        <li>
+            @BaseResource.Get("MenuOrderProcess")
+            <ul>
+                <li>@Html.ActionLink(@BaseResource.Get("MenuProducts"), "Index", "Product", null, null)</li>
+                <li>@Html.ActionLink(@BaseResource.Get("MenuOrders"), "Index", "Order", null, null)</li>
+            </ul>
+        </li>
 
-         <li>@Html.ActionLink(@BaseResource.Get("MenuUserRoles"), "Index", "UserRoles", null, null)</li>
-         <li>@Html.ActionLink(@BaseResource.Get("MenuSignalRClients"), "Index", "SignalRClients", null, null)</li>
-         <li>@Html.ActionLink(@BaseResource.Get("MenuServices"), "Index", "ServiceConfiguration", null, null)</li>
+        <li>@Html.ActionLink(@BaseResource.Get("MenuUserRoles"), "Index", "UserRoles", null, null)</li>
+        <li>@Html.ActionLink(@BaseResource.Get("MenuSignalRClients"), "Index", "SignalRClients", null, null)</li>
+        <li>@Html.ActionLink(@BaseResource.Get("MenuServices"), "Index", "ServiceConfiguration", null, null)</li>
 
-         @{
-             if (User.IsInRole("Admin"))
-             {
-                 <li>@Html.ActionLink(@BaseResource.Get("MenuPredefClients"), "Index", "PreDefinedMinerClient", null, null)</li>
-             }
-         }
-
-
-     </ul>
-
-        <script>
-
-            function makeid() {
-                var text = "";
-                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-                for (var i = 0; i < 5; i++)
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-                return text;
+        @{
+            if (User.IsInRole("Admin"))
+            {
+                <li>@Html.ActionLink(@BaseResource.Get("MenuPredefClients"), "Index", "PreDefinedMinerClient", null, null)</li>
             }
+        }
 
 
-            $(function () {
-                $("#adminmenu").menu();
-            });
-        </script>
+    </ul>
 
-        <style>
+    <script>
 
-            #adminmenu.ui-menu {
-                overflow: hidden;
-                z-index: 1000;
-            }
+        function makeid() {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for (var i = 0; i < 5; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+        }
+
+
+        $(function () {
+            $("#adminmenu").menu();
+        });
+    </script>
+
+    <style>
+
+        #adminmenu.ui-menu {
+            overflow: hidden;
+            z-index: 1000;
+        }
+
             #adminmenu.ui-menu .ui-menu {
                 overflow: visible !important;
             }
+
             #adminmenu.ui-menu > li {
-                    float: left;
-                    display: block;
-                    width: auto !important;
+                float: left;
+                display: block;
+                width: auto !important;
             }
+
             #adminmenu.ui-menu ul li {
                 display: block;
                 float: none;
             }
-            #adminmenu.ui-menu ul li ul {
-                left: 120px !important;
-                width: 100%;
-            }
-            #adminmenu.ui-menu ul li ul li {
-                width: auto;
-            }
-            #adminmenu.ui-menu ul li ul li a {
-                float: left;
-            }
+
+                #adminmenu.ui-menu ul li ul {
+                    left: 120px !important;
+                    width: 100%;
+                }
+
+                    #adminmenu.ui-menu ul li ul li {
+                        width: auto;
+                    }
+
+                        #adminmenu.ui-menu ul li ul li a {
+                            float: left;
+                        }
+
             #adminmenu.ui-menu > li {
                 margin: 5px 5px !important;
                 padding: 0 0 !important;
             }
-            #adminmenu.ui-menu > li > a {
-                float: left;
-                display: block;
-                clear: both;
-                overflow: hidden;
-            }
+
+                #adminmenu.ui-menu > li > a {
+                    float: left;
+                    display: block;
+                    clear: both;
+                    overflow: hidden;
+                }
+
             #adminmenu.ui-menu .ui-menu-icon {
                 margin-top: 0.3em !important;
             }
-            .ui-menu .ui-menu .ui-menu li {
-                float: left;
-                display: block;
-            }
 
-        </style>
+        .ui-menu .ui-menu .ui-menu li {
+            float: left;
+            display: block;
+        }
+    </style>
 
 }
 

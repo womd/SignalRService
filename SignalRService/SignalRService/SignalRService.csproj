@@ -540,6 +540,7 @@
     <Compile Include="Repositories\ServiceSettingContext.cs" />
     <Compile Include="Repositories\ServiceSettingRepositorie.cs" />
     <Compile Include="Repositories\UserContext.cs" />
+    <Compile Include="Repositories\LocalizationRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />

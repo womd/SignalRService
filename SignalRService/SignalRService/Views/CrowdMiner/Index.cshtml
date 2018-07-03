@@ -293,7 +293,9 @@
             function editorSave() {
                 var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
                 var mdstring = markdowndata.mdd.X;
-                servicehub.server.updateMiningRoomDescription(@Model.CrowdMinerConfigurationViewModel.Id, mdstring);
+            
+                var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "UpdateDescription", { Content: mdstring, Culture: "@SignalRService.Utils.CultureHelper.GetCurrentCulture()" });
+                servicehub.server.generalHubIncoming(request);
             }
 
 
@@ -324,16 +326,7 @@
             isOn = true;
         }
 
-         var RequestData = {
-                MiningRoomId : @Model.CrowdMinerConfigurationViewModel.Id,
-                Command : "ToggleControls",
-                CommandData: isOn
-        };
-
-         var request = {
-                RequestData: RequestData,
-                ServiceId : @Model.Id
-                };
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "ToggleControls", isOn);
 
         servicehub.server.generalHubIncoming(request);
     }
