@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using SignalRService.Localization;
 using SignalRService.ViewModels;
 using SignalRService.Utils;
+using System.Globalization;
 
 namespace SignalRService.Controllers
 {
@@ -82,6 +83,7 @@ namespace SignalRService.Controllers
             try
             {
                 var dbObj = localizationRepository.Update(model.ToLocalizationModel(), User.Identity.Name);
+                Localization.UiResources.Instance.removeFromCache(dbObj.Key, CultureInfo.CurrentCulture.Name);
                 return Json(new { Result = "OK", Record = dbObj.ToLocalizationViewModel() });
 
             }
