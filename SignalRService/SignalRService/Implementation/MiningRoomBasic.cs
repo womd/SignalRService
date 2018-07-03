@@ -63,10 +63,10 @@ namespace SignalRService.Implementation
             result.HpsRoom = currGroupDb.Connections.Sum(x => x.MinerStatus.Hps);
             result.ShowControls = dbRoom.ShowControls;
 
-            var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
+         //   var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
 
-            result.Description = md.Transform(description);
-            result.DescriptionMarkdown = description;
+      //      result.Description = md.Transform(description);
+      //      result.DescriptionMarkdown = description;
 
             var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
             if (cacheRes != null)

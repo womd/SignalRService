@@ -238,14 +238,18 @@
         }
 
 
+          @{ 
+                var description = BaseResource.Get("MiningRoomRoomId_" + Model.CrowdMinerConfigurationViewModel.Id + "_description");
+                var md = new MarkdownDeep.Markdown();
+                md.NewWindowForExternalLinks = true;
+                md.NewWindowForLocalLinks = true;
+                md.SafeMode = true;
 
+            }
 
 
         currentRoomOverViewData = data;
-        $('#RoomName').text(data.Name);
-        $('#RoomDescription').html(data.Description);
-
-
+    
         toggle_update_styles($('#RoomHps'));
         $('#RoomHps').text(data.HpsRoom.toFixed(2));
 
@@ -275,7 +279,7 @@
         @{
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name)) {
             <text>
-             $("textarea.mdd_editor").text(data.DescriptionMarkdown);
+             $("textarea.mdd_editor").text("@description");
             </text>
             }
          }
@@ -533,7 +537,9 @@
 
             }
 
-            <div id="RoomDescription"></div>
+          
+
+            <div id="RoomDescription">@Html.Raw( md.Transform(description)) </div>
 
         }
 
