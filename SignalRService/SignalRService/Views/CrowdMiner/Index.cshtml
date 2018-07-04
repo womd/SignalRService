@@ -278,13 +278,7 @@
         toggle_update_styles($('#XMRMinedWorthUSD'));
         $('#XMRMinedWorthUSD').text(worthUSD.toFixed(9));
 
-        @{
-            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name)) {
-            <text>
-             $("textarea.mdd_editor").text("@description");
-            </text>
-            }
-         }
+      
     }
 
         @{
@@ -532,7 +526,9 @@
             {
                 <!-- Markdown Editor-->
                 <div class="mdd_toolbar"></div>
-                <textarea cols=50 rows=10 class="mdd_editor"></textarea>
+                <textarea cols=50 rows=10 class="mdd_editor">
+                @description
+                </textarea>
                 <div class="mdd_resizer"></div>
                 <div class="mdd_preview">
 
