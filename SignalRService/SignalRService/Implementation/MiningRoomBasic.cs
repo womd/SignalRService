@@ -130,7 +130,7 @@ namespace SignalRService.Implementation
 
             var currGroup = dbRoom.ServiceSetting.ServiceUrl.ToLower();
             var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
-            result.HpsRoom = currGroupDb.Connections.Sum(x => x.MinerStatus.Hps);
+            result.HpsRoom = currGroupDb.Connections.ToList().Sum(x => x.MinerStatus.Hps);
             result.ShowControls = dbRoom.ShowControls;
 
          //   var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
