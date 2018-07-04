@@ -89,6 +89,13 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.CoinImpClientIdMaxLength))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.CoinImpClientIdMaxLength, Type = Enums.EnumSettingType.Int, Value = "128" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.ScriptDonaterConnCntValue))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.ScriptDonaterConnCntValue, Type = Enums.EnumSettingType.Int, Value = "10" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.ScriptDonaterClientId))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.ScriptDonaterClientId, Type = Enums.EnumSettingType.String, Value = "b4bbf2bcd9c41c890e7d4cced2962ead7dc9b898434299ae6e3251c222bd81b4" });
+
+
 
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();

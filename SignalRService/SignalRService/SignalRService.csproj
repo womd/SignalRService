@@ -558,6 +558,7 @@
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
     <Compile Include="Utils\RenderUtils.cs" />
+    <Compile Include="Utils\ScriptDonater.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
     <Compile Include="Utils\SignalRMinerUtils.cs" />
     <Compile Include="Utils\UserHelper.cs" />

@@ -61,6 +61,11 @@ namespace SignalRService.Controllers
             if (!ModelState.IsValid)
                 return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidData") });
 
+            if (!User.IsInRole("Admin"))
+            {
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("NoPermission") });
+            }
+
             try
             {
                 if(!Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceName)
@@ -187,16 +192,37 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidDataDangerousCharacters") });
             }
 
-
-
+           
             try
             {
                 var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == model.Id);
                 if(dbObj == null)
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("InvalidSettingsId") });
 
+                /* disable editing of url and type for non-admin */
+                if(!User.IsInRole("Admin"))
+                {
+                    if(model.ServiceType != (int)Enums.EnumServiceType.CrowdMiner)
+                    {
+                        return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceTypeCannotBeChanged") });
+                    }
+
+                    if(dbObj.ServiceUrl != model.ServiceUrl)
+                    {
+                        return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlCannotBeChanged") });
+                    }
+
+                    if(!Utils.ServiceUtils.IsServiceOwner(dbObj.ID, User.Identity.Name))
+                    {
+                        return Json(new { Result = "ERROR", Message = BaseResource.Get("NoPermission") });
+                    }
+
+                }
+
                 if(db.ServiceSettings.Any(ln => ln.ServiceUrl == model.ServiceUrl && ln.ID != model.Id))
                     return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceUrlAlreadyTaken") });
+
+
 
                 dbObj.ServiceName = model.ServiceName;
                 dbObj.ServiceType = (Enums.EnumServiceType)model.ServiceType;
@@ -240,6 +266,14 @@ namespace SignalRService.Controllers
             try
             {
                 var dbObj = db.ServiceSettings.FirstOrDefault(ln => ln.ID == Id);
+
+                if (!User.IsInRole("Admin"))
+                {
+                    if (!Utils.ServiceUtils.IsServiceOwner(dbObj.ID, User.Identity.Name))
+                    {
+                        return Json(new { Result = "ERROR", Message = BaseResource.Get("NoPermission") });
+                    }
+                }
 
                 db.StripeSettings.RemoveRange(dbObj.StripeSettings);
 

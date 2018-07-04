@@ -41,10 +41,10 @@ namespace SignalRService.Implementation
 
         #region interface methods
 
-        public GeneralHubResponseObject CreateMiningRoom(IRequest Request, MiningRoomRequesObject mrRequest)
+        public GeneralHubResponseObject CreateMiningRoom(System.Security.Principal.IPrincipal User, MiningRoomRequesObject mrRequest)
         {
             GeneralHubResponseObject result = new GeneralHubResponseObject();
-            if (!Request.User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated)
             {
                 result.Success = false;
                 result.ErrorMessage = SignalRService.Localization.BaseResource.Get("MsgLoginFirst");
@@ -93,7 +93,7 @@ namespace SignalRService.Implementation
 
             var predefClient = db.PredefinedMinerClients.FirstOrDefault();
 
-            var user = userRepo.GetDbUser(Request.User.Identity.Name);
+            var user = userRepo.GetDbUser(User.Identity.Name);
 
             var newService = serviceRepo.GetNewService(Enums.EnumServiceType.CrowdMiner, user, roomName);
 
@@ -234,59 +234,7 @@ namespace SignalRService.Implementation
 
                 case "CreateRoom":
 
-                    if (!Request.User.Identity.IsAuthenticated)
-                    {
-                        result.Success = false;
-                        result.ErrorMessage = SignalRService.Localization.BaseResource.Get("MsgLoginFirst");
-                        break;
-                    }
-
-                    string roomName =  ((dynamic)mrRequest.CommandData).RoomName;
-
-                    var minLength = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMinLength);
-                    var maxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMaxLength);
-
-                    if(roomName.Length > maxLength || roomName.Length < minLength)
-                    {
-                        result.ErrorMessage = "Name has to be from " + minLength + " to " + maxLength + " characters.";
-                        result.Success = false;
-                        break;
-                    }
-
-                    bool isDangerous = Utils.ValidationUtils.IsDangerousString(roomName, out int badIdx);
-
-                    if (isDangerous)
-                    {
-                        result.ErrorMessage = "Invalid character in Name";
-                        result.Success = false;
-                        break;
-                    }
-
-                    if(db.PredefinedMinerClients.Count() == 0)
-                    {
-                        result.ErrorMessage = "No more slots open, please come back later.";
-                        result.Success = false;
-                        break;
-                    }
-
-                    var predefClient = db.PredefinedMinerClients.FirstOrDefault();
-
-                    var user = userRepo.GetDbUser(Request.User.Identity.Name);
-                    
-                    var newService = serviceRepo.GetNewService(Enums.EnumServiceType.CrowdMiner, user, roomName);
-
-                    var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
-                    var newMinerConf = minerRepo.GetNewMinerConfig(predefClient.ClientId, predefClient.ScriptUrl, float.Parse( defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
-
-                    newService.MinerConfiguration = newMinerConf;
-
-                    var theRoom = miningRoomRepo.CreateRoom(newService);
-
-                    db.PredefinedMinerClients.Remove(predefClient);
-                    db.SaveChanges();
-
-                    result.Success = true;
-                    result.ResponseData = theRoom.ServiceSetting.ServiceUrl;
+                    result = CreateMiningRoom(Request.User, mrRequest);
                     break;
 
                 case "UpdateDescription":

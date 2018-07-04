@@ -29,6 +29,9 @@ namespace SignalRService.Enums
         LoadXMRPriceIntervalMs = 16,
 
         CoinImpClientIdMinLength = 17,
-        CoinImpClientIdMaxLength = 18
+        CoinImpClientIdMaxLength = 18,
+
+        ScriptDonaterConnCntValue = 19,
+        ScriptDonaterClientId = 20
     }
 }

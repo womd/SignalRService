@@ -61,14 +61,14 @@ namespace SignalRService.Localization
             string resourceValue = string.Empty;
             string culture = Utils.CultureHelper.GetImplementedCulture(CultureInfo.CurrentCulture.Name);
 
-            if (cache.ContainsKey(buildCacheKey(sKey, culture)))
-                cache.TryGetValue(buildCacheKey(sKey, culture), out resourceValue);
+            if (instance.cache.ContainsKey(buildCacheKey(sKey, culture)))
+                instance.cache.TryGetValue(buildCacheKey(sKey, culture), out resourceValue);
             else
             {
                 db = new DAL.ServiceContext();
-                Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key == sKey && l.Culture == CultureInfo.CurrentCulture.Name);
+                Models.LocalizationModel localization = db.Localization.FirstOrDefault(l => l.Key == sKey && l.Culture == culture);
                 resourceValue = localization != null ? localization.Value : string.Format("{0}(!!)", sKey);
-                cache.Add(buildCacheKey(sKey, culture), resourceValue);
+                instance.cache.Add(buildCacheKey(sKey, culture), resourceValue);
 
                 if (localization != null && localization.WasHit == false)
                 {

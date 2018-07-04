@@ -32,7 +32,9 @@
                           }
                           else {
                            <text>
-                           listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "ServiceConfiguration", "List") }
+                           listAction: function (postData, jtParams) { return jtable_datasource.list(postData, jtParams, "ServiceConfiguration", "List") },
+                           updateAction: function (postData) { return jtable_datasource.update(postData, "ServiceConfiguration", "Update") },
+                           deleteAction: function (postData) { return jtable_datasource.delete(postData, "ServiceConfiguration", "Delete") }
                           </text>
                                       }
                                   }
@@ -63,7 +65,12 @@
                         options: {
                                   @SignalRService.Utils.JTableHelper.Get_Options_ServiceType()
                         }
-                          },
+                    },
+                    MinerClientId: {
+                        title: 'MinerClientId',
+                        create: true,
+                        edit: true
+                    },
 
                     @if (User.IsInRole("Admin"))
                     {
@@ -88,11 +95,7 @@
                         create: true,
                         edit: true
                     },
-                    MinerClientId: {
-                                  title: 'MinerClientId',
-                        create: true,
-                        edit: true
-                    },
+              
                     MinerScriptUrl: {
                                   title: 'MinerScriptUrl',
                         create: true,
