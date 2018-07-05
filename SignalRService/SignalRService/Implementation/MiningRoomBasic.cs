@@ -200,7 +200,7 @@ namespace SignalRService.Implementation
 
                 case "MinerSetThrottleForRoom":
                     var dbMiningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
-                    if (dbMiningRoom.ServiceSetting.Owner == Request.User || Request.User.IsInRole("Admin"))
+                    if (dbMiningRoom.ServiceSetting.Owner.IdentityName  == Request.User.Identity.Name || Request.User.IsInRole("Admin"))
                     {
                         var nxString = mrRequest.CommandData.ToString().Replace(".",",");
 
