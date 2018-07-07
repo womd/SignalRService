@@ -55,7 +55,7 @@
 
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(function (stream) {
-                pc.addStream(remote);
+                pc.addStream(stream);
                 pc.createOffer();
 
             })
