@@ -13,8 +13,11 @@ namespace SignalRService.Factories
         {
             switch(miningRoomType)
             {
-                case Enums.EnumMiningRoomType.Basic:
+                case Enums.EnumMiningRoomType.CoinIMP:
                     return new Implementation.MiningRoomBasic();
+                case Enums.EnumMiningRoomType.JSECoin:
+                    return new Implementation.MiningRoomCSECoin();
+                
                 default:
                     throw new NotImplementedException("no such implementation for Minigroom: " + miningRoomType);
                 

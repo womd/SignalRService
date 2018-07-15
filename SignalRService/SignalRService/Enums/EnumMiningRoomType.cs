@@ -8,8 +8,10 @@ namespace SignalRService.Enums
 {
     public enum EnumMiningRoomType
     {
-        [Display(Name = "BasicMiningRoom")]
-        Basic = 0
+        [Display(Name = "CoinIMPMiningRoom")]
+        CoinIMP = 0,
+        [Display(Name = "JSEMiningRoom")]
+        JSECoin = 1
         
     }
 }

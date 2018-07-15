@@ -95,7 +95,7 @@ namespace SignalRService.Hubs
                 switch(service.ServiceType)
                 {
                     case Enums.EnumServiceType.CrowdMinerCoinIMP:
-                        var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                        var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
                         return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = mrp.ProcessIncoming(RequestData) };
                  
                     default:
@@ -165,17 +165,18 @@ namespace SignalRService.Hubs
             var dbservice = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == name);
             if(dbservice != null)
             {
-                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP)
+                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP || dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerJSECoin)
                 {
                     var mr = dbservice.MiningRooms.FirstOrDefault();
                     if (mr != null)
                     {
                         InitializeCulture(Context.Request);
-                        var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                        var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
                         var mr_vm = mri.GetOverview(mr.Id);
                         mri.SendRoomInfoUpdateToClient(mr_vm, Context.ConnectionId);
                     }
                 }
+
             }
 
             //return Groups.Add(Context.ConnectionId, name.ToLower());
@@ -679,7 +680,7 @@ namespace SignalRService.Hubs
                         {
                             foreach (var room in roomsToUpdate)
                             {
-                                var mrb = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
+                                var mrb = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
                                 var vm = mrb.GetOverview(room.Id);
                                 mrb.SendRoomInfoUpdateToClients(vm, room.ServiceSetting.ServiceUrl.ToLower());
                             }
