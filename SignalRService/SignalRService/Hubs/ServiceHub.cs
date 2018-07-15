@@ -94,10 +94,10 @@ namespace SignalRService.Hubs
             {
                 switch(service.ServiceType)
                 {
-                    case Enums.EnumServiceType.CrowdMiner:
+                    case Enums.EnumServiceType.CrowdMinerCoinIMP:
                         var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.Basic);
                         return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = mrp.ProcessIncoming(RequestData) };
-                        break;
+                 
                     default:
                         return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
                 }
@@ -165,7 +165,7 @@ namespace SignalRService.Hubs
             var dbservice = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == name);
             if(dbservice != null)
             {
-                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMiner)
+                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP)
                 {
                     var mr = dbservice.MiningRooms.FirstOrDefault();
                     if (mr != null)
@@ -671,7 +671,7 @@ namespace SignalRService.Hubs
                 var conn = db.SignalRConnections.FirstOrDefault(ln => ln.SignalRConnectionId == Context.ConnectionId);
                 if(conn != null)
                 {
-                    var miningrooms = db.MiningRooms.Where(ln => ln.ServiceSetting.ServiceType == Enums.EnumServiceType.CrowdMiner).ToList();
+                    var miningrooms = db.MiningRooms.Where(ln => ln.ServiceSetting.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP).ToList();
                     foreach(var group in conn.Groups)
                     {
                         var roomsToUpdate = miningrooms.Where(ln => ln.ServiceSetting.ServiceUrl == group.GroupName).ToList();

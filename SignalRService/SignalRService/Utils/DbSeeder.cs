@@ -95,7 +95,14 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.ScriptDonaterClientId))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.ScriptDonaterClientId, Type = Enums.EnumSettingType.String, Value = "b4bbf2bcd9c41c890e7d4cced2962ead7dc9b898434299ae6e3251c222bd81b4" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinApiUrl ))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinApiUrl, Type = Enums.EnumSettingType.String, Value = "https://api.jsecoin.com" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinPrivateKey))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinPrivateKey, Type = Enums.EnumSettingType.String, Value = "mOHU7vnNDBpoyDLhFcebrPP9EWo7pjBX" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinPublicKey))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinPublicKey, Type = Enums.EnumSettingType.String, Value = "040509916867e1b6c767205a7b91508a1d9939b9efe63eb8e5d58f1936ac1cd2204189f50e5c80f98caa97ac9695242fa6745bf9dbc979caecc22364cdf953524e" });
 
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
@@ -183,7 +190,7 @@ namespace SignalRService.Utils
             miningRoom0Service.Owner = defAccountProp;
             miningRoom0Service.ServiceName = "testMiningRoom0";
             miningRoom0Service.ServiceUrl = "testminingroom0";
-            miningRoom0Service.ServiceType = Enums.EnumServiceType.CrowdMiner;
+            miningRoom0Service.ServiceType = Enums.EnumServiceType.CrowdMinerCoinIMP;
             miningRoom0Service.MinerConfiguration = new MinerConfigurationModel()
             {
                 ClientId = "33dd55318abfb839996ecf61c962bac94d4d7caba66debb0ea2aa3f61668e2b8",
@@ -201,7 +208,7 @@ namespace SignalRService.Utils
             miningRoom1.Owner = defAccountProp;
             miningRoom1.ServiceName = "testMiningRoom1";
             miningRoom1.ServiceUrl = "testminingroom1";
-            miningRoom1.ServiceType = Enums.EnumServiceType.CrowdMiner;
+            miningRoom1.ServiceType = Enums.EnumServiceType.CrowdMinerCoinIMP;
             miningRoom1.MinerConfiguration = new MinerConfigurationModel()
             {
                 ClientId = "13f8168cb06d16abec48cf0b0cdf9e0027948b1c95913be3469d7592a672cd3d",

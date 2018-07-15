@@ -20,9 +20,11 @@ namespace SignalRService.Enums
         LuckyGameDefault = 4,
         [Display(Name = "BaseTracking")]
         BaseTracking = 5,
-        [Display(Name = "CrowdMiner")]
-        CrowdMiner = 6,
+        [Display(Name = "CrowdMinerCoinIMP")]
+        CrowdMinerCoinIMP = 6,
         [Display(Name = "DJRoom")]
-        DJRoom = 7
+        DJRoom = 7,
+        [Display(Name = "CrowdMinerJSECoin")]
+        CrowdMinerJSECoin = 8
     }
 }

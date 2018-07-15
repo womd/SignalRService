@@ -11,11 +11,11 @@ namespace SignalRService.Interfaces
         /// <summary>
         /// returns MiningRoomOverViewViewModel containing detals about the room
         /// </summary>
-        ViewModels.MiningRoomViewModel GetOverview(int MiningRoomId);
+        dynamic GetOverview(int MiningRoomId);
 
       
-        void SendRoomInfoUpdateToClients(ViewModels.MiningRoomViewModel vm, string signalRGroup);
-        void SendRoomInfoUpdateToClient(ViewModels.MiningRoomViewModel vm, string connectionId);
+        void SendRoomInfoUpdateToClients(ViewModels.MiningRoomCoinIMPViewModel vm, string signalRGroup);
+        void SendRoomInfoUpdateToClient(ViewModels.MiningRoomCoinIMPViewModel vm, string connectionId);
 
         DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request);
     }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.ViewModels
 {
-    public class MiningRoomViewModel
+    public class MiningRoomCoinIMPViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

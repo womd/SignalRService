@@ -55,8 +55,17 @@
 
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then(function (stream) {
+
+
+                var mediaStreamSource = context.createMediaStreamSource(stream);
+
+                // Connect it to destination to hear yourself
+                // or any other node for processing!
+                mediaStreamSource.connect(remote);
+
                 pc.addStream(stream);
                 pc.createOffer();
+
 
             })
             .catch(function (err) {
@@ -65,6 +74,8 @@
             });
 
     }
+
+ 
 
     function gotRemoteStream(event) {
         var player = new Audio();

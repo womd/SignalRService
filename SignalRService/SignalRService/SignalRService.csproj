@@ -473,6 +473,7 @@
     </Compile>
     <Compile Include="HubPipelineModules\GroupMonitorPipelineModule.cs" />
     <Compile Include="Hubs\ServiceHub.cs" />
+    <Compile Include="Implementation\MiningRoomJSECoin.cs" />
     <Compile Include="Implementation\MiningRoomBasic.cs" />
     <Compile Include="Implementation\OrderProcessDrone.cs" />
     <Compile Include="Implementation\OrderProcessDefault.cs" />
@@ -567,8 +568,9 @@
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\CrowdMinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\MiningRoomJSECoinViewModel.cs" />
     <Compile Include="ViewModels\MiningRoomUpdateResult.cs" />
-    <Compile Include="ViewModels\MiningRoomViewModel.cs" />
+    <Compile Include="ViewModels\MiningRoomCoinIMPViewModel.cs" />
     <Compile Include="ViewModels\PositionTrackerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameSettingsViewModel.cs" />
     <Compile Include="ViewModels\LuckyGameWinningRuleViewModel.cs" />
@@ -937,13 +939,14 @@
     <Content Include="Views\Miner\Index.cshtml" />
     <Content Include="Views\LuckyGame\Index.cshtml" />
     <Content Include="Views\PositionTracker\Index.cshtml" />
-    <Content Include="Views\CrowdMiner\Index.cshtml" />
+    <Content Include="Views\CrowdMiner\IndexCoinIMP.cshtml" />
     <Content Include="Views\Shared\_LayoutCrowdMiner.cshtml" />
     <Content Include="Views\PreDefinedMinerClient\Index.cshtml" />
     <Content Include="Views\DJRoom\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutDJRoom.cshtml" />
     <Content Include="Views\Manage\ChangeXMRWalletAddress.cshtml" />
     <Content Include="Views\Shared\LanguageSelector.cshtml" />
+    <Content Include="Views\CrowdMiner\IndexJSECoin.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

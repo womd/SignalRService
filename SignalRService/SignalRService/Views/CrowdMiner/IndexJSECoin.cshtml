@@ -1,0 +1,647 @@
+﻿@model SignalRService.ViewModels.ServiceSettingViewModel
+
+@{
+    ViewBag.Title = "MiningRoomTitle";
+}
+
+<style>
+
+    .updateValueFont {
+        color: blue;
+        -webkit-transition: color 1s;
+        -moz-transition: color 1s;
+        -o-transition: color 1s;
+        transition: color 1s;
+    }
+
+    .normalValueFont {
+        color: black;
+        -webkit-transition: color 1s;
+        -moz-transition: color 1s;
+        -o-transition: color 1s;
+        transition: color 1s;
+    }
+
+
+    .updateValueFontFast {
+        color: blue;
+        -webkit-transition: color 1s;
+        -moz-transition: color 0.1s;
+        -o-transition: color 0.1s;
+        transition: color 0.1s;
+    }
+
+    .normalValueFontFast {
+        color: black;
+        -webkit-transition: color 1s;
+        -moz-transition: color 1s;
+        -o-transition: color 1s;
+        transition: color 1s;
+    }
+
+    .showControls {
+        display: none;
+    }
+
+    .culturewrapper {
+        float: right;
+    }
+
+    .controlelement {
+       width: 400px;
+       float:left;
+    }
+
+    .addRoomCntrl {
+        visibility: hidden;
+        width: 400px;
+    }
+</style>
+
+<script>
+
+    $(function () {
+
+        loadXMRPrices();
+        setInterval(function () { loadXMRPrices() }, @SignalRService.Utils.GeneralSettingsUtils.GetSettingValue(SignalRService.Enums.EnumGeneralSetting.LoadXMRPriceIntervalMs));
+
+          @{
+              if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+              {
+                <text>
+                //load markdown editor
+                editor = $("textarea.mdd_editor").MarkdownDeep({
+                    help_location: "/Scripts/mdd_help.htm",
+                    disableTabHandling: true
+                });
+                </text>
+              }
+           }
+
+              });
+
+    servicehub = null;
+
+                @if (Model != null)
+                {
+                    <text>
+    				signalRGroup = "@Model.CrowdMinerConfigurationViewModel.SignalRGroup";
+                    </text>
+                }
+
+            servicehub = $.connection.serviceHub;
+            $.connection.hub.url = "/signalr";
+
+
+            $.connection.hub.start().done(function () {
+
+                 @if (Model != null)
+                 {
+                     <text>
+                    servicehub.server.joinGroup("@Model.CrowdMinerConfigurationViewModel.SignalRGroup");
+                    </text>
+                 }
+
+                setInterval(function () { youMinerStatsTick() }, 1000);
+
+
+
+
+    });
+
+    servicehub.client.updateMinigRoomOverView = function (data) {
+        updateRoomOverviewDomElements(data);
+    }
+
+    servicehub.client.updateGroupConnections = function (data) {
+        updateGroupConnectionsDomElement(data);
+    }
+
+    servicehub.client.minerRoomSetMinerThrottle = function (data) {
+        miner.client().setThrottle(data);
+        var throttlePercent = (data * 100).toFixed();
+        var cpuPower = (100 - throttlePercent).toFixed();
+
+        $('#sliderCpu')[0].value = cpuPower;
+        $("#sliderCpu").slider("refresh");
+    }
+
+
+
+
+            $.connection.hub.error(function (error) {
+                console.log('SignalR error: ' + error)
+            });
+
+
+    function youMinerStatsTick() {
+        @*if (myminer) {
+
+            if (myminer.getTotalHashes() == 0)
+                return;
+
+            toggle_update_styles_fast($('#youHps'));
+            $('#youHps').text(myminer.getHashesPerSecond().toFixed(2));
+
+            toggle_update_styles_fast($('#youHashes'));
+            $('#youHashes').text(myminer.getTotalHashes());
+
+
+            @{
+                var payout1M = SignalRService.Utils.GeneralSettingsUtils.GetSettingValue(SignalRService.Enums.EnumGeneralSetting.CoinImpXMRPayoutPer1MHashes);
+            }
+
+            var payoutPer1MHs = "@Html.Raw(payout1M)";
+            payoutPer1MHs = parseFloat(payoutPer1MHs.replace(",", "."));
+            var pp1h = parseFloat(payoutPer1MHs / 1000000).toFixed(20);
+            var yourxmrval = (myminer.getTotalHashes() * pp1h).toFixed(16);
+
+            toggle_update_styles_fast($('#YouXMRMined'));
+            $('#YouXMRMined').text(yourxmrval);
+
+            toggle_update_styles_fast($('#YourXMRMinedWorthBTC'));
+            $('#YourXMRMinedWorthBTC').text((xmrPriceInfo.BTC * yourxmrval).toFixed(16));
+
+            toggle_update_styles_fast($('#YourXMRMinedWorthEUR'));
+            $('#YourXMRMinedWorthEUR').text((xmrPriceInfo.EUR * yourxmrval).toFixed(16));
+
+            toggle_update_styles_fast($('#YourXMRMinedWorthUSD'));
+            $('#YourXMRMinedWorthUSD').text((xmrPriceInfo.USD * yourxmrval).toFixed(16));
+
+        }*@
+    }
+
+
+    function updateGroupConnectionsDomElement(data) {
+        toggle_update_styles_fast($('#nrOfOthers'));
+        $('#nrOfOthers').text(data);
+    }
+
+    function toggle_update_styles(element) {
+
+        element.removeClass("normalValueFont");
+        element.addClass("updateValueFont");
+
+        setTimeout(function() {
+
+            element.removeClass("updateValueFont");
+            element.addClass("normalValueFont");
+
+        }, 1000);
+
+    }
+
+    function toggle_update_styles_fast(element) {
+
+        element.removeClass("normalValueFontFast");
+        element.addClass("updateValueFontFast");
+
+        setTimeout(function () {
+
+            element.removeClass("updateValueFontFast");
+            element.addClass("normalValueFontFast");
+
+        }, 500);
+    }
+
+
+    var currentRoomOverViewData;
+    function updateRoomOverviewDomElements(data) {
+
+        @{
+            if(SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id,User.Identity.Name) || User.IsInRole("Admin"))
+            {
+                <text>
+        $('.showControls').css('display', 'inline-block');
+
+        if (data.ShowControls === true) {
+            $('#flipControls').attr('checked', 'checked');
+        }
+        else {
+            $('#flipControls').removeAttr('checked');
+        }
+        $("#flipControls").flipswitch("refresh");
+
+                </text>
+            }
+            else
+            {
+                <text>
+        if (data.ShowControls) {
+            $('.showControls').css('display', 'inline-block');
+        }
+        else {
+            $('.showControls').css('display', 'none');
+        }
+                </text>
+            }
+
+
+        }
+
+
+          @{ 
+                var description = BaseResource.Get("MiningRoomRoomId_" + Model.CrowdMinerConfigurationViewModel.Id + "_description");
+                var md = new MarkdownDeep.Markdown();
+                md.NewWindowForExternalLinks = true;
+                md.NewWindowForLocalLinks = true;
+                md.SafeMode = true;
+
+            }
+
+
+        currentRoomOverViewData = data;
+    
+        toggle_update_styles($('#RoomHps'));
+        $('#RoomHps').text(data.HpsRoom.toFixed(2));
+
+        toggle_update_styles($('#RoomHashesTotal'));
+        $('#RoomHashesTotal').text(data.HashesTotal);
+
+        toggle_update_styles($('#XMRMined'));
+        $('#XMRMined').text(data.XMR_Mined.toFixed(9));
+
+        toggle_update_styles($('#XMR_Needed'));
+        $('#XMR_Needed').text(data.XMR_Needed);
+
+        var worthEUR = xmrPriceInfo.EUR * data.XMR_Mined;
+        var worthUSD = xmrPriceInfo.USD * data.XMR_Mined;
+        var worthBTC = xmrPriceInfo.BTC * data.XMR_Mined;
+
+        toggle_update_styles($('#XMRMinedWorthBTC'));
+        $('#XMRMinedWorthBTC').text(worthBTC.toFixed(9));
+
+
+        toggle_update_styles($('#XMRMinedWorthEUR'));
+        $('#XMRMinedWorthEUR').text(worthEUR.toFixed(9));
+
+        toggle_update_styles($('#XMRMinedWorthUSD'));
+        $('#XMRMinedWorthUSD').text(worthUSD.toFixed(9));
+
+      
+    }
+
+        @{
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                <text>
+
+
+
+
+
+            function editorSave() {
+                var markdowndata = $("textarea.mdd_editor").MarkdownDeep().data();
+                var mdstring = markdowndata.mdd.X;
+            
+                var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "UpdateDescription", { Content: mdstring, Culture: "@SignalRService.Utils.CultureHelper.GetCurrentCulture()" });
+                servicehub.server.generalHubIncoming(request);
+            }
+
+
+
+                </text>
+            }
+         }
+
+
+
+    var xmrPriceInfo = { "BTC": 0.0, "USD": 0.0, "EUR": 0.0 };
+    function loadXMRPrices() {
+
+        $.ajax({
+            url: "https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=BTC,USD,EUR",
+            context: document.body
+        }).done(function (data) {
+            xmrPriceInfo = data;
+        });
+        //
+
+    }
+
+    function controlsFlipSwitchChanged(e) {
+
+        var isOn = false;
+        if (e.checked) {
+            isOn = true;
+        }
+
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "ToggleControls", isOn);
+
+        servicehub.server.generalHubIncoming(request);
+    }
+
+    function cpuSliderChanged(e) {
+
+        var dataval = parseFloat(  ((100 - e.value) / 100) );
+        @{
+            if(SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name) )
+            {
+                <text>
+
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "MinerSetThrottleForRoom", dataval);
+
+
+                 servicehub.server.generalHubIncoming(request);
+                </text>
+            }
+            else
+            {
+                <text>
+                miner.client().setThrottle(dataval);
+                </text>
+            }
+        }
+
+    }
+
+    function CreateRoomBtnClicked() {
+        $("#addRoomCtrl").css('visibility', 'visible');
+        componentHandler.upgradeDom();
+
+    }
+
+    function BtnSaveMiningRoomClicked() {
+        var name = $('#InputRoomName')[0].value;
+        var clientId = $('#InputClientId')[0].value;
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name, ClientId: clientId  });
+
+        servicehub.server.generalHubIncoming(request).done(function (responseData) {
+
+            if (responseData.ResponseData.Success == true) {
+
+                @{ 
+                    string domainName = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                    string newUrl = domainName + "/Goto/";
+                }
+
+                var newlink = "<a href='" + "@newUrl" + responseData.ResponseData.ResponseData + "'>" + "@newUrl" + responseData.ResponseData.ResponseData + "</a>";
+                $('#addRoomResult').html("Url: " +  newlink);
+
+            }
+            else {
+                $('#addRoomResult').html(responseData.ResponseData.ErrorMessage);
+            }
+
+        }).fail(function (err) {
+            alert("createroom request failed...." + err);
+        });
+    }
+
+    function CreateRequest(serviceId, roomId, command, data)
+    {
+
+        var RequestData = {
+            MiningRoomId: roomId,
+            Command: command,
+            CommandData: data
+        };
+
+        var request = {
+            RequestData: RequestData,
+            ServiceId: serviceId
+        };
+
+        return request;
+    }
+
+
+</script>
+
+
+
+@Html.Partial("LanguageSelector")
+<div class="userinfowrapper showControls">@Html.Partial("UserInfoPartial")</div>
+
+
+
+
+<!-- other users Chip -->
+<div class="mdl-chip mdl-chip--contact showControls">
+    <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+        <i title="@BaseResource.Get("TitleOtherUsersinRoom")" class="fas fa-users"></i>
+    </div>
+    <div class="mdl-chip__text">
+        <div id="nrOfOthers">1</div>
+    </div>
+</div>
+
+
+<div class="youstatswrapper">
+
+
+    @{
+        var thrtl = float.Parse(Model.MinerConfigurationViewModel.Throttle);
+        var usagep = thrtl * 100;
+        var cpuPower = (100 - usagep);
+    }
+
+    <div class="ui-field-contain showControls controlelement">
+        <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@cpuPower" onchange="cpuSliderChanged(this)">
+        <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage")</label>
+    </div>
+
+    @{
+        if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+        {
+            <text>
+                <div class="ui-field-contain showControls controlelement">
+                    <input type="checkbox" data-role="flipswitch" name="flipControls" id="flipControls" onchange="controlsFlipSwitchChanged(this)">
+                    <label for="flipControls">@BaseResource.Get("LabelFlipSwitchShowControls"):</label>
+                </div>
+            </text>
+        }
+    }
+
+
+    <!-- youHps Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleYouHps")" class="fab fa-galactic-senate"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="youHps">0</div>
+        </div>
+    </div>
+
+    <!-- youHashes Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleYouHashes")" class="far fa-heart"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="youHashes">0</div>
+        </div>
+    </div>
+
+    <!-- YouXMRMined Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleYouXMRMined")" class="fab fa-monero"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YouXMRMined">0</div>
+        </div>
+    </div>
+
+    <!-- You XMR worth BTC -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthBitcoin")" class="fab fa-bitcoin"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthBTC">0</div>
+        </div>
+    </div>
+
+    <!-- your ~XMR worth EUR -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthEUR")" class="fas fa-euro-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthEUR">0</div>
+        </div>
+    </div>
+
+    <!-- XMR worth USD -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthUSD")" class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="YourXMRMinedWorthUSD">0</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="roominfowrapper">
+    <div class="showControls" id="RoomName"></div>
+
+    <div class="descriptionWrapper">
+
+        @{
+            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+            {
+                <!-- Markdown Editor-->
+                <div class="mdd_toolbar"></div>
+                <textarea cols=50 rows=10 class="mdd_editor">
+                @description
+                </textarea>
+                <div class="mdd_resizer"></div>
+                <div class="mdd_preview">
+
+                </div>
+
+
+
+                <button class="mdl-button mdl-js-button" onclick="editorSave()">
+                    <i class="far fa-save" title="@BaseResource.Get("TitleSave")"></i>
+                </button>
+
+            }
+
+          
+
+            <div id="RoomDescription">@Html.Raw( md.Transform(description)) </div>
+
+        }
+
+
+    </div>
+
+    <!-- RoomHps Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleRoomHps")" class="fab fa-galactic-senate"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div id="RoomHps">0</div>
+        </div>
+    </div>
+
+    <!-- RoomHashesTotal Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TítleRoomHashesTotal")" class="far fa-heart"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="RoomHashesTotal">0</div>
+        </div>
+    </div>
+
+    <!-- XMRMined Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleRoomXMRMined")" class="fab fa-monero"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMined">0</div>
+        </div>
+    </div>
+
+
+    <!-- XMR worth BTC -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthBitcoin")" class="fab fa-bitcoin"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthBTC">0</div>
+        </div>
+    </div>
+
+    <!-- XMR worth EUR -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthEUR")" class="fas fa-euro-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthEUR">0</div>
+        </div>
+    </div>
+
+
+
+    <!-- XMR worth USD -->
+    <div class="mdl-chip mdl-chip--contact showControls">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleXMRWorthUSD")" class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="mdl-chip__text">
+            <div class="normalValueFont" id="XMRMinedWorthUSD"></div>
+        </div>
+    </div>
+
+
+    <div id="XMRNeeded"></div>
+
+    <!-- create room Chip -->
+    <div class="mdl-chip mdl-chip--contact showControls" onclick="CreateRoomBtnClicked()">
+        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
+            <i title="@BaseResource.Get("TitleAddMiningRoom") " class="far fa-plus-square"></i>
+        </div>
+        <div class="mdl-chip__text">
+            @BaseResource.Get("TextAddMiningRoom")
+        </div>
+    </div>
+
+</div>
+
+<div id="addRoomCtrl" class="addRoomCntrl">
+
+    <div class="ui-field-contain">
+        <label for="InputRoomName">@BaseResource.Get("RomName") </label>
+        <input type="text" id="InputRoomName">
+
+        <label for="InputClientId">@BaseResource.Get("ClientId")</label>
+        <input type="text" id="InputClientId">
+
+        <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()">@BaseResource.Get("BtnSaveMiningRoomText")</button>
+    </div>
+    <div class="addRoomResult" id="addRoomResult">
+
+    </div>
+
+</div>

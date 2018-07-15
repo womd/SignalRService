@@ -66,6 +66,11 @@ namespace SignalRService.Controllers
                 return Json(new { Result = "ERROR", Message = BaseResource.Get("NoPermission") });
             }
 
+            if(string.IsNullOrEmpty(model.ServiceUrl))
+            {
+                return Json(new { Result = "ERROR", Message = BaseResource.Get("URLCannotBeEmpty") });
+            }
+
             try
             {
                 if(!Utils.ValidationUtils.IsNumbersAndLettersOnly(model.ServiceName)
@@ -100,13 +105,13 @@ namespace SignalRService.Controllers
                     ServiceType = (Enums.EnumServiceType)model.ServiceType,
                 });
 
-                if (model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                if (!string.IsNullOrEmpty(model.StripePublishableKey) && !string.IsNullOrEmpty(model.StripeSecretKey))
                 {
                     dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
                     dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
                 }
 
-                if(model.MinerClientId != string.Empty && model.MinerScriptUrl != string.Empty)
+                if( !string.IsNullOrEmpty( model.MinerClientId ) && !string.IsNullOrEmpty( model.MinerScriptUrl))
                 {
                     var defaultConfig = minerContext.GetDefaultMinerConfig();
                     dbobj.MinerConfiguration = new Models.MinerConfigurationModel()
@@ -146,7 +151,7 @@ namespace SignalRService.Controllers
                     dbobj.LuckyGameSettings.Add(gsmodel);
                 }
 
-                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMiner || model.ServiceType == (int)Enums.EnumServiceType.DJRoom)
+                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMinerCoinIMP || model.ServiceType == (int)Enums.EnumServiceType.DJRoom)
                 {
                     if (dbobj.MiningRooms == null)
                         dbobj.MiningRooms = new List<Models.MiningRoomModel>();
@@ -202,7 +207,7 @@ namespace SignalRService.Controllers
                 /* disable editing of url and type for non-admin */
                 if(!User.IsInRole("Admin"))
                 {
-                    if(model.ServiceType != (int)Enums.EnumServiceType.CrowdMiner)
+                    if(model.ServiceType != (int)Enums.EnumServiceType.CrowdMinerCoinIMP)
                     {
                         return Json(new { Result = "ERROR", Message = BaseResource.Get("ServiceTypeCannotBeChanged") });
                     }

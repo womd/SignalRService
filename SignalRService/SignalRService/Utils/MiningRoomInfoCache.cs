@@ -7,14 +7,14 @@ namespace SignalRService.Utils
 {
     static public class MiningRoomInfoCache
     {
-        private static Dictionary<int, ViewModels.MiningRoomViewModel> VmCache;
+        private static Dictionary<int, ViewModels.MiningRoomCoinIMPViewModel> VmCache;
 
-        public static ViewModels.MiningRoomViewModel GetItem(int MiningRoomId, int cacheTimeSec)
+        public static ViewModels.MiningRoomCoinIMPViewModel GetItem(int MiningRoomId, int cacheTimeSec)
         {
             if (VmCache == null)
-                VmCache = new Dictionary<int, ViewModels.MiningRoomViewModel>();
+                VmCache = new Dictionary<int, ViewModels.MiningRoomCoinIMPViewModel>();
 
-            ViewModels.MiningRoomViewModel result = null;
+            ViewModels.MiningRoomCoinIMPViewModel result = null;
             if (VmCache.TryGetValue(MiningRoomId, out result))
             {
                 var refDate = result.DataSnapshot.AddSeconds(cacheTimeSec);
@@ -26,12 +26,12 @@ namespace SignalRService.Utils
             return null;
         }
 
-        public static void AddItem(int MiningRoomId, ViewModels.MiningRoomViewModel vm)
+        public static void AddItem(int MiningRoomId, ViewModels.MiningRoomCoinIMPViewModel vm)
         {
             if (VmCache == null)
-                VmCache = new Dictionary<int, ViewModels.MiningRoomViewModel>();
+                VmCache = new Dictionary<int, ViewModels.MiningRoomCoinIMPViewModel>();
 
-            ViewModels.MiningRoomViewModel fromCache = null;
+            ViewModels.MiningRoomCoinIMPViewModel fromCache = null;
             if( VmCache.TryGetValue(MiningRoomId, out fromCache) )
             {
                 VmCache[MiningRoomId] = vm;

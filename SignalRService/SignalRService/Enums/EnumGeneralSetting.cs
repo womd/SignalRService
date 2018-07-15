@@ -32,6 +32,11 @@ namespace SignalRService.Enums
         CoinImpClientIdMaxLength = 18,
 
         ScriptDonaterConnCntValue = 19,
-        ScriptDonaterClientId = 20
+        ScriptDonaterClientId = 20,
+
+        JSECoinPrivateKey = 21,
+        JSECoinPublicKey = 22,
+        JSECoinApiUrl = 23
+
     }
 }

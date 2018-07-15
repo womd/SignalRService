@@ -15,7 +15,7 @@ using System.Globalization;
 
 namespace SignalRService.Implementation
 {
-    public class MiningRoomBasic : IMiningRoom, IServiceImport
+    public class MiningRoomCSECoin : IMiningRoom, IServiceImport
     {
         private DAL.ServiceContext db;
         string apiUrl;
@@ -27,12 +27,12 @@ namespace SignalRService.Implementation
         private Repositories.MinerRepository minerRepo;
 
 
-        public MiningRoomBasic()
+        public MiningRoomCSECoin()
         {
             db = new DAL.ServiceContext();
-            apiUrl = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiBaseUrl);
-            cmpPrivate = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPrivateKey);
-            cmpPublic = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpPublicKey);
+            apiUrl = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSECoinApiUrl);
+            cmpPrivate = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSECoinPrivateKey);
+            cmpPublic = (string) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSECoinPublicKey);
             miningRoomRepo = new Repositories.MinerRoomRepository(db);
             userRepo = new Repositories.UserRepository(db);
             serviceRepo = new Repositories.ServiceSettingRepositorie(db);
@@ -115,7 +115,7 @@ namespace SignalRService.Implementation
         public dynamic GetOverview(int MiningRoomId)
         {
             int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec);
-            ViewModels.MiningRoomCoinIMPViewModel result = new MiningRoomCoinIMPViewModel();
+            ViewModels.MiningRoomJSECoinViewModel result = new MiningRoomJSECoinViewModel();
 
             var md = new MarkdownDeep.Markdown();
             md.NewWindowForExternalLinks = true;
@@ -130,43 +130,21 @@ namespace SignalRService.Implementation
 
             var currGroup = dbRoom.ServiceSetting.ServiceUrl.ToLower();
             var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
-            result.HpsRoom = currGroupDb.Connections.ToList().Sum(x => x.MinerStatus.Hps);
-            result.ShowControls = dbRoom.ShowControls;
-
+          
          //   var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
 
       //      result.Description = md.Transform(description);
       //      result.DescriptionMarkdown = description;
 
-            var cacheRes = Utils.MiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
-            if (cacheRes != null)
-            {
-                cacheRes.HpsRoom = result.HpsRoom;
-                cacheRes.ShowControls = result.ShowControls;
-                cacheRes.Description = result.Description;
-                cacheRes.DescriptionMarkdown = result.DescriptionMarkdown;
-                return cacheRes;
-            }
-
-
+           
             var minerClientId = dbRoom.ServiceSetting.MinerConfiguration.ClientId;
-            var TotalHash = GetClientTotalHash(minerClientId);
-            var TotalReward = GetClientReward(minerClientId);
-
+            var TotalBalance = GetClientBalance(minerClientId);
            
 
             result.Id = dbRoom.Id;
             result.Name = dbRoom.Name;
-          
-            result.HashesTotal = TotalHash;
-            result.XMR_Mined = TotalReward;
-            result.DataSnapshot = DateTime.Now;
-      
+            result.Balance = TotalBalance;
 
-           // if(result.HashesTotal != 0)
-            Utils.MiningRoomInfoCache.AddItem(MiningRoomId, result);
-
-          //  SendRoomInfoUpdateToClients(result, dbRoom.ServiceSetting.ServiceUrl.ToLower());
             return result;
         }
 
@@ -318,14 +296,15 @@ namespace SignalRService.Implementation
         #endregion
 
 
-        private int GetClientTotalHash(string MinerClientId)
+        private int GetClientBalance(string MinerClientId)
         {
-            string apiUrlComplete = apiUrl + "hashes?site-key=" + MinerClientId + "&public=" + cmpPublic + "&private=" + cmpPrivate;
+            string apiUrlComplete = apiUrl + "/v1.7/balance/auth/" + MinerClientId;
 
             try
             {
                 WebRequest request = WebRequest.Create(apiUrlComplete);
                 request.Credentials = CredentialCache.DefaultCredentials;
+                request.Headers.Add("Authorization: " + cmpPrivate);
                 ((HttpWebRequest) request).UserAgent = ".NET Framework HttpWebRequest womd";
                 WebResponse response = request.GetResponse();
                
@@ -349,40 +328,6 @@ namespace SignalRService.Implementation
             }
             return 0;
         }
-
-        private decimal GetClientReward(string MinerClientId)
-        {
-            string apiUrlComplete = apiUrl + "reward?site-key=" + MinerClientId + "&public=" + cmpPublic + "&private=" + cmpPrivate;
-
-            try
-            {
-                WebRequest request = WebRequest.Create(apiUrlComplete);
-                request.Credentials = CredentialCache.DefaultCredentials;
-                ((HttpWebRequest) request).UserAgent = ".NET Framework HttpWebRequest womd";
-                WebResponse response = request.GetResponse();
-
-                Stream dataStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream);
-
-
-                string responseFromServer = reader.ReadToEnd();
-                dynamic responseJson = Newtonsoft.Json.JsonConvert.DeserializeObject(responseFromServer);
-
-                reader.Close();
-                response.Close();
-
-                return responseJson.message;
-            }
-            catch (Exception ex)
-            {
-
-                Utils.SimpleLogger logger = new Utils.SimpleLogger();
-                logger.Error(ex.Message);
-            }
-            return 0;
-        }
-
-       
 
     }
 }
