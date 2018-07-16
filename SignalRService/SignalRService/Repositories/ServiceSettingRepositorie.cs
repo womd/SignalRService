@@ -99,7 +99,7 @@ namespace SignalRService.Repositories
                     ServiceName = serviceDTO.ServiceName,
                     ServiceType = (Enums.EnumServiceType) serviceDTO.ServiceType,
                     ServiceUrl = serviceDTO.ServiceUrl,
-                    MinerConfiguration = new Models.MinerConfigurationModel() {
+                    CoinIMPMinerConfiguration = new Models.CoinIMPMinerConfigurationModel() {
                         ClientId = serviceDTO.ClientId,
                         ScriptUrl = serviceDTO.ScriptUrl,
                         Throttle = serviceDTO.Throttle,
@@ -121,11 +121,11 @@ namespace SignalRService.Repositories
                 dbService.ServiceType = (Enums.EnumServiceType) serviceDTO.ServiceType;
                 dbService.ServiceUrl = serviceDTO.ServiceUrl;
 
-                dbService.MinerConfiguration.ClientId = serviceDTO.ClientId;
-                dbService.MinerConfiguration.ScriptUrl = serviceDTO.ScriptUrl;
-                dbService.MinerConfiguration.Throttle = serviceDTO.Throttle;
-                dbService.MinerConfiguration.StartDelayMs = serviceDTO.StartDelayMs;
-                dbService.MinerConfiguration.ReportStatusIntervalMs = serviceDTO.ReportStatusIntervalMs;
+                dbService.CoinIMPMinerConfiguration.ClientId = serviceDTO.ClientId;
+                dbService.CoinIMPMinerConfiguration.ScriptUrl = serviceDTO.ScriptUrl;
+                dbService.CoinIMPMinerConfiguration.Throttle = serviceDTO.Throttle;
+                dbService.CoinIMPMinerConfiguration.StartDelayMs = serviceDTO.StartDelayMs;
+                dbService.CoinIMPMinerConfiguration.ReportStatusIntervalMs = serviceDTO.ReportStatusIntervalMs;
                 
                 var mr = dbService.MiningRooms.FirstOrDefault();
                 mr.Name = serviceDTO.Name;
@@ -177,11 +177,11 @@ namespace SignalRService.Repositories
                     ServiceName = item.ServiceName,
                     ServiceType = (int) item.ServiceType,
 
-                    ScriptUrl = item.MinerConfiguration.ScriptUrl,
-                    ClientId = item.MinerConfiguration.ClientId,
-                    Throttle = item.MinerConfiguration.Throttle,
-                    StartDelayMs = item.MinerConfiguration.StartDelayMs,
-                    ReportStatusIntervalMs = item.MinerConfiguration.ReportStatusIntervalMs,
+                    ScriptUrl = item.CoinIMPMinerConfiguration.ScriptUrl,
+                    ClientId = item.CoinIMPMinerConfiguration.ClientId,
+                    Throttle = item.CoinIMPMinerConfiguration.Throttle,
+                    StartDelayMs = item.CoinIMPMinerConfiguration.StartDelayMs,
+                    ReportStatusIntervalMs = item.CoinIMPMinerConfiguration.ReportStatusIntervalMs,
 
                     Name = mr.Name,
                     Description = mr.Description,

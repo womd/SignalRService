@@ -117,21 +117,10 @@
         updateGroupConnectionsDomElement(data);
     }
 
-    servicehub.client.minerRoomSetMinerThrottle = function (data) {
-        miner.client().setThrottle(data);
-        var throttlePercent = (data * 100).toFixed();
-        var cpuPower = (100 - throttlePercent).toFixed();
 
-        $('#sliderCpu')[0].value = cpuPower;
-        $("#sliderCpu").slider("refresh");
-    }
-
-
-
-
-            $.connection.hub.error(function (error) {
-                console.log('SignalR error: ' + error)
-            });
+    $.connection.hub.error(function (error) {
+        console.log('SignalR error: ' + error)
+    });
 
 
     function youMinerStatsTick() {
@@ -252,17 +241,8 @@
 
         currentRoomOverViewData = data;
     
-        toggle_update_styles($('#RoomHps'));
-        $('#RoomHps').text(data.HpsRoom.toFixed(2));
-
-        toggle_update_styles($('#RoomHashesTotal'));
-        $('#RoomHashesTotal').text(data.HashesTotal);
-
-        toggle_update_styles($('#XMRMined'));
-        $('#XMRMined').text(data.XMR_Mined.toFixed(9));
-
-        toggle_update_styles($('#XMR_Needed'));
-        $('#XMR_Needed').text(data.XMR_Needed);
+        toggle_update_styles($('#JSEMined'));
+        $('#JSEMined').text(data.Balance.toFixed(9));
 
         var worthEUR = xmrPriceInfo.EUR * data.XMR_Mined;
         var worthUSD = xmrPriceInfo.USD * data.XMR_Mined;
@@ -270,7 +250,6 @@
 
         toggle_update_styles($('#XMRMinedWorthBTC'));
         $('#XMRMinedWorthBTC').text(worthBTC.toFixed(9));
-
 
         toggle_update_styles($('#XMRMinedWorthEUR'));
         $('#XMRMinedWorthEUR').text(worthEUR.toFixed(9));
@@ -430,16 +409,6 @@
 <div class="youstatswrapper">
 
 
-    @{
-        var thrtl = float.Parse(Model.MinerConfigurationViewModel.Throttle);
-        var usagep = thrtl * 100;
-        var cpuPower = (100 - usagep);
-    }
-
-    <div class="ui-field-contain showControls controlelement">
-        <input type="range" name="sliderCpu" id="sliderCpu" min="1" max="99" value="@cpuPower" onchange="cpuSliderChanged(this)">
-        <label for="sliderCpu">@BaseResource.Get("LabelCpuUsage")</label>
-    </div>
 
     @{
         if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
@@ -561,23 +530,14 @@
         </div>
     </div>
 
-    <!-- RoomHashesTotal Chip -->
-    <div class="mdl-chip mdl-chip--contact showControls">
-        <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
-            <i title="@BaseResource.Get("TítleRoomHashesTotal")" class="far fa-heart"></i>
-        </div>
-        <div class="mdl-chip__text">
-            <div class="normalValueFont" id="RoomHashesTotal">0</div>
-        </div>
-    </div>
-
-    <!-- XMRMined Chip -->
+   
+    <!-- JSEMined Chip -->
     <div class="mdl-chip mdl-chip--contact showControls">
         <div class="mdl-chip__contact mdl-color--teal mdl-color-text--white">
             <i title="@BaseResource.Get("TitleRoomXMRMined")" class="fab fa-monero"></i>
         </div>
         <div class="mdl-chip__text">
-            <div class="normalValueFont" id="XMRMined">0</div>
+            <div class="normalValueFont" id="JSEMined">0</div>
         </div>
     </div>
 

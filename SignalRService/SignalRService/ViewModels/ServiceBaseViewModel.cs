@@ -7,7 +7,7 @@ namespace SignalRService.ViewModels
 {
     public class ServiceBaseViewModel
     {
-        public ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel { get; set; }
+        public ViewModels.CoinIMPMinerConfigurationViewModel MinerConfigurationViewModel { get; set; }
         public ViewModels.SignalRBaseConfigurationViewModel SiganlRBaseConfigurationVieModel { get; set; }
     }
 }

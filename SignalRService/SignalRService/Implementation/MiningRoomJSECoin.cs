@@ -100,7 +100,7 @@ namespace SignalRService.Implementation
             var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
             var newMinerConf = minerRepo.GetNewMinerConfig(clientId, predefClient.ScriptUrl, float.Parse(defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
 
-            newService.MinerConfiguration = newMinerConf;
+            newService.CoinIMPMinerConfiguration = newMinerConf;
 
             var theRoom = miningRoomRepo.CreateRoom(newService);
 
@@ -114,7 +114,7 @@ namespace SignalRService.Implementation
         
         public dynamic GetOverview(int MiningRoomId)
         {
-            int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpApiCallTresholdSec);
+            int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSEAPITresholdSec);
             ViewModels.MiningRoomJSECoinViewModel result = new MiningRoomJSECoinViewModel();
 
             var md = new MarkdownDeep.Markdown();
@@ -130,14 +130,19 @@ namespace SignalRService.Implementation
 
             var currGroup = dbRoom.ServiceSetting.ServiceUrl.ToLower();
             var currGroupDb = db.SignalRGroups.FirstOrDefault(ln => ln.GroupName == currGroup);
-          
-         //   var description = BaseResource.Get(GetDescriptionKeyForRoom(dbRoom.Id));
 
-      //      result.Description = md.Transform(description);
-      //      result.DescriptionMarkdown = description;
+            var cacheRes = Utils.JSECoinMiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
+            if (cacheRes != null)
+            {
+                cacheRes.Balance = result.Balance;
+                cacheRes.DataSnapshot = DateTime.Now;
+                cacheRes.Description = result.Description;
+                cacheRes.DescriptionMarkdown = result.DescriptionMarkdown;
+                return cacheRes;
+            }
 
-           
-            var minerClientId = dbRoom.ServiceSetting.MinerConfiguration.ClientId;
+
+            var minerClientId = dbRoom.ServiceSetting.JSECoinMinerConfiguration.ClientId;
             var TotalBalance = GetClientBalance(minerClientId);
            
 
@@ -145,17 +150,19 @@ namespace SignalRService.Implementation
             result.Name = dbRoom.Name;
             result.Balance = TotalBalance;
 
+            Utils.JSECoinMiningRoomInfoCache.AddItem(MiningRoomId, result);
+
             return result;
         }
 
        
 
-        public void SendRoomInfoUpdateToClients(MiningRoomCoinIMPViewModel vm, string signalRGroup)
+        public void SendRoomInfoUpdateToClients(dynamic vm, string signalRGroup)
         {
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(signalRGroup.ToLower()).updateMinigRoomOverView(vm);
         }
 
-        public void SendRoomInfoUpdateToClient(MiningRoomCoinIMPViewModel vm, string connectionId)
+        public void SendRoomInfoUpdateToClient(dynamic vm, string connectionId)
         {
             GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Client(connectionId).updateMinigRoomOverView(vm);
         }
@@ -184,7 +191,7 @@ namespace SignalRService.Implementation
 
                         float throttle = float.Parse(nxString);
                       
-                        dbMiningRoom.ServiceSetting.MinerConfiguration.Throttle = throttle;
+                        dbMiningRoom.ServiceSetting.CoinIMPMinerConfiguration.Throttle = throttle;
                         db.SaveChanges();
 
                         Utils.SignalRMinerUtils.SetThrottleForGroup(throttle, dbMiningRoom.ServiceSetting.ServiceUrl.ToLower());

@@ -19,13 +19,15 @@ namespace SignalRService.Controllers
     public class ServiceConfigurationController : BaseController
     {
         private DAL.ServiceContext db;
-        private Repositories.MinerContext minerContext;
+        private Repositories.CoinIMPMinerContext coinIMPMinerContext;
+        private Repositories.JSECoinMinerContext jseCoinMinerContext;
         private Repositories.ServiceSettingRepositorie serviceSettingRepo;
 
         public ServiceConfigurationController()
         {
             db = new DAL.ServiceContext();
-            minerContext = new Repositories.MinerContext(db);
+            coinIMPMinerContext = new Repositories.CoinIMPMinerContext(db);
+            jseCoinMinerContext = new Repositories.JSECoinMinerContext(db);
             serviceSettingRepo = new Repositories.ServiceSettingRepositorie(db);
         }
 
@@ -105,64 +107,117 @@ namespace SignalRService.Controllers
                     ServiceType = (Enums.EnumServiceType)model.ServiceType,
                 });
 
-                if (!string.IsNullOrEmpty(model.StripePublishableKey) && !string.IsNullOrEmpty(model.StripeSecretKey))
+                switch (dbobj.ServiceType)
                 {
-                    dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
-                    dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
+                    case Enums.EnumServiceType.OrderService:
+                        if (!string.IsNullOrEmpty(model.StripePublishableKey) && !string.IsNullOrEmpty(model.StripeSecretKey))
+                        {
+                            dbobj.StripeSettings = new List<Models.StripeSettingsModel>();
+                            dbobj.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey });
+                        }
+                        break;
+                    case Enums.EnumServiceType.TaxiService:
+                        break;
+                    case Enums.EnumServiceType.SecurityService:
+                        break;
+                    case Enums.EnumServiceType.OrderServiceDrone:
+                        break;
+                    case Enums.EnumServiceType.LuckyGameDefault:
+                        var defRule1 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 3, WinFactor = 1.6f };
+                        var defRule2 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 4, WinFactor = 4 };
+                        var defRule3 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 5, WinFactor = 5 };
+                        var defRule4 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 6, WinFactor = 10 };
+
+                        var gsmodel = new Models.LuckyGameSettingsModel()
+                        {
+                            MoneyAvailable = 0,
+                            WinningRules = new List<Models.LuckyGameWinningRule>()
+
+                        };
+                        //   gsmodel.WinningRules.Add(defRule0);
+                        gsmodel.WinningRules.Add(defRule1);
+                        gsmodel.WinningRules.Add(defRule2);
+                        gsmodel.WinningRules.Add(defRule3);
+                        gsmodel.WinningRules.Add(defRule4);
+
+                        dbobj.LuckyGameSettings = new List<Models.LuckyGameSettingsModel>();
+                        dbobj.LuckyGameSettings.Add(gsmodel);
+                        break;
+                    case Enums.EnumServiceType.BaseTracking:
+                        break;
+                    case Enums.EnumServiceType.CrowdMinerCoinIMP:
+                        if (!string.IsNullOrEmpty(model.MinerClientId) && !string.IsNullOrEmpty(model.MinerScriptUrl))
+                        {
+                            var defaultConfig = coinIMPMinerContext.GetDefaultMinerConfig();
+                            dbobj.CoinIMPMinerConfiguration = new Models.CoinIMPMinerConfigurationModel()
+                            {
+                                ClientId = model.MinerClientId,
+                                ScriptUrl = model.MinerScriptUrl,
+                                Throttle = defaultConfig.Throttle,
+                                StartDelayMs = defaultConfig.StartDelayMs,
+                                ReportStatusIntervalMs = defaultConfig.ReportStatusIntervalMs
+                            };
+                        }
+                        else
+                        {
+                            dbobj.CoinIMPMinerConfiguration = coinIMPMinerContext.GetDefaultMinerConfig();
+                        }
+
+                        if (dbobj.MiningRooms == null)
+                            dbobj.MiningRooms = new List<Models.MiningRoomModel>();
+
+                        dbobj.MiningRooms.Add(new Models.MiningRoomModel()
+                        {
+                            Name = model.ServiceName,
+                            Description = "-- -- --",
+                            ShowControls = true
+                        });
+                        break;
+                    case Enums.EnumServiceType.DJRoom:
+                        if (dbobj.MiningRooms == null)
+                            dbobj.MiningRooms = new List<Models.MiningRoomModel>();
+
+                        dbobj.MiningRooms.Add(new Models.MiningRoomModel()
+                        {
+                            Name = model.ServiceName,
+                            Description = "-- -- --",
+                            ShowControls = true
+                        });
+                        break;
+                    case Enums.EnumServiceType.CrowdMinerJSECoin:
+                        var roomImplementation = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.JSECoin);
+                        /* todo: move following code in a CreateRoom interface-method */
+
+                        if (!string.IsNullOrEmpty(model.MinerClientId) && !string.IsNullOrEmpty(model.MinerScriptUrl))
+                        {
+                            var defaultConfig = jseCoinMinerContext.GetDefaultMinerConfig();
+                            dbobj.JSECoinMinerConfiguration = new Models.JSECoinMinerConfigurationModel()
+                            {
+                                ClientId = defaultConfig.ClientId,
+                                SiteId = defaultConfig.SiteId,
+                                SubId = defaultConfig.SubId
+                            };
+                        }
+                        else
+                        {
+                            dbobj.JSECoinMinerConfiguration = jseCoinMinerContext.GetDefaultMinerConfig();
+                        }
+
+
+                        if (dbobj.MiningRooms == null)
+                            dbobj.MiningRooms = new List<Models.MiningRoomModel>();
+
+                        dbobj.MiningRooms.Add(new Models.MiningRoomModel()
+                        {
+                            Name = model.ServiceName,
+                            Description = "-- -- --",
+                            ShowControls = true
+                        });
+                        break;
+                    default:
+                        break;
                 }
 
-                if( !string.IsNullOrEmpty( model.MinerClientId ) && !string.IsNullOrEmpty( model.MinerScriptUrl))
-                {
-                    var defaultConfig = minerContext.GetDefaultMinerConfig();
-                    dbobj.MinerConfiguration = new Models.MinerConfigurationModel()
-                    {
-                        ClientId = model.MinerClientId,
-                        ScriptUrl = model.MinerScriptUrl,
-                        Throttle = defaultConfig.Throttle,
-                        StartDelayMs = defaultConfig.StartDelayMs,
-                        ReportStatusIntervalMs = defaultConfig.ReportStatusIntervalMs
-                    };
-                }
-                else
-                {
-                    dbobj.MinerConfiguration = minerContext.GetDefaultMinerConfig();
-                }
-
-                if(model.ServiceType == (int)Enums.EnumServiceType.LuckyGameDefault)
-                {
-               //     var defRule0 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 2, WinFactor = 1.2f };
-                    var defRule1 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 3, WinFactor = 1.6f };
-                    var defRule2 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 4, WinFactor = 4 };
-                    var defRule3 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 5, WinFactor = 5 };
-                    var defRule4 = new Models.LuckyGameWinningRule() { AmountMatchingCards = 6, WinFactor = 10 };
-
-                    var gsmodel = new Models.LuckyGameSettingsModel() {
-                        MoneyAvailable = 0,
-                        WinningRules = new List<Models.LuckyGameWinningRule>()
-                         
-                    };
-                 //   gsmodel.WinningRules.Add(defRule0);
-                    gsmodel.WinningRules.Add(defRule1);
-                    gsmodel.WinningRules.Add(defRule2);
-                    gsmodel.WinningRules.Add(defRule3);
-                    gsmodel.WinningRules.Add(defRule4);
-
-                    dbobj.LuckyGameSettings = new List<Models.LuckyGameSettingsModel>();
-                    dbobj.LuckyGameSettings.Add(gsmodel);
-                }
-
-                if(model.ServiceType == (int)Enums.EnumServiceType.CrowdMinerCoinIMP || model.ServiceType == (int)Enums.EnumServiceType.DJRoom)
-                {
-                    if (dbobj.MiningRooms == null)
-                        dbobj.MiningRooms = new List<Models.MiningRoomModel>();
-
-                    dbobj.MiningRooms.Add( new Models.MiningRoomModel() {
-                             Name = model.ServiceName,
-                             Description = "-- -- --",
-                             ShowControls = true
-                    });
-                }
-               
                 db.SaveChanges();
 
                 return Json(new { Result = "OK", Record = dbobj.ToServiceSettingViewModel() }, JsonRequestBehavior.AllowGet);
@@ -254,7 +309,7 @@ namespace SignalRService.Controllers
                     }
                 }
 
-                dbObj.MinerConfiguration.ClientId = model.MinerClientId;
+                dbObj.CoinIMPMinerConfiguration.ClientId = model.MinerClientId;
 
                 db.SaveChanges();
 

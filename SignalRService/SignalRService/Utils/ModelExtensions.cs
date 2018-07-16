@@ -10,9 +10,20 @@ namespace SignalRService.Utils
     public static class ModelExtensions
     {
 
-        public static MinerConfigurationViewModel ToMinerConfigurationViewModel(this MinerConfigurationModel dbmodel)
+        public static JSEMinerConfigurationViewModel ToJSECoinMinerConfigurationViewModel(this JSECoinMinerConfigurationModel dbmodel)
         {
-            return new MinerConfigurationViewModel() {
+            return new JSEMinerConfigurationViewModel()
+            {
+                ID = dbmodel.ID,
+                ClientId = dbmodel.ClientId,
+                SiteId = dbmodel.SiteId,
+                SubId = dbmodel.SubId
+            };
+        }
+
+        public static CoinIMPMinerConfigurationViewModel ToCoinIMPMinerConfigurationViewModel(this CoinIMPMinerConfigurationModel dbmodel)
+        {
+            return new CoinIMPMinerConfigurationViewModel() {
                 ID = dbmodel.ID,
                 ClientId = dbmodel.ClientId,
                 ScriptUrl = dbmodel.ScriptUrl,
@@ -24,41 +35,46 @@ namespace SignalRService.Utils
 
         public static ServiceSettingViewModel ToServiceSettingViewModel(this ServiceSettingModel dbmodel )
         {
-            return new ServiceSettingViewModel()
+            var res = new ServiceSettingViewModel();
+
+            res.Id = dbmodel.ID;
+            res.ServiceName = dbmodel.ServiceName;
+            res.ServiceUrl = dbmodel.ServiceUrl;
+            res.ServiceType = (int)dbmodel.ServiceType;
+            res.EnumServiceTpe = dbmodel.ServiceType;
+
+            res.CoinIMPMinerConfigurationViewModel = dbmodel.CoinIMPMinerConfiguration != null ? dbmodel.CoinIMPMinerConfiguration.ToCoinIMPMinerConfigurationViewModel() : null;
+            res.MinerClientId = dbmodel.CoinIMPMinerConfiguration != null ? dbmodel.CoinIMPMinerConfiguration.ClientId : string.Empty;
+            res.MinerScriptUrl = dbmodel.CoinIMPMinerConfiguration != null ? dbmodel.CoinIMPMinerConfiguration.ScriptUrl : string.Empty;
+
+            res.JSECoinMinerConfigurationViewModel = dbmodel.JSECoinMinerConfiguration != null ? dbmodel.JSECoinMinerConfiguration.ToJSECoinMinerConfigurationViewModel() : null;
+
+            res.SiganlRBaseConfigurationVieModel = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
             {
-                Id = dbmodel.ID,
-                ServiceName = dbmodel.ServiceName,
-                ServiceUrl = dbmodel.ServiceUrl,
-                ServiceType = (int)dbmodel.ServiceType,
-                EnumServiceTpe = dbmodel.ServiceType,
-
-                MinerConfigurationViewModel = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel(),
-                MinerClientId = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel().ClientId,
-                MinerScriptUrl = dbmodel.MinerConfiguration.ToMinerConfigurationViewModel().ScriptUrl,
-
-                SiganlRBaseConfigurationVieModel = new SignalRService.ViewModels.SignalRBaseConfigurationViewModel()
-                {
-                    SinalRGroup = dbmodel.ServiceUrl.ToLower()
-                },
-                OrderClientConfigurationViewModel = new SignalRService.ViewModels.OrderClientConfigurationViewModel()
-                {
-                    //  AppendToSelector = "*[data-role=page]"
-                    AppendToSelector = ".body-content",
-                    SinalRGroup = dbmodel.ServiceUrl.ToLower()
-                },
-                OrderHostConfigurationViewModel = new SignalRService.ViewModels.OrderHostConfigurationViewModel()
-                {
-                    AppendToSelector = ".body-content",
-                    SinalRGroup = dbmodel.ServiceUrl.ToLower()
-                },
-                User = dbmodel.Owner.ToUserDataViewModel(),
-                StripeSecretKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "",
-                StripePublishableKey = dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "",
-                LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() },
-                PositionTrackerConfiguratinViewModel = new PositionTrackerConfigurationViewModel() { Id = dbmodel.ID, SignalRGroup = dbmodel.ServiceUrl.ToLower() },
-                CrowdMinerConfigurationViewModel = new CrowdMinerConfigurationViewModel() { Id = dbmodel.MiningRooms.FirstOrDefault() != null ? dbmodel.MiningRooms.FirstOrDefault().Id : 0, SignalRGroup = dbmodel.ServiceUrl.ToLower() }
-
+                   SinalRGroup = dbmodel.ServiceUrl.ToLower()
             };
+
+            res.OrderClientConfigurationViewModel = new SignalRService.ViewModels.OrderClientConfigurationViewModel()
+            {
+                //  AppendToSelector = "*[data-role=page]"
+                AppendToSelector = ".body-content",
+                SinalRGroup = dbmodel.ServiceUrl.ToLower()
+            };
+
+            res.OrderHostConfigurationViewModel = new SignalRService.ViewModels.OrderHostConfigurationViewModel()
+            {
+                AppendToSelector = ".body-content",
+                SinalRGroup = dbmodel.ServiceUrl.ToLower()
+            };
+
+                res.User = dbmodel.Owner.ToUserDataViewModel();
+            res.StripeSecretKey = dbmodel.StripeSettings != null && dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "";
+            res.StripePublishableKey = dbmodel.StripeSettings != null && dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "";
+            res.LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() };
+            res.PositionTrackerConfiguratinViewModel = new PositionTrackerConfigurationViewModel() { Id = dbmodel.ID, SignalRGroup = dbmodel.ServiceUrl.ToLower() };
+            res.CrowdMinerConfigurationViewModel = new CrowdMinerConfigurationViewModel() { Id = dbmodel.MiningRooms.FirstOrDefault() != null ? dbmodel.MiningRooms.FirstOrDefault().Id : 0, SignalRGroup = dbmodel.ServiceUrl.ToLower() };
+
+            return res;
         }
 
         public static ViewModels.LuckyGameSettingsViewModel ToLuckyGameConfigurationViewModel(this Models.LuckyGameSettingsModel model)

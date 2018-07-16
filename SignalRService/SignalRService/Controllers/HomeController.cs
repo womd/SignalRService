@@ -97,6 +97,7 @@ namespace SignalRService.Controllers
                     db.SaveChanges();
                 }
 
+                UiResources.Instance.clearCache();
                 return Json(new { Success = true, Message = "language seeding complete" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

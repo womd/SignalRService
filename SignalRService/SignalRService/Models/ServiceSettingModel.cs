@@ -24,7 +24,8 @@ namespace SignalRService.Models
         public virtual ICollection<StripeSettingsModel> StripeSettings { get; set; }
         public virtual ICollection<LuckyGameSettingsModel> LuckyGameSettings { get; set; }
 
-        public virtual MinerConfigurationModel MinerConfiguration { get; set; }
+        public virtual CoinIMPMinerConfigurationModel CoinIMPMinerConfiguration { get; set; }
+        public virtual JSECoinMinerConfigurationModel JSECoinMinerConfiguration { get; set; }
 
         public virtual ICollection<MiningRoomModel> MiningRooms { get; set; }
 

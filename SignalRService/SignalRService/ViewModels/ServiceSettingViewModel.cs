@@ -14,7 +14,8 @@ namespace SignalRService.ViewModels
         public Enums.EnumServiceType EnumServiceTpe { get; set; }
         public ViewModels.UserDataViewModel User { get; set; }
 
-        public ViewModels.MinerConfigurationViewModel MinerConfigurationViewModel { get; set; }
+        public ViewModels.CoinIMPMinerConfigurationViewModel CoinIMPMinerConfigurationViewModel { get; set; }
+        public ViewModels.JSEMinerConfigurationViewModel JSECoinMinerConfigurationViewModel { get; set; }
         public ViewModels.SignalRBaseConfigurationViewModel SiganlRBaseConfigurationVieModel { get; set; }
         public ViewModels.OrderClientConfigurationViewModel OrderClientConfigurationViewModel { get; set; }
         public ViewModels.OrderHostConfigurationViewModel OrderHostConfigurationViewModel { get; set; }

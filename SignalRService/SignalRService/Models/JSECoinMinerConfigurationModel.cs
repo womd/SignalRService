@@ -7,16 +7,14 @@ using System.Web;
 
 namespace SignalRService.Models
 {
-    public class MinerConfigurationModel : BaseModel
+    public class JSECoinMinerConfigurationModel : BaseModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public string ScriptUrl { get; set; }
         public string ClientId { get; set; }
-        public float Throttle { get; set; }
-        public int StartDelayMs { get; set; }
-        public int ReportStatusIntervalMs { get; set; }
+        public string SiteId { get; set; }
+        public string SubId { get; set; }
         public virtual ICollection<ServiceSettingModel> ServiceSetting { get; set; }
     }
 }

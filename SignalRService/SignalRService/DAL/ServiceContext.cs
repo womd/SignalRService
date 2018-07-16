@@ -19,7 +19,8 @@ namespace SignalRService.DAL
         public DbSet<SignalRConnectionModel>SignalRConnections { get; set; }
         public DbSet<UserDataModel>UserData { get; set; }
         public DbSet<ServiceSettingModel>ServiceSettings { get; set; }
-        public DbSet<MinerConfigurationModel>MinerConfiurationModels { get; set; }
+        public DbSet<CoinIMPMinerConfigurationModel>CoinIMPMinerConfiurationModels{ get; set; }
+        public DbSet<JSECoinMinerConfigurationModel> JSECoinMinerConfigurationModels { get; set; }
         public DbSet<MinerStatusModel>MinerStatus{ get; set; }
         public DbSet<OrderModel>Orders { get; set; }
         public DbSet<OrderJournalModel>OrderJournal { get; set; }

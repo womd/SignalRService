@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SignalRService.Utils
 {
-    static public class MiningRoomInfoCache
+    static public class CoinIMPMiningRoomInfoCache
     {
         private static Dictionary<int, ViewModels.MiningRoomCoinIMPViewModel> VmCache;
 

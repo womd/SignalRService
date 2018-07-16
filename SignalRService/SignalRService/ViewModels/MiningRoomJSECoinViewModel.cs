@@ -12,5 +12,6 @@ namespace SignalRService.ViewModels
         public string Description { get; set; }
         public string DescriptionMarkdown { get; set; }
         public decimal Balance { get; set; }
+        public DateTime DataSnapshot { get; set; }
     }
 }

@@ -14,8 +14,8 @@ namespace SignalRService.Interfaces
         dynamic GetOverview(int MiningRoomId);
 
       
-        void SendRoomInfoUpdateToClients(ViewModels.MiningRoomCoinIMPViewModel vm, string signalRGroup);
-        void SendRoomInfoUpdateToClient(ViewModels.MiningRoomCoinIMPViewModel vm, string connectionId);
+        void SendRoomInfoUpdateToClients(dynamic vm, string signalRGroup);
+        void SendRoomInfoUpdateToClient(dynamic vm, string connectionId);
 
         DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request);
     }

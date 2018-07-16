@@ -18,15 +18,26 @@ namespace SignalRService.Utils
 
         public void DefaultMinerConfiguration()
         {
-            if (!db.MinerConfiurationModels.Any())
+            if (!db.CoinIMPMinerConfiurationModels.Any())
             {
-                db.MinerConfiurationModels.Add(new MinerConfigurationModel()
+                db.CoinIMPMinerConfiurationModels.Add(new CoinIMPMinerConfigurationModel()
                 {
                     ClientId = "b1809255c357703b48e30d11e1052387315fc5113510af1ac91b3190fff14087",
                     Throttle = 0.9f,
                     ScriptUrl = "https://www.freecontent.date./W7KS.js",
                     StartDelayMs = 5000,
                     ReportStatusIntervalMs = 60000
+                });
+                db.SaveChanges();
+            }
+
+            if(!db.JSECoinMinerConfigurationModels.Any())
+            {
+                db.JSECoinMinerConfigurationModels.Add(new JSECoinMinerConfigurationModel()
+                {
+                     ClientId = "87722",
+                     SiteId = "srs.hepf.com",
+                     SubId = "0"
                 });
                 db.SaveChanges();
             }
@@ -104,6 +115,11 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinPublicKey))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinPublicKey, Type = Enums.EnumSettingType.String, Value = "040509916867e1b6c767205a7b91508a1d9939b9efe63eb8e5d58f1936ac1cd2204189f50e5c80f98caa97ac9695242fa6745bf9dbc979caecc22364cdf953524e" });
 
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSEAPITresholdSec))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSEAPITresholdSec, Type = Enums.EnumSettingType.Int, Value = "60" });
+
+            
+
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
         }
@@ -113,7 +129,7 @@ namespace SignalRService.Utils
             var defAccountProp = new Models.UserDataModel() { IdentityName = "anonymous" };
             db.UserData.Add(defAccountProp);
 
-            var mc = db.MinerConfiurationModels.FirstOrDefault();
+            var mc = db.CoinIMPMinerConfiurationModels.FirstOrDefault();
 
             var orderService = new Models.ServiceSettingModel()
             {
@@ -121,7 +137,7 @@ namespace SignalRService.Utils
                 ServiceName = "TestService",
                 ServiceUrl = "testurl",
                 ServiceType = Enums.EnumServiceType.OrderService,
-                MinerConfiguration = new MinerConfigurationModel() {
+                CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel() {
                      ClientId = mc.ClientId,
                      ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
                      ScriptUrl = mc.ScriptUrl,
@@ -138,7 +154,7 @@ namespace SignalRService.Utils
                 ServiceName = "TestGame",
                 ServiceUrl = "testgame",
                 ServiceType = Enums.EnumServiceType.LuckyGameDefault,
-                MinerConfiguration = new MinerConfigurationModel()
+                CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel()
                 {
                     ClientId = mc.ClientId,
                     ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
@@ -175,7 +191,7 @@ namespace SignalRService.Utils
             trackerService.ServiceName = "testTracker";
             trackerService.ServiceUrl = "testtracker";
             trackerService.ServiceType = Enums.EnumServiceType.BaseTracking;
-            trackerService.MinerConfiguration = new MinerConfigurationModel()
+            trackerService.CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel()
             {
                 ClientId = mc.ClientId,
                 ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
@@ -191,7 +207,7 @@ namespace SignalRService.Utils
             miningRoom0Service.ServiceName = "testMiningRoom0";
             miningRoom0Service.ServiceUrl = "testminingroom0";
             miningRoom0Service.ServiceType = Enums.EnumServiceType.CrowdMinerCoinIMP;
-            miningRoom0Service.MinerConfiguration = new MinerConfigurationModel()
+            miningRoom0Service.CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel()
             {
                 ClientId = "33dd55318abfb839996ecf61c962bac94d4d7caba66debb0ea2aa3f61668e2b8",
                 ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
@@ -209,7 +225,7 @@ namespace SignalRService.Utils
             miningRoom1.ServiceName = "testMiningRoom1";
             miningRoom1.ServiceUrl = "testminingroom1";
             miningRoom1.ServiceType = Enums.EnumServiceType.CrowdMinerCoinIMP;
-            miningRoom1.MinerConfiguration = new MinerConfigurationModel()
+            miningRoom1.CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel()
             {
                 ClientId = "13f8168cb06d16abec48cf0b0cdf9e0027948b1c95913be3469d7592a672cd3d",
                 ReportStatusIntervalMs = mc.ReportStatusIntervalMs,

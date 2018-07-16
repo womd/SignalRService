@@ -508,12 +508,17 @@
     <Compile Include="Migrations\201806260706048_AddWalletAddressToUserData.Designer.cs">
       <DependentUpon>201806260706048_AddWalletAddressToUserData.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807161701096_CSECoin.cs" />
+    <Compile Include="Migrations\201807161701096_CSECoin.Designer.cs">
+      <DependentUpon>201807161701096_CSECoin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\JSECoinMinerConfigurationModel.cs" />
     <Compile Include="Models\GeneralSettingsModel.cs" />
     <Compile Include="Models\LocalizationModel.cs" />
     <Compile Include="Models\LuckyGameSettingsModel.cs" />
-    <Compile Include="Models\MinerConfigurationModel.cs" />
+    <Compile Include="Models\CoinIMPMinerConfigurationModel.cs" />
     <Compile Include="Models\MinerStatusModel.cs" />
     <Compile Include="Models\MiningRoomModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
@@ -526,11 +531,12 @@
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\SignalRGroupsModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
+    <Compile Include="Repositories\JSECoinMinerContext.cs" />
     <Compile Include="Repositories\GameSettingsContext.cs" />
     <Compile Include="Repositories\GameSettingsRepository.cs" />
     <Compile Include="Repositories\GeneralSettingsRepository.cs" />
     <Compile Include="Repositories\MinerRoomContext.cs" />
-    <Compile Include="Repositories\MinerContext.cs" />
+    <Compile Include="Repositories\CoinIMPMinerContext.cs" />
     <Compile Include="Repositories\MinerRoomRepository.cs" />
     <Compile Include="Repositories\MinerRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
@@ -545,6 +551,7 @@
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Rest\RestProductController.cs" />
     <Compile Include="Localization\LocalizationProvider.cs" />
+    <Compile Include="Utils\JSECoinMiningRoomInfoCache.cs" />
     <Compile Include="Utils\CoinImpScriptProvider.cs" />
     <Compile Include="Utils\CultureHelper.cs" />
     <Compile Include="Utils\DbSeeder.cs" />
@@ -554,7 +561,7 @@
     <Compile Include="Utils\JTableHelper.cs" />
     <Compile Include="Utils\LuceneUtils.cs" />
     <Compile Include="Utils\LuckyGameUtils.cs" />
-    <Compile Include="Utils\MiningRoomInfoCache.cs" />
+    <Compile Include="Utils\CoinIMPMiningRoomInfoCache.cs" />
     <Compile Include="Utils\OrderUtils.cs" />
     <Compile Include="Utils\ProgressDialogUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
@@ -568,6 +575,7 @@
     <Compile Include="ViewModels\LocalizationViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\CrowdMinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\JSECoinMinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\MiningRoomJSECoinViewModel.cs" />
     <Compile Include="ViewModels\MiningRoomUpdateResult.cs" />
     <Compile Include="ViewModels\MiningRoomCoinIMPViewModel.cs" />
@@ -594,7 +602,7 @@
     <Compile Include="Models\UserDataModel.cs" />
     <Compile Include="ViewModels\ServiceBaseViewModel.cs" />
     <Compile Include="ViewModels\SignalRBaseConfigurationViewModel.cs" />
-    <Compile Include="ViewModels\MinerConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\CoinIMPMinerConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderClientConfigurationViewModel.cs" />
     <Compile Include="ViewModels\OrderHostConfigurationViewModel.cs" />
     <Compile Include="ViewModels\UserRolesViewModel.cs" />
@@ -989,6 +997,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806260706048_AddWalletAddressToUserData.resx">
       <DependentUpon>201806260706048_AddWalletAddressToUserData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807161701096_CSECoin.resx">
+      <DependentUpon>201807161701096_CSECoin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
