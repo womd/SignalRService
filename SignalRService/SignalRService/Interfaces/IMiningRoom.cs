@@ -18,5 +18,6 @@ namespace SignalRService.Interfaces
         void SendRoomInfoUpdateToClient(dynamic vm, string connectionId);
 
         DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request);
+        DTOs.GeneralHubResponseObject CreateMiningRoom(System.Security.Principal.IPrincipal User, DTOs.MiningRoomRequesObject mrRequest);
     }
 }

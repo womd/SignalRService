@@ -31,6 +31,8 @@ namespace SignalRService.Utils
             if (VmCache == null)
                 VmCache = new Dictionary<int, ViewModels.MiningRoomJSECoinViewModel>();
 
+            vm.DataSnapshot = DateTime.Now;
+
             ViewModels.MiningRoomJSECoinViewModel fromCache = null;
             if( VmCache.TryGetValue(MiningRoomId, out fromCache) )
             {

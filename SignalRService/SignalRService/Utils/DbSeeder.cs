@@ -118,7 +118,12 @@ namespace SignalRService.Utils
             if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSEAPITresholdSec))
                 defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSEAPITresholdSec, Type = Enums.EnumSettingType.Int, Value = "60" });
 
-            
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinClientIdMinLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinClientIdMinLength, Type = Enums.EnumSettingType.Int, Value = "3" });
+
+            if (!db.GeneralSettings.Any(ln => ln.GeneralSetting == Enums.EnumGeneralSetting.JSECoinClientIdMaxLength))
+                defaultStandards.Add(new GeneralSettingsModel() { GeneralSetting = Enums.EnumGeneralSetting.JSECoinClientIdMaxLength, Type = Enums.EnumSettingType.Int, Value = "12" });
+
 
             db.GeneralSettings.AddRange(defaultStandards);
             db.SaveChanges();
@@ -157,9 +162,9 @@ namespace SignalRService.Utils
                 CoinIMPMinerConfiguration = new CoinIMPMinerConfigurationModel()
                 {
                     ClientId = mc.ClientId,
-                    ReportStatusIntervalMs = mc.ReportStatusIntervalMs,
+                    ReportStatusIntervalMs = 10000,
                     ScriptUrl = mc.ScriptUrl,
-                    StartDelayMs = mc.StartDelayMs,
+                    StartDelayMs = 500,
                     Throttle = mc.Throttle
                 }
             };

@@ -6,13 +6,13 @@ using SignalRService.Utils;
 
 namespace SignalRService.Repositories
 {
-    public class MinerRepository
+    public class CoinIMPMinerRepository
     {
 
         private Repositories.CoinIMPMinerContext minerContext;
         private DAL.ServiceContext _db;
 
-        public MinerRepository(DAL.ServiceContext db)
+        public CoinIMPMinerRepository(DAL.ServiceContext db)
         {
             minerContext = new CoinIMPMinerContext(db);
             _db = db;

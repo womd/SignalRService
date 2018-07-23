@@ -24,7 +24,7 @@ namespace SignalRService.Implementation
         private Repositories.MinerRoomRepository miningRoomRepo;
         private Repositories.UserRepository userRepo;
         private Repositories.ServiceSettingRepositorie serviceRepo;
-        private Repositories.MinerRepository minerRepo;
+        private Repositories.JSECoinMinerRepository minerRepo;
 
 
         public MiningRoomCSECoin()
@@ -36,7 +36,7 @@ namespace SignalRService.Implementation
             miningRoomRepo = new Repositories.MinerRoomRepository(db);
             userRepo = new Repositories.UserRepository(db);
             serviceRepo = new Repositories.ServiceSettingRepositorie(db);
-            minerRepo = new Repositories.MinerRepository(db);
+            minerRepo = new Repositories.JSECoinMinerRepository(db);
         }
 
         #region interface methods
@@ -44,15 +44,43 @@ namespace SignalRService.Implementation
         public GeneralHubResponseObject CreateMiningRoom(System.Security.Principal.IPrincipal User, MiningRoomRequesObject mrRequest)
         {
             GeneralHubResponseObject result = new GeneralHubResponseObject();
+
             if (!User.Identity.IsAuthenticated)
             {
                 result.Success = false;
                 result.ErrorMessage = SignalRService.Localization.BaseResource.Get("MsgLoginFirst");
                 return result;
             }
+            string toParse = ((dynamic)mrRequest.CommandData).CoinType;
+            if (!Enum.TryParse(toParse, out Enums.EnumMiningRoomType coinType))
+            {
+                result.ErrorMessage = "Invalid type given";
+                result.Success = false;
+                return result;
+            }
+
+            //if it's not this implementation, use coinimp
+            switch (coinType)
+            {
+                case Enums.EnumMiningRoomType.CoinIMP:
+                    var roomImplementation = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
+                    return roomImplementation.CreateMiningRoom(User, mrRequest);
+                    
+                case Enums.EnumMiningRoomType.JSECoin:
+
+                    break;
+                default:
+                    break;
+            }
+
+
+
+           
 
             string roomName = ((dynamic)mrRequest.CommandData).RoomName;
             string clientId = ((dynamic)mrRequest.CommandData).ClientId;
+            string siteId = ((dynamic)mrRequest.CommandData).SiteId;
+            string subId = ((dynamic)mrRequest.CommandData).SubId;
 
             var mrMinLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMinLength);
             var MrMaxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.MiningRoomNameMaxLength);
@@ -73,34 +101,24 @@ namespace SignalRService.Implementation
                 return result;
             }
 
-            var clIdMinLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpClientIdMinLength);
-            var clIdMaxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.CoinImpClientIdMaxLength);
+            var clIdMinLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSECoinClientIdMinLength);
+            var clIdMaxLength = (int)Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSECoinClientIdMaxLength);
 
             if (clientId.Length > clIdMaxLength || clientId.Length < clIdMinLength)
             {
-                result.ErrorMessage = "Name has to be from " + clIdMinLength + " to " + clIdMaxLength + " characters.";
+                result.ErrorMessage = "ClientId has to be from " + clIdMinLength + " to " + clIdMaxLength + " characters.";
                 result.Success = false;
                 return result;
             }
-
-
-            if (db.PredefinedMinerClients.Count() == 0)
-            {
-                result.ErrorMessage = "No more slots open, please come back later.";
-                result.Success = false;
-                return result;
-            }
-
-            var predefClient = db.PredefinedMinerClients.FirstOrDefault();
 
             var user = userRepo.GetDbUser(User.Identity.Name);
 
             var newService = serviceRepo.GetNewService(Enums.EnumServiceType.CrowdMinerCoinIMP, user, roomName);
 
             var defaultMinerConf = minerRepo.GetDefaultMinerConfig();
-            var newMinerConf = minerRepo.GetNewMinerConfig(clientId, predefClient.ScriptUrl, float.Parse(defaultMinerConf.Throttle), defaultMinerConf.StartDelayMs, defaultMinerConf.ReportStatusIntervalMs);
+            var newMinerConf = minerRepo.GetNewMinerConfig(clientId, siteId, subId);
 
-            newService.CoinIMPMinerConfiguration = newMinerConf;
+            newService.JSECoinMinerConfiguration = newMinerConf;
 
             var theRoom = miningRoomRepo.CreateRoom(newService);
 
@@ -117,10 +135,10 @@ namespace SignalRService.Implementation
             int tresholdSec = (int) Utils.GeneralSettingsUtils.GetSettingValue(Enums.EnumGeneralSetting.JSEAPITresholdSec);
             ViewModels.MiningRoomJSECoinViewModel result = new MiningRoomJSECoinViewModel();
 
-            var md = new MarkdownDeep.Markdown();
-            md.NewWindowForExternalLinks = true;
-            md.NewWindowForLocalLinks = true;
-            md.SafeMode = true;
+            //var md = new MarkdownDeep.Markdown();
+            //md.NewWindowForExternalLinks = true;
+            //md.NewWindowForLocalLinks = true;
+            //md.SafeMode = true;
 
 
 
@@ -133,17 +151,9 @@ namespace SignalRService.Implementation
 
             var cacheRes = Utils.JSECoinMiningRoomInfoCache.GetItem(MiningRoomId, tresholdSec);
             if (cacheRes != null)
-            {
-                cacheRes.Balance = result.Balance;
-                cacheRes.DataSnapshot = DateTime.Now;
-                cacheRes.Description = result.Description;
-                cacheRes.DescriptionMarkdown = result.DescriptionMarkdown;
                 return cacheRes;
-            }
-
-
-            var minerClientId = dbRoom.ServiceSetting.JSECoinMinerConfiguration.ClientId;
-            var TotalBalance = GetClientBalance(minerClientId);
+            
+            var TotalBalance = GetClientBalance(dbRoom.ServiceSetting.JSECoinMinerConfiguration.SiteId);
            
 
             result.Id = dbRoom.Id;
@@ -183,27 +193,7 @@ namespace SignalRService.Implementation
                     result.ResponseData = overviewData;
                     break;
 
-                case "MinerSetThrottleForRoom":
-                    var dbMiningRoom = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
-                    if (dbMiningRoom.ServiceSetting.Owner.IdentityName  == Request.User.Identity.Name || Request.User.IsInRole("Admin"))
-                    {
-                        var nxString = mrRequest.CommandData.ToString().Replace(".",",");
-
-                        float throttle = float.Parse(nxString);
-                      
-                        dbMiningRoom.ServiceSetting.CoinIMPMinerConfiguration.Throttle = throttle;
-                        db.SaveChanges();
-
-                        Utils.SignalRMinerUtils.SetThrottleForGroup(throttle, dbMiningRoom.ServiceSetting.ServiceUrl.ToLower());
-                    }
-                    else
-                    {
-                        result.Success = false;
-                        result.ErrorMessage = "no permission";
-                    }
-
-                    break;
-
+             
                 case "ToggleControls":
                     var dbMiningRoomx = db.MiningRooms.FirstOrDefault(ln => ln.Id == mrRequest.MiningRoomId);
                     if (dbMiningRoomx.ServiceSetting.Owner == Request.User || Request.User.IsInRole("Admin"))
@@ -303,15 +293,16 @@ namespace SignalRService.Implementation
         #endregion
 
 
-        private int GetClientBalance(string MinerClientId)
+        private int GetClientBalance(string SiteId)
         {
-            string apiUrlComplete = apiUrl + "/v1.7/balance/auth/" + MinerClientId;
+            string apiUrlComplete = apiUrl + "/v1.7/balance/auth/" + SiteId + "/";
 
             try
             {
                 WebRequest request = WebRequest.Create(apiUrlComplete);
                 request.Credentials = CredentialCache.DefaultCredentials;
                 request.Headers.Add("Authorization: " + cmpPrivate);
+                request.ContentType = "application/json";
                 ((HttpWebRequest) request).UserAgent = ".NET Framework HttpWebRequest womd";
                 WebResponse response = request.GetResponse();
                
@@ -325,7 +316,7 @@ namespace SignalRService.Implementation
                 reader.Close();
                 response.Close();
 
-                return responseJson.message;
+                return responseJson.balance;
             }
             catch (Exception ex)
             {

@@ -97,7 +97,11 @@ namespace SignalRService.Hubs
                     case Enums.EnumServiceType.CrowdMinerCoinIMP:
                         var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
                         return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = mrp.ProcessIncoming(RequestData) };
-                 
+
+                    case Enums.EnumServiceType.CrowdMinerJSECoin:
+                        var amrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.JSECoin);
+                        return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = amrp.ProcessIncoming(RequestData) };
+
                     default:
                         return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
                 }

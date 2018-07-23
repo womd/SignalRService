@@ -37,7 +37,10 @@ namespace SignalRService.Enums
         JSECoinPrivateKey = 21,
         JSECoinPublicKey = 22,
         JSECoinApiUrl = 23,
-        JSEAPITresholdSec = 24
+        JSEAPITresholdSec = 24,
+
+        JSECoinClientIdMinLength = 25,
+        JSECoinClientIdMaxLength = 26,
 
     }
 }

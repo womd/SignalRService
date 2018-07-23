@@ -1,0 +1,63 @@
+﻿<div id="addRoomCtrl" class="addRoomCntrl">
+
+    <div class="ui-field-contain">
+        <label for="InputRoomName">@BaseResource.Get("RoomName") </label>
+        <input type="text" id="InputRoomName">
+
+
+        @Html.DropDownList("InputCoinSelect",
+           EnumHelper.GetSelectList(typeof(SignalRService.Enums.EnumMiningRoomType)) ,
+           BaseResource.Get("SelectCoin"),
+           new { @class = "form-control" })
+
+        <!-- for coinIMP-->
+        <label for="InputClientId">@BaseResource.Get("ClientId")</label>
+        <input type="text" id="InputClientId">
+
+        <!-- for JSECoin-->
+        <label for="InputSiteId">@BaseResource.Get("SiteId")</label>
+        <input type="text" id="InputSiteId">
+
+        <label for="InputSubId">@BaseResource.Get("SubId")</label>
+        <input type="text" id="InputSubId">
+
+        <button class="mdl-button mdl-js-button mdl-button--raised" onclick="BtnSaveMiningRoomClicked()">@BaseResource.Get("BtnSaveMiningRoomText")</button>
+    </div>
+    <div class="addRoomResult" id="addRoomResult">
+
+    </div>
+
+</div>
+
+<script>
+    function BtnSaveMiningRoomClicked() {
+        var name = $('#InputRoomName')[0].value;
+        var clientId = $('#InputClientId')[0].value;
+        var enumCoin = $('#InputCoinSelect')[0].selectedOptions[0].value;
+        var siteId = $('#InputSiteId')[0].value;
+        var subId = $('#InputSubId')[0].value;
+        var request = CreateRequest(@Model.Id, @Model.CrowdMinerConfigurationViewModel.Id, "CreateRoom", { RoomName: name, ClientId: clientId, CoinType: enumCoin, SiteId: siteId, SubId: subId  });
+
+        servicehub.server.generalHubIncoming(request).done(function (responseData) {
+
+            if (responseData.ResponseData.Success == true) {
+
+                @{
+                    string domainName = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                    string newUrl = domainName + "/Goto/";
+                }
+
+                var newlink = "<a href='" + "@newUrl" + responseData.ResponseData.ResponseData + "'>" + "@newUrl" + responseData.ResponseData.ResponseData + "</a>";
+                $('#addRoomResult').html("Url: " +  newlink);
+
+            }
+            else {
+                $('#addRoomResult').html(responseData.ResponseData.ErrorMessage);
+            }
+
+        }).fail(function (err) {
+            alert("createroom request failed...." + err);
+        });
+    }
+
+</script>

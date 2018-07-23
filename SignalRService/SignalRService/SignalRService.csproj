@@ -531,6 +531,7 @@
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\SignalRGroupsModel.cs" />
     <Compile Include="Models\StripeSettingsModel.cs" />
+    <Compile Include="Repositories\JSECoinMinerRepository.cs" />
     <Compile Include="Repositories\JSECoinMinerContext.cs" />
     <Compile Include="Repositories\GameSettingsContext.cs" />
     <Compile Include="Repositories\GameSettingsRepository.cs" />
@@ -538,7 +539,7 @@
     <Compile Include="Repositories\MinerRoomContext.cs" />
     <Compile Include="Repositories\CoinIMPMinerContext.cs" />
     <Compile Include="Repositories\MinerRoomRepository.cs" />
-    <Compile Include="Repositories\MinerRepository.cs" />
+    <Compile Include="Repositories\CoinIMPMinerRepository.cs" />
     <Compile Include="Repositories\OrderContext.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\SignalRConnectionContext.cs" />
@@ -955,6 +956,7 @@
     <Content Include="Views\Manage\ChangeXMRWalletAddress.cshtml" />
     <Content Include="Views\Shared\LanguageSelector.cshtml" />
     <Content Include="Views\CrowdMiner\IndexJSECoin.cshtml" />
+    <Content Include="Views\Shared\AddMiningRoom.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

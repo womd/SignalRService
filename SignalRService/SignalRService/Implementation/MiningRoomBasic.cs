@@ -24,7 +24,7 @@ namespace SignalRService.Implementation
         private Repositories.MinerRoomRepository miningRoomRepo;
         private Repositories.UserRepository userRepo;
         private Repositories.ServiceSettingRepositorie serviceRepo;
-        private Repositories.MinerRepository minerRepo;
+        private Repositories.CoinIMPMinerRepository minerRepo;
 
 
         public MiningRoomBasic()
@@ -36,7 +36,7 @@ namespace SignalRService.Implementation
             miningRoomRepo = new Repositories.MinerRoomRepository(db);
             userRepo = new Repositories.UserRepository(db);
             serviceRepo = new Repositories.ServiceSettingRepositorie(db);
-            minerRepo = new Repositories.MinerRepository(db);
+            minerRepo = new Repositories.CoinIMPMinerRepository(db);
         }
 
         #region interface methods
