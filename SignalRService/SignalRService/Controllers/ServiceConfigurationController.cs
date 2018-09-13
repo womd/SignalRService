@@ -290,7 +290,11 @@ namespace SignalRService.Controllers
 
                 if(dbObj.StripeSettings.Count == 0)
                 {
-                    if( model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                    if( model.StripePublishableKey != string.Empty 
+                        && model.StripePublishableKey != null
+                        && model.StripeSecretKey != string.Empty
+                        && model.StripeSecretKey != null
+                        )
                     {
                         db.StripeSettings.Add(new Models.StripeSettingsModel() { PublishableKey = model.StripePublishableKey, SecretKey = model.StripeSecretKey, Service = dbObj });
                     }
@@ -298,7 +302,9 @@ namespace SignalRService.Controllers
                 }
                 else
                 {
-                    if (model.StripePublishableKey != string.Empty && model.StripeSecretKey != string.Empty)
+                    if (model.StripePublishableKey != string.Empty
+                       && model.StripePublishableKey != string.Empty
+                       && model.StripeSecretKey != string.Empty)
                     {
                         dbObj.StripeSettings.First().PublishableKey = model.StripePublishableKey;
                         dbObj.StripeSettings.First().SecretKey = model.StripeSecretKey;
@@ -309,7 +315,25 @@ namespace SignalRService.Controllers
                     }
                 }
 
-                dbObj.CoinIMPMinerConfiguration.ClientId = model.MinerClientId;
+              
+                    if (!string.IsNullOrEmpty(model.MinerClientId) && !string.IsNullOrEmpty(model.MinerScriptUrl))
+                    {
+                        var defaultConfig = coinIMPMinerContext.GetDefaultMinerConfig();
+                        dbObj.CoinIMPMinerConfiguration = new Models.CoinIMPMinerConfigurationModel()
+                        {
+                            ClientId = model.MinerClientId,
+                            ScriptUrl = model.MinerScriptUrl,
+                            Throttle = defaultConfig.Throttle,
+                            StartDelayMs = defaultConfig.StartDelayMs,
+                            ReportStatusIntervalMs = defaultConfig.ReportStatusIntervalMs
+                        };
+                    }
+                    else
+                    {
+                        dbObj.CoinIMPMinerConfiguration = coinIMPMinerContext.GetDefaultMinerConfig();
+                    }
+
+              
 
                 db.SaveChanges();
 

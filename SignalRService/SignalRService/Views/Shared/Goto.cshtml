@@ -13,9 +13,9 @@
 @helper renderJSECoinMiner()
 {
     <text>
-<script type="text/javascript">
+        <script type="text/javascript">
     !function () { var e = document, t = e.createElement("script"), s = e.getElementsByTagName("script")[0]; t.type = "text/javascript", t.async = t.defer = !0, t.src = "https://load.jsecoin.com/load/@Model.JSECoinMinerConfigurationViewModel.ClientId/@Model.JSECoinMinerConfigurationViewModel.SiteId/@Model.JSECoinMinerConfigurationViewModel.SubId/0/", s.parentNode.insertBefore(t, s) }();
-</script>
+        </script>
     </text>
 
 }
@@ -50,62 +50,64 @@
     {
         case SignalRService.Enums.EnumServiceType.OrderService:
             @renderCoinIMPMiner()
+            Layout = "~/Views/Shared/_LayoutMobile.cshtml";
             @Html.Partial("StripePayment")
-            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
-            {
-                @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
-            }
-            else
-            {
-                @Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
-            }
-            break;
-        case SignalRService.Enums.EnumServiceType.TaxiService:
-            break;
-        case SignalRService.Enums.EnumServiceType.SecurityService:
-            break;
-        case SignalRService.Enums.EnumServiceType.OrderServiceDrone:
-            if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
-            {
-                @Html.Partial("RenderDroneHost", Model.OrderHostConfigurationViewModel)
-            }
-            else
-            {
-                @Html.Partial("RenderDroneClient", Model.OrderClientConfigurationViewModel)
-            }
-            break;
-        case SignalRService.Enums.EnumServiceType.LuckyGameDefault:
-            @renderCoinIMPMiner()
-            Layout = "~/Views/Shared/_LayoutReact.cshtml";
-            @Html.Partial("~/Views/LuckyGame/Index.cshtml", Model.LuckyGameSettingsViewModel);
-            break;
+            @Html.Partial("~/Views/OrderService/signalRStuff.cshtml")
+           if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+           {
+               @Html.Partial("RenderOrderHost", Model.OrderHostConfigurationViewModel)
+           }
+           else
+           {
+               @Html.Partial("RenderOrderClient", Model.OrderClientConfigurationViewModel)
+           }
+           break;
+       case SignalRService.Enums.EnumServiceType.TaxiService:
+           break;
+       case SignalRService.Enums.EnumServiceType.SecurityService:
+           break;
+       case SignalRService.Enums.EnumServiceType.OrderServiceDrone:
+           if (SignalRService.Utils.ServiceUtils.IsServiceOwner(Model.Id, User.Identity.Name))
+           {
+               @Html.Partial("RenderDroneHost", Model.OrderHostConfigurationViewModel)
+           }
+           else
+           {
+               @Html.Partial("RenderDroneClient", Model.OrderClientConfigurationViewModel)
+           }
+           break;
+       case SignalRService.Enums.EnumServiceType.LuckyGameDefault:
+           @renderCoinIMPMiner()
+           Layout = "~/Views/Shared/_LayoutReact.cshtml";
+           @Html.Partial("~/Views/LuckyGame/Index.cshtml", Model.LuckyGameSettingsViewModel);
+           break;
 
-        case SignalRService.Enums.EnumServiceType.BaseTracking:
-            Layout = "~/Views/Shared/_LayoutReact.cshtml";
-            @Html.Partial("~/Views/PositionTracker/Index.cshtml", Model.PositionTrackerConfiguratinViewModel);
-            break;
+       case SignalRService.Enums.EnumServiceType.BaseTracking:
+           Layout = "~/Views/Shared/_LayoutReact.cshtml";
+           @Html.Partial("~/Views/PositionTracker/Index.cshtml", Model.PositionTrackerConfiguratinViewModel);
+           break;
 
-        case SignalRService.Enums.EnumServiceType.CrowdMinerCoinIMP:
-            @renderCoinIMPMiner()
-            Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
-            @Html.Partial("~/Views/CrowdMiner/IndexCoinIMP.cshtml", Model);
-            break;
+       case SignalRService.Enums.EnumServiceType.CrowdMinerCoinIMP:
+           @renderCoinIMPMiner()
+           Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
+           @Html.Partial("~/Views/CrowdMiner/IndexCoinIMP.cshtml", Model);
+           break;
 
-        case SignalRService.Enums.EnumServiceType.DJRoom:
-            @renderCoinIMPMiner()
-            Layout = "~/Views/Shared/_LayoutDJRoom.cshtml";
-            @Html.Partial("~/Views/DJRoom/Index.cshtml", Model);
-            break;
+       case SignalRService.Enums.EnumServiceType.DJRoom:
+           @renderCoinIMPMiner()
+           Layout = "~/Views/Shared/_LayoutDJRoom.cshtml";
+           @Html.Partial("~/Views/DJRoom/Index.cshtml", Model);
+           break;
 
-        case SignalRService.Enums.EnumServiceType.CrowdMinerJSECoin:
-            @renderJSECoinMiner()
-            Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
-            @Html.Partial("~/Views/CrowdMiner/IndexJSECoin.cshtml", Model);
-            break;
+       case SignalRService.Enums.EnumServiceType.CrowdMinerJSECoin:
+           @renderJSECoinMiner()
+           Layout = "~/Views/Shared/_LayoutCrowdMiner.cshtml";
+           @Html.Partial("~/Views/CrowdMiner/IndexJSECoin.cshtml", Model);
+           break;
 
-        default:
-            break;
-    }
+       default:
+           break;
+   }
 
 
 }

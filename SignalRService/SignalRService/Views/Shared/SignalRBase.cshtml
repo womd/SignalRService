@@ -14,74 +14,74 @@
                 }
             }
 
-            servicehub.client.someoneAddedItemToCart = function (itemid) {
-                //find item and highlight it
-                $('*[data-itemid=' + itemid + ']').addClass("highlight");
-                setTimeout(function () {
-                    $('*[data-itemid=' + itemid + ']').removeClass("highlight");
-                }, 500);
-            }
+            //servicehub.client.someoneAddedItemToCart = function (itemid) {
+            //    //find item and highlight it
+            //    $('*[data-itemid=' + itemid + ']').addClass("highlight");
+            //    setTimeout(function () {
+            //        $('*[data-itemid=' + itemid + ']').removeClass("highlight");
+            //    }, 500);
+            //}
 
-            servicehub.client.productStaged = function (data) {
-                //add to available products on host
-                if (typeof itemOrderHost !== 'undefined') {
+            //servicehub.client.productStaged = function (data) {
+            //    //add to available products on host
+            //    if (typeof itemOrderHost !== 'undefined') {
                 
-                    var existingitem = $('#hostitemlist').children().find("*[data-itemid='" + data.Id + "']");
-                    if (existingitem.length == 0) {
-                        $('#hostitemlist').append(hostProducList.createItem(data));
-                        $('#hostitemlist').listview();
-                        $('#hostitemlist').listview("refresh");
-                    }
-                    //else {
-                    //    $(existingitem).replaceWith(itemOrderHost.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
-                    //}    
-                }
+            //        var existingitem = $('#hostitemlist').children().find("*[data-itemid='" + data.Id + "']");
+            //        if (existingitem.length == 0) {
+            //            $('#hostitemlist').append(hostProducList.createItem(data));
+            //            $('#hostitemlist').listview();
+            //            $('#hostitemlist').listview("refresh");
+            //        }
+            //        //else {
+            //        //    $(existingitem).replaceWith(itemOrderHost.createProductItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
+            //        //}    
+            //    }
 
-                if (typeof itemOrderClient !== 'undefined') {
+            //    if (typeof itemOrderClient !== 'undefined') {
                 
-                    var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
-                    if (existingitem.length == 0) {
-                        $('#customeritemlist').append(productItemList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
-                        $('#customeritemlist').listview();
-                        $('#customeritemlist').listview("refresh");
-                    }
-                    else {
-                        $(existingitem).replaceWith(productItemList.createItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
-                    }
-                }
-            }
+            //        var existingitem = $('#customeritemlist').find("*[data-itemid='" + data.Id + "']");
+            //        if (existingitem.length == 0) {
+            //            $('#customeritemlist').append(productItemList.createItem(data.Id, data.ImgUrl, data.Name, data.Description, data.Price));
+            //            $('#customeritemlist').listview();
+            //            $('#customeritemlist').listview("refresh");
+            //        }
+            //        else {
+            //            $(existingitem).replaceWith(productItemList.createItem(data.Id, data.ImgSrc, data.Name, data.Description, data.Price));
+            //        }
+            //    }
+            //}
 
-            servicehub.client.productRemove = function (id) {
+            //servicehub.client.productRemove = function (id) {
 
-                if (typeof itemOrderClient !== 'undefined') {
-                    itemOrderClient.productRemove(id);
-                }
+            //    if (typeof itemOrderClient !== 'undefined') {
+            //        itemOrderClient.productRemove(id);
+            //    }
 
-                if (typeof itemOrderHost !== 'undefined') {
-                    itemOrderHost.productRemove(id);
-                }
+            //    if (typeof itemOrderHost !== 'undefined') {
+            //        itemOrderHost.productRemove(id);
+            //    }
 
-            }
+            //}
 
 
-            servicehub.client.hostOrderRequest = function (order) {
-                //got new clientorder from server...
-                var element = hostOrderList.createItem(order);
-                $('#hostorderitemlist').append(element);
+            //servicehub.client.hostOrderRequest = function (order) {
+            //    //got new clientorder from server...
+            //    var element = hostOrderList.createItem(order);
+            //    $('#hostorderitemlist').append(element);
 
-            }
+            //}
 
          
-            servicehub.client.updateOrder = function (ordervm) {
+            //servicehub.client.updateOrder = function (ordervm) {
 
-                if (typeof itemOrderClient !== 'undefined') {
-                    itemOrderClient.orderUpdate(ordervm);
-                }
+            //    if (typeof itemOrderClient !== 'undefined') {
+            //        itemOrderClient.orderUpdate(ordervm);
+            //    }
 
-                if (typeof itemOrderHost !== 'undefined') {
-                    itemOrderHost.orderUpdate(ordervm);
-                }
-            }
+            //    if (typeof itemOrderHost !== 'undefined') {
+            //        itemOrderHost.orderUpdate(ordervm);
+            //    }
+            //}
 
             
             servicehub.client.miner_start = function () {

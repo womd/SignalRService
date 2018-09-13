@@ -92,7 +92,7 @@ namespace SignalRService.Hubs
 
             if(service != null)
             {
-                switch(service.ServiceType)
+                switch (service.ServiceType)
                 {
                     case Enums.EnumServiceType.CrowdMinerCoinIMP:
                         var mrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.CoinIMP);
@@ -101,6 +101,14 @@ namespace SignalRService.Hubs
                     case Enums.EnumServiceType.CrowdMinerJSECoin:
                         var amrp = Factories.MiningRoomFactory.GetImplementation(Enums.EnumMiningRoomType.JSECoin);
                         return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = amrp.ProcessIncoming(RequestData) };
+
+                    case Enums.EnumServiceType.LuckyGameDefault:
+                        var lgmp = Factories.SlotGameFactory.GetImplementation(Enums.EnumSlotGame.LuckyGame);
+                        return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = lgmp.ProcessIncoming(RequestData.User, RequestData) };
+
+                    case Enums.EnumServiceType.OrderService:
+                        var osmp = Factories.OrderProcessFactory.GetOrderProcessImplementation(Enums.EnumServiceType.OrderService);
+                        return new DTOs.GeneralHubResponseObject() { Success = true, ResponseData = osmp.ProcessIncoming(RequestData)};
 
                     default:
                         return new DTOs.GeneralHubResponseObject() { Success = false, ErrorMessage = "not implemented"  };
@@ -211,43 +219,7 @@ namespace SignalRService.Hubs
 
         }
 
-        /// <summary>
-        /// clientrequest for loading products
-        /// </summary>
-        /// <returns></returns>
-        public List<ViewModels.ProductViewModel> getProducts(string group, SearchConfig config)
-        {
-            List<ViewModels.ProductViewModel> reslist = new List<ViewModels.ProductViewModel>();
-            var user = userRepository.GetUser(Context.Request.User.Identity.Name);
-            var dbService = db.ServiceSettings.FirstOrDefault(ln => ln.ServiceUrl == group);
-            if (dbService == null)
-                return reslist;
-
-            if (config.SearchTerms.Length == 0)
-            {
-                foreach (var item in db.Products
-                        .Where(ln => ln.Owner.ID == dbService.Owner.ID)
-                        .OrderBy(ln => ln.Name).Take(10))
-                {
-                    reslist.Add(item.ToProductViewModel());
-                }
-                return reslist;
-            }
-
-            var searchResItems = Utils.LuceneUtils.Search(config.SearchTerms,user.Id);
-
-
-          
-
-            foreach (var item in searchResItems)
-            {
-                //if(item.Owner.ID == dbService.Owner.ID)
-                    reslist.Add(item.ToProductViewModel());
-            }
-
-            return reslist;
-        }
-
+     
      //   [Authorize]
         public List<ViewModels.OrderViewModel> getOrders(Enums.EnumGuiType guiType, string group, FilterSortConfig config)
         {
@@ -263,51 +235,7 @@ namespace SignalRService.Hubs
             return sortedorders;
         }
 
-        private ViewModels.ProductViewModel _stageProduct(ProductData data, string group, string connectionId)
-        {
-            ViewModels.ProductViewModel resVm = new ViewModels.ProductViewModel();
-            int dangerIdx = 0;
-            if(string.IsNullOrEmpty(group))
-            {
-                resVm.ErrorMessage = "stageProduct - no groupname given....";
-                resVm.ErrorNumber = 7710;
-                return resVm;
-            }
-
-            if( Utils.ValidationUtils.IsDangerousString(group, out dangerIdx) )
-            {
-                resVm.ErrorMessage = "invalid groupname given....";
-                resVm.ErrorNumber = 7710;
-                return resVm;
-            }
-
-            List<string> vmessages = new List<string>();
-            if (Utils.ProductUtils.IsValidProductData(data, out vmessages))
-            {
-                var newProduct = productRepository.ProductAddOrUpdate(new ViewModels.ProductViewModel()
-                {
-                    Name = data.Name,
-                    Description = data.Description,
-                    Owner = userRepository.GetUserFromSignalR(connectionId),
-                    Price = data.Price,
-                    PartNumber = data.PartNumber
-                });
-                
-                GlobalHost.ConnectionManager.GetHubContext<ServiceHub>().Clients.Group(group).productStaged(newProduct.ToProductViewModel());
-                resVm.Identifier = newProduct.ProductIdentifier;
-                resVm.Name = newProduct.Name;
-                resVm.Owner = newProduct.Owner.ToUserDataViewModel();
-                resVm.Price = newProduct.Price;
-            }
-            resVm.ErrorMessage = vmessages.FirstOrDefault();;
-            return resVm;
-        }
-
-      //  [Authorize]
-        public async Task<ViewModels.ProductViewModel> StageProduct(ProductData data, string group)
-        {
-            return await Task.Run(() => _stageProduct(data,group, Context.ConnectionId));
-        }
+       
 
     //    [Authorize]
         public void RemoveProduct(string id, string group)
@@ -801,6 +729,16 @@ namespace SignalRService.Hubs
         public string PartNumber { get; set; }
     }
 
+    public class ProductDataWrap
+    {
+        public ProductData Product { get; set; }
+    }
+
+    public class ProductRemoveCommand
+    {
+        public string Id { get; set; }
+    }
+
     public class OrderDataDTO
     {
         public List<OrderItem>Items { get; set; }
@@ -832,6 +770,11 @@ namespace SignalRService.Hubs
         public int StartIndex { get; set; }
         public int PageSize { get; set; }
         public string Sorting { get; set; }
+    }
+
+    public class SearchConfigWrap
+    {
+        public SearchConfig SearchConfig { get; set; }
     }
 
     public class FilterSortConfig

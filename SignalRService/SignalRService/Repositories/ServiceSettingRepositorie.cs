@@ -11,12 +11,12 @@ namespace SignalRService.Repositories
 {
     public class ServiceSettingRepositorie
     {
-        private Repositories.ServiceSettingContext context;
+        private Repositories.ServiceSettingContext serviceContext;
         private DAL.ServiceContext db;
 
         public ServiceSettingRepositorie(DAL.ServiceContext _db)
         {
-            context = new ServiceSettingContext(db);
+            serviceContext = new ServiceSettingContext(db);
             db = _db;
         }
 
@@ -201,6 +201,12 @@ namespace SignalRService.Repositories
                 }
             }
             return xml;
+        }
+
+        public string GetSignalRGroup(int ServiceId)
+        {
+            var service = serviceContext.GetServiceById(ServiceId);
+            return service.ServiceUrl.ToLower();
         }
     }
 }

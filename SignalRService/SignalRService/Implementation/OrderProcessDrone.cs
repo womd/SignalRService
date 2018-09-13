@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using SignalRService.DTOs;
 using SignalRService.Hubs;
 using SignalRService.Interfaces;
 
@@ -75,7 +76,13 @@ namespace SignalRService.Implementation
         }
 
 
+        public DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request)
+        {
+            GeneralHubResponseObject result = new GeneralHubResponseObject();
+            return result;
+        }
+
     }
 
-   
+
 }

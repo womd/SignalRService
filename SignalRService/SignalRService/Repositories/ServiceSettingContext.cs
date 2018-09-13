@@ -10,7 +10,14 @@ namespace SignalRService.Repositories
         private readonly DAL.ServiceContext _db;
         public ServiceSettingContext(DAL.ServiceContext db)
         {
-            _db = db;
+            if(db == null)
+            {
+                _db = new DAL.ServiceContext();
+            }
+            else
+            {
+                _db = db;
+            }
         }
 
         public Models.ServiceSettingModel GetServiceForUrl(string url)

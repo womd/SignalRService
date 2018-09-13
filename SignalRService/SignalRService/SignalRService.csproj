@@ -446,10 +446,12 @@
     <Compile Include="DTOs\AspNetUserDTOs.cs" />
     <Compile Include="DTOs\GeneralHubRequestObject.cs" />
     <Compile Include="DTOs\GeneralHubResponseObject.cs" />
+    <Compile Include="DTOs\OrderServiceRequesObject.cs" />
     <Compile Include="DTOs\MiningRoomRequesObject.cs" />
     <Compile Include="DTOs\PredefinedMinerClientExportDTO.cs" />
     <Compile Include="DTOs\ServicesExportDTO.cs" />
     <Compile Include="Enums\EnumGeneralSetting.cs" />
+    <Compile Include="Enums\EnumSlotGame.cs" />
     <Compile Include="Enums\EnumImportType.cs" />
     <Compile Include="Enums\EnumOrderProcessingState.cs" />
     <Compile Include="Enums\EnumOrderProcessingMethods.cs" />
@@ -465,6 +467,7 @@
     <Compile Include="Enums\EnumSignalRConnectionState.cs" />
     <Compile Include="Enums\EnumTranslationState.cs" />
     <Compile Include="Exceptions\SettingNotFoundException.cs" />
+    <Compile Include="Factories\SlotGameFactory.cs" />
     <Compile Include="Factories\MiningRoomFactory.cs" />
     <Compile Include="Factories\OrderProcessFactory.cs" />
     <Compile Include="Factories\ProductImportFactory.cs" />
@@ -473,6 +476,7 @@
     </Compile>
     <Compile Include="HubPipelineModules\GroupMonitorPipelineModule.cs" />
     <Compile Include="Hubs\ServiceHub.cs" />
+    <Compile Include="Implementation\LuckyGameDefault.cs" />
     <Compile Include="Implementation\MiningRoomJSECoin.cs" />
     <Compile Include="Implementation\MiningRoomBasic.cs" />
     <Compile Include="Implementation\OrderProcessDrone.cs" />
@@ -482,6 +486,7 @@
     <Compile Include="Interfaces\IOrderProcess.cs" />
     <Compile Include="Interfaces\IProductImport.cs" />
     <Compile Include="Interfaces\IServiceImport.cs" />
+    <Compile Include="Interfaces\ISlotGame.cs" />
     <Compile Include="Localization\BaseResource.cs" />
     <Compile Include="Localization\UiResources.cs" />
     <Compile Include="Migrations\201806051103572_DbInit.cs" />
@@ -957,6 +962,7 @@
     <Content Include="Views\Shared\LanguageSelector.cshtml" />
     <Content Include="Views\CrowdMiner\IndexJSECoin.cshtml" />
     <Content Include="Views\Shared\AddMiningRoom.cshtml" />
+    <Content Include="Views\OrderService\signalRStuff.cshtml" />
     <None Include="web.SRS.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

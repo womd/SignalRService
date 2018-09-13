@@ -64,10 +64,11 @@ namespace SignalRService.Utils
             res.OrderHostConfigurationViewModel = new SignalRService.ViewModels.OrderHostConfigurationViewModel()
             {
                 AppendToSelector = ".body-content",
-                SinalRGroup = dbmodel.ServiceUrl.ToLower()
+                SinalRGroup = dbmodel.ServiceUrl.ToLower(),
+                ServiceId = dbmodel.ID
             };
 
-                res.User = dbmodel.Owner.ToUserDataViewModel();
+              res.User = dbmodel.Owner.ToUserDataViewModel();
             res.StripeSecretKey = dbmodel.StripeSettings != null && dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().SecretKey : "";
             res.StripePublishableKey = dbmodel.StripeSettings != null && dbmodel.StripeSettings.Count > 0 ? dbmodel.StripeSettings.First().PublishableKey : "";
             res.LuckyGameSettingsViewModel = dbmodel.LuckyGameSettings != null && dbmodel.LuckyGameSettings.Count > 0 ? dbmodel.LuckyGameSettings.First().ToLuckyGameConfigurationViewModel() : new LuckyGameSettingsViewModel() { Id = 0, MoneyAvailable = 0, WinningRules = new List<LuckyGameWinningRuleViewModel>() };

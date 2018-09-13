@@ -1,6 +1,24 @@
 ﻿@model SignalRService.ViewModels.OrderHostConfigurationViewModel
 <script>
 
+   
+
+    function CreateRequest(serviceId, command, data) {
+
+        var RequestData = {
+            Command: command,
+            CommandData: data
+        };
+
+        var request = {
+            RequestData: RequestData,
+            ServiceId: serviceId
+        };
+
+        return request;
+    }
+
+
     var hostProducList = {
 
         signalRGroup: "@Model.SinalRGroup",
@@ -282,17 +300,17 @@
                 Sorting: ""
             };
 
-            servicehub.server.getProducts("@Model.SinalRGroup", searchconfig)
-                .done(function (productList) {
 
-                    itemOrderHost._data_ProductList = productList;
+            var request = CreateRequest(@Model.ServiceId, "LoadProducts", { searchConfig: searchconfig });
+            servicehub.server.generalHubIncoming(request).done(function (productListResponse) {
+
+                itemOrderHost._data_ProductList = productListResponse.ResponseData.ResponseData;
                     hostProducList.refresh();
 
                 })
                 .fail(function () {
                 console.log("load_products failed..");
                 });
-
 
         },
         loadOrders: function load_orders(type) {
@@ -428,8 +446,9 @@
             var product = itemOrderHost.getProductFromInput();
 
 
-            var stageRes = servicehub.server.stageProduct(product, "@Model.SinalRGroup")
-                .done(function (data) {
+              var request = CreateRequest(@Model.ServiceId, "StageProduct", { Product: product });
+            servicehub.server.generalHubIncoming(request).done(function (data) {
+
                     if (!data.ErrorMessage) {
                         //ok no errors
                         $('#pagepannel2').panel("close");
@@ -500,7 +519,12 @@
     };
 
     function removeProduct(id) {
-        servicehub.server.removeProduct(id,"@Model.SinalRGroup");
+
+        var request = CreateRequest(@Model.ServiceId, "RemoveProduct", { Id: id });
+        servicehub.server.generalHubIncoming(request).done(function (response) {
+            console.log("done removing. .");
+        });
+
     }
 
     function OrdersSortSelectionChanged(event, ui) {

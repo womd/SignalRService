@@ -9,5 +9,6 @@ namespace SignalRService.ViewModels
     {
         public string AppendToSelector { get; set; }
         public string SinalRGroup { get; set; }
+        public int ServiceId { get; set; }
     }
 }

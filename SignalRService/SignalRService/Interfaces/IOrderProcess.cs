@@ -18,6 +18,9 @@ namespace SignalRService.Interfaces
 
       
         ViewModels.OrderViewModel ProcessOrder(ViewModels.OrderViewModel order, bool sentFromStoreUser);
-        
+
+
+        DTOs.GeneralHubResponseObject ProcessIncoming(DTOs.GeneralHubRequestObject Request);
+
     }
 }
